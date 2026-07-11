@@ -1,11 +1,11 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  base: '/check-in-net-doc/',
+  base: '/',
   lang: 'zh-CN',
   title: 'SignWave',
   description: '课堂签到打卡系统 — 使用文档与指南',
-  head: [['link', { rel: 'icon', href: '/check-in-net-doc/favicon.svg' }]],
+  head: [['link', { rel: 'icon', href: '/favicon.svg' }]],
 
   themeConfig: {
     logo: '/favicon.svg',
