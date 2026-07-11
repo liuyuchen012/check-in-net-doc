@@ -1,9 +1,3 @@
----
-title: 快速开始
-layout: page
-icon: i-ri-guide-line
----
-
 # 🚀 快速开始
 
 本文档将帮助你在 5 分钟内完成 SignWave 的部署和运行。

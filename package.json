@@ -3,17 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "valaxy dev",
-    "build": "valaxy build",
-    "preview": "valaxy preview",
-    "new": "valaxy new"
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
   },
-  "dependencies": {
-    "@unocss/reset": "^66.7.5",
-    "@vueuse/core": "^14.3.0",
-    "unocss": "^66.7.5",
-    "valaxy": "latest",
-    "valaxy-theme-yun": "latest",
-    "vue": "^3.5.39"
+  "devDependencies": {
+    "vitepress": "^1.6.3",
+    "vue": "^3.5.13"
   }
 }

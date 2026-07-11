@@ -1,9 +1,3 @@
----
-title: 常见问题
-layout: page
-icon: i-ri-question-line
----
-
 # ❓ 常见问题
 
 ## 服务器相关

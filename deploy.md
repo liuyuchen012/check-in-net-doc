@@ -1,9 +1,3 @@
----
-title: 部署指南
-layout: page
-icon: i-ri-rocket-line
----
-
 # 📦 部署指南
 
 本指南详细介绍如何在不同环境下部署 SignWave 签到系统。

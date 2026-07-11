@@ -1,16 +1,6 @@
 node_modules/
 dist/
+.vitepress/dist/
+.vitepress/cache/
 .DS_Store
 *.log
-
-# valaxy fuse
-public/valaxy-fuse-list.json
-
-# valaxy rss
-public/feed.xml
-
-# valaxy rss
-public/atom.xml
-
-# valaxy rss
-public/feed.json

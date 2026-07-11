@@ -1,9 +1,3 @@
----
-title: 功能特性
-layout: page
-icon: i-ri-stack-line
----
-
 # ✨ 功能特性
 
 SignWave 提供全面的课堂签到管理功能，以下是所有支持的特性详解。

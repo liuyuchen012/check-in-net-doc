@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>SignWave 使用文档</title>
+        <link>https://liuyuchen012.github.io/check-in-docs/</link>
+        <description>SignWave 课堂签到打卡系统 — 使用文档与指南</description>
+        <lastBuildDate>Sat, 11 Jul 2026 16:39:34 GMT</lastBuildDate>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
+        <generator>https://github.com/jpmonette/feed</generator>
+        <image>
+            <title>SignWave 使用文档</title>
+            <url>https://github.com/liuyuchen012.png</url>
+            <link>https://liuyuchen012.github.io/check-in-docs/</link>
+        </image>
+        <copyright>CC BY-NC-SA 4.0 2026 © 刘宇晨</copyright>
+        <atom:link href="https://liuyuchen012.github.io/check-in-docs/feed.xml" rel="self" type="application/rss+xml"/>
+    </channel>
+</rss>

@@ -3,16 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  # 允许手动触发
   workflow_dispatch:
 
-# 设置 GitHub Pages 权限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 防止并发部署冲突
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -39,12 +36,12 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm valaxy build
+        run: pnpm vitepress build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: .vitepress/dist
 
   deploy:
     needs: build

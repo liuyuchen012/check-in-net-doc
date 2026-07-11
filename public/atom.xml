@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://liuyuchen012.github.io/check-in-docs/</id>
+    <title>SignWave 使用文档</title>
+    <updated>2026-07-11T16:39:34.013Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <author>
+        <name>刘宇晨</name>
+        <email>i@valaxy.site</email>
+        <uri>https://github.com/liuyuchen012</uri>
+    </author>
+    <link rel="alternate" href="https://liuyuchen012.github.io/check-in-docs/"/>
+    <link rel="self" href="https://liuyuchen012.github.io/check-in-docs/atom.xml"/>
+    <subtitle>SignWave 课堂签到打卡系统 — 使用文档与指南</subtitle>
+    <logo>https://github.com/liuyuchen012.png</logo>
+    <icon>https://liuyuchen012.github.io/check-in-docs/favicon.svg</icon>
+    <rights>CC BY-NC-SA 4.0 2026 © 刘宇晨</rights>
+</feed>
