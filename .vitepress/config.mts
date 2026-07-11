@@ -8,7 +8,7 @@ export default defineConfig({
   head: [['link', { rel: 'icon', href: '/favicon.svg' }]],
 
   themeConfig: {
-    logo: '/favicon.svg',
+    logo: '/logo.svg',
     
     // 顶部导航栏
     nav: [
