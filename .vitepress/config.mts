@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/',
   lang: 'zh-CN',
-  title: 'AgoraIn',
+  title: 'AgoraIn | 课堂签到打卡系统',
   description: '课堂签到打卡系统 — 使用文档与指南',
   head: [['link', { rel: 'icon', href: '/favicon.svg' }]],
 
