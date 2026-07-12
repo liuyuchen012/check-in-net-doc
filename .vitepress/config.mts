@@ -13,11 +13,16 @@ export default defineConfig({
     // 顶部导航栏
     nav: [
       { text: '下载', link: '/download' },
-      { text: '使用指南', link: '/guide' },
+      {
+        text: '使用指南',
+        items: [
+          { text: '使用指南', link: '/guide' },
+          { text: 'API 文档', link: '/api' },
+          { text: '部署指南', link: '/deploy' },
+          { text: '常见问题', link: '/faq' },
+        ]
+      },
       { text: '功能特性', link: '/features' },
-      { text: 'API 文档', link: '/api' },
-      { text: '部署指南', link: '/deploy' },
-      { text: '常见问题', link: '/faq' },
       { text: '站点地图', link: '/sitemap' },
       {
         text: 'v2.7',
