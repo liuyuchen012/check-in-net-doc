@@ -1,6 +1,6 @@
 # 📦 部署指南
 
-本指南详细介绍如何在不同环境下部署 SignWave 签到系统。
+本指南详细介绍如何在不同环境下部署 AgoraIn 签到系统。
 
 ---
 
@@ -112,7 +112,7 @@ chmod +x CheckIn.Server
 
 ```ini
 [Unit]
-Description=SignWave CheckIn Server
+Description=AgoraIn CheckIn Server
 After=network.target
 
 [Service]
@@ -202,7 +202,7 @@ cd CheckIn.Server
 
 ```powershell
 # Windows 防火墙
-netsh advfirewall firewall add rule name="SignWave" dir=in action=allow protocol=TCP localport=5000
+netsh advfirewall firewall add rule name="AgoraIn" dir=in action=allow protocol=TCP localport=5000
 ```
 
 ```bash
@@ -214,7 +214,7 @@ sudo ufw allow 5000/tcp
 
 ## 数据库管理
 
-SignWave 使用 SQLite 数据库，数据库文件位于服务器目录：
+AgoraIn 使用 SQLite 数据库，数据库文件位于服务器目录：
 
 ```
 CheckIn.Server/

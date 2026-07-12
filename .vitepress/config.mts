@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/',
   lang: 'zh-CN',
-  title: 'SignWave',
+  title: 'AgoraIn',
   description: '课堂签到打卡系统 — 使用文档与指南',
   head: [['link', { rel: 'icon', href: '/favicon.svg' }]],
 
@@ -17,6 +17,7 @@ export default defineConfig({
       { text: 'API 文档', link: '/api' },
       { text: '部署指南', link: '/deploy' },
       { text: '常见问题', link: '/faq' },
+      { text: '站点地图', link: '/sitemap' },
       {
         text: 'v2.7',
         items: [
@@ -98,6 +99,20 @@ export default defineConfig({
             { text: '远程签到', link: '/faq#远程签到' },
             { text: '版本与更新', link: '/faq#版本与更新' },
             { text: '其他', link: '/faq#其他' }
+          ]
+        }
+      ],
+      '/sitemap': [
+        {
+          text: '站点地图',
+          items: [
+            { text: '首页', link: '/sitemap#首页' },
+            { text: '使用指南', link: '/sitemap#使用指南' },
+            { text: '功能特性', link: '/sitemap#功能特性' },
+            { text: 'API 文档', link: '/sitemap#api-文档' },
+            { text: '部署指南', link: '/sitemap#部署指南' },
+            { text: '常见问题', link: '/sitemap#常见问题' },
+            { text: '外部链接', link: '/sitemap#外部链接' }
           ]
         }
       ]

@@ -2,12 +2,12 @@
 layout: home
 
 hero:
-  name: SignWave
+  name: AgoraIn
   text: 课堂签到打卡系统
   tagline: 大屏打卡程序，适用于班级电子白板<br>现代化桌面 + Web 双端打卡解决方案
   image:
     src: /favicon.svg
-    alt: SignWave
+    alt: AgoraIn
   actions:
     - theme: brand
       text: 快速开始
@@ -39,7 +39,7 @@ features:
 
 ## 项目简介
 
-**SignWave** 是一款专为班级课堂场景设计的签到打卡系统。教师可通过桌面客户端一键发起签到，学生通过电子白板完成打卡，同时支持远程扫码签到和浏览器管理面板。系统采用 C/S 架构，支持多任务并行管理和跨平台服务器部署。
+**AgoraIn** 是一款专为班级课堂场景设计的签到打卡系统。教师可通过桌面客户端一键发起签到，学生通过电子白板完成打卡，同时支持远程扫码签到和浏览器管理面板。系统采用 C/S 架构，支持多任务并行管理和跨平台服务器部署。
 
 ## 适用场景
 
