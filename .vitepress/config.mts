@@ -14,6 +14,7 @@ export default defineConfig({
     nav: [
       { text: '使用指南', link: '/guide' },
       { text: '功能特性', link: '/features' },
+      { text: 'API 文档', link: '/api' },
       { text: '部署指南', link: '/deploy' },
       { text: '常见问题', link: '/faq' },
       {
@@ -66,6 +67,24 @@ export default defineConfig({
             { text: '局域网部署', link: '/deploy#局域网部署' },
             { text: '数据库管理', link: '/deploy#数据库管理' },
             { text: '版本升级', link: '/deploy#版本升级' }
+          ]
+        }
+      ],
+      '/api': [
+        {
+          text: 'API 文档',
+          items: [
+            { text: '概述', link: '/api#1-概述' },
+            { text: '配置说明', link: '/api#2-配置说明' },
+            { text: '认证机制', link: '/api#3-认证机制' },
+            { text: '数据模型', link: '/api#4-数据模型' },
+            { text: 'API 接口一览', link: '/api#5-api-接口一览' },
+            { text: '客户端 API', link: '/api#6-客户端-api-详解' },
+            { text: 'Web 面板 API', link: '/api#7-web-面板-api-详解' },
+            { text: '签到功能 API', link: '/api#8-签到功能-api-详解v27-新增' },
+            { text: '认证页面接口', link: '/api#9-认证页面接口' },
+            { text: '管理面板页面', link: '/api#10-web-管理面板页面' },
+            { text: '调用示例', link: '/api#11-调用示例' }
           ]
         }
       ],
