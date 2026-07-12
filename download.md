@@ -1,7 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const activePlatform = ref('windows')
+const loading = ref(true)
+const version = ref('V2.7')
+const publishedAt = ref('')
+const releaseUrl = ref('https://github.com/liuyuchen012/AgoraIn/releases/tag/V2.7')
 
 const platforms = [
   { key: 'windows', label: 'Windows', icon: '⊞' },
@@ -9,50 +13,98 @@ const platforms = [
   { key: 'macos', label: 'macOS', icon: '🍎' },
 ]
 
-const downloads = {
-  windows: [
-    {
-      title: '桌面客户端',
-      desc: 'WPF 桌面应用，适用于班级电子白板',
-      file: 'AgoraIn-Client-win-x64.zip',
-      link: 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-      icon: '🖥',
-      tag: '推荐',
-      tagColor: '#7c3aed',
-    },
-    {
-      title: '服务器端',
-      desc: 'ASP.NET Core 服务，Windows x64 独立部署包',
-      file: 'AgoraIn-Server-win-x64.zip',
-      link: 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-      icon: '⚙',
-      tag: '必装',
-      tagColor: '#10b981',
-    },
-  ],
-  linux: [
-    {
-      title: '服务器端',
-      desc: 'ASP.NET Core 服务，Linux x64 独立部署包',
-      file: 'AgoraIn-Server-linux-x64.tar.gz',
-      link: 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-      icon: '⚙',
-      tag: '必装',
-      tagColor: '#10b981',
-    },
-  ],
-  macos: [
-    {
-      title: '服务器端',
-      desc: 'ASP.NET Core 服务，macOS ARM64 独立部署包',
-      file: 'AgoraIn-Server-osx-arm64.tar.gz',
-      link: 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-      icon: '⚙',
-      tag: '必装',
-      tagColor: '#10b981',
-    },
-  ],
+// 从 GitHub API 获取最新版本信息
+const assets = ref({
+  'AgoraIn-Windows-x64-Client.exe': { size: 0, url: '' },
+  'AgoraIn-Windows-x64-Server.exe': { size: 0, url: '' },
+  'AgoraIn-Linux-x64-Server.zip': { size: 0, url: '' },
+  'AgoraIn-MacOS-x64-Server.zip': { size: 0, url: '' },
+})
+
+function fmtSize(bytes) {
+  if (!bytes) return ''
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
+  return (bytes / 1024 / 1024).toFixed(1) + ' MB'
 }
+
+async function fetchRelease() {
+  try {
+    const res = await fetch('https://api.github.com/repos/liuyuchen012/AgoraIn/releases/latest')
+    if (!res.ok) throw new Error('API error')
+    const data = await res.json()
+    version.value = data.tag_name || 'V2.7'
+    publishedAt.value = new Date(data.published_at).toLocaleDateString('zh-CN')
+    releaseUrl.value = data.html_url || releaseUrl.value
+
+    const map = {}
+    for (const a of data.assets) {
+      map[a.name] = { size: a.size, url: a.browser_download_url }
+    }
+    assets.value = { ...assets.value, ...map }
+  } catch (_) {
+    // 使用默认值，页面正常展示
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchRelease)
+
+const downloads = computed(() => {
+  const a = assets.value
+  return {
+    windows: [
+      {
+        title: '桌面客户端',
+        desc: 'WPF 桌面应用，适用于班级电子白板',
+        filename: 'AgoraIn-Windows-x64-Client.exe',
+        ext: 'exe',
+        url: a['AgoraIn-Windows-x64-Client.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['AgoraIn-Windows-x64-Client.exe']?.size || 0,
+        icon: '🖥',
+        tag: '推荐',
+        tagColor: '#7c3aed',
+      },
+      {
+        title: '服务器端',
+        desc: 'ASP.NET Core 服务，Windows x64 独立部署包',
+        filename: 'AgoraIn-Windows-x64-Server.exe',
+        ext: 'exe',
+        url: a['AgoraIn-Windows-x64-Server.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['AgoraIn-Windows-x64-Server.exe']?.size || 0,
+        icon: '⚙',
+        tag: '必装',
+        tagColor: '#10b981',
+      },
+    ],
+    linux: [
+      {
+        title: '服务器端',
+        desc: 'ASP.NET Core 服务，Linux x64 独立部署包',
+        filename: 'AgoraIn-Linux-x64-Server.zip',
+        ext: 'zip',
+        url: a['AgoraIn-Linux-x64-Server.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['AgoraIn-Linux-x64-Server.zip']?.size || 0,
+        icon: '⚙',
+        tag: '必装',
+        tagColor: '#10b981',
+      },
+    ],
+    macos: [
+      {
+        title: '服务器端',
+        desc: 'ASP.NET Core 服务，macOS x64 独立部署包',
+        filename: 'AgoraIn-MacOS-x64-Server.zip',
+        ext: 'zip',
+        url: a['AgoraIn-MacOS-x64-Server.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['AgoraIn-MacOS-x64-Server.zip']?.size || 0,
+        icon: '⚙',
+        tag: '必装',
+        tagColor: '#10b981',
+      },
+    ],
+  }
+})
 </script>
 
 <style>
@@ -73,15 +125,25 @@ const downloads = {
   color: var(--vp-c-text-2);
   font-size: 1.05rem;
 }
+.download-hero .version-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
 .download-hero .version-badge {
-  display: inline-block;
-  margin-top: 12px;
   padding: 4px 16px;
   background: var(--vp-c-brand-soft);
   color: var(--vp-c-brand-1);
   border-radius: 999px;
   font-size: 0.9rem;
   font-weight: 600;
+}
+.download-hero .pub-date {
+  font-size: 0.85rem;
+  color: var(--vp-c-text-3);
 }
 
 /* 平台选择器 */
@@ -121,7 +183,7 @@ const downloads = {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
-  max-width: 740px;
+  max-width: 760px;
   margin: 0 auto;
 }
 .download-card {
@@ -132,6 +194,8 @@ const downloads = {
   transition: all 0.25s;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 .download-card:hover {
   border-color: var(--vp-c-brand-2);
@@ -160,17 +224,18 @@ const downloads = {
 .download-card .desc {
   color: var(--vp-c-text-2);
   font-size: 0.9rem;
-  margin-bottom: 12px;
+  margin-bottom: auto;
 }
-.download-card .file-info {
+.download-card .file-meta {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
+  margin: 16px 0;
   font-size: 0.82rem;
   color: var(--vp-c-text-3);
-  margin-bottom: 16px;
 }
-.download-card .file-info .ext {
+.download-card .file-meta .ext-badge {
   padding: 1px 6px;
   background: var(--vp-c-default-soft);
   border-radius: 4px;
@@ -180,8 +245,9 @@ const downloads = {
 .download-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 24px;
+  padding: 10px 28px;
   border-radius: 10px;
   background: linear-gradient(135deg, #7c3aed, #6366f1);
   color: #fff;
@@ -189,6 +255,9 @@ const downloads = {
   font-size: 0.95rem;
   text-decoration: none;
   transition: all 0.25s;
+  cursor: pointer;
+  border: none;
+  width: 100%;
 }
 .download-btn:hover {
   background: linear-gradient(135deg, #8b5cf6, #818cf8);
@@ -200,11 +269,26 @@ const downloads = {
   background: var(--vp-c-bg-alt);
   color: var(--vp-c-text-1);
   border: 1px solid var(--vp-c-divider);
+  width: auto;
+  padding: 10px 32px;
 }
 .download-btn.git-btn:hover {
   border-color: var(--vp-c-text-2);
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
   color: var(--vp-c-text-1);
+}
+
+/* 下载中的脉冲动画 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.download-card.loading-skeleton .card-icon,
+.download-card.loading-skeleton h3,
+.download-card.loading-skeleton .desc,
+.download-card.loading-skeleton .file-meta,
+.download-card.loading-skeleton .download-btn {
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 /* 底部提示 */
@@ -234,8 +318,11 @@ const downloads = {
 
 <div class="download-hero">
   <h1>AgoraIn 资源库</h1>
-  <p class="subtitle">请选择服务端平台，下载对应版本</p>
-  <span class="version-badge">最新版本 v2.7</span>
+  <p class="subtitle">请选择服务端平台，点击按钮直接下载</p>
+  <div class="version-info">
+    <span class="version-badge">{{ version }}</span>
+    <span v-if="publishedAt" class="pub-date">发布于 {{ publishedAt }}</span>
+  </div>
 </div>
 
 <!-- 平台选择 -->
@@ -262,13 +349,20 @@ const downloads = {
     <div class="card-icon">{{ item.icon }}</div>
     <h3>{{ item.title }}</h3>
     <p class="desc">{{ item.desc }}</p>
-    <div class="file-info">
+    <div class="file-meta">
       <span>📦</span>
-      <span class="ext">{{ item.file.split('.').slice(-2).join('.') }}</span>
-      <span>{{ item.file }}</span>
+      <span class="ext-badge">.{{ item.ext }}</span>
+      <span>{{ item.filename }}</span>
+      <span v-if="item.filesize" style="margin-left:auto;flex-shrink:0;">{{ fmtSize(item.filesize) }}</span>
     </div>
-    <a class="download-btn" :href="item.link" target="_blank" rel="noopener">
-      前往下载 →
+    <a
+      class="download-btn"
+      :href="item.url"
+      target="_blank"
+      rel="noopener"
+    >
+      <span>⬇</span>
+      <span>立即下载</span>
     </a>
   </div>
 </div>
@@ -277,11 +371,11 @@ const downloads = {
 <div style="text-align:center; margin-top: 24px;">
   <a
     class="download-btn git-btn"
-    href="https://github.com/liuyuchen012/AgoraIn/releases"
+    :href="releaseUrl"
     target="_blank"
     rel="noopener"
   >
-    <span>查看所有历史版本 →</span>
+    <span>📋 查看更新详情</span>
   </a>
 </div>
 
