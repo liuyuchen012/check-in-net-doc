@@ -250,10 +250,10 @@ const downloads = computed(() => {
   padding: 10px 28px;
   border-radius: 10px;
   background: linear-gradient(135deg, #7c3aed, #6366f1);
-  color: #fff;
+  color: #fff !important;
   font-weight: 600;
   font-size: 0.95rem;
-  text-decoration: none;
+  text-decoration: none !important;
   transition: all 0.25s;
   cursor: pointer;
   border: none;
@@ -262,8 +262,8 @@ const downloads = computed(() => {
 .download-btn:hover {
   background: linear-gradient(135deg, #8b5cf6, #818cf8);
   box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
-  color: #fff;
-  text-decoration: none;
+  color: #fff !important;
+  text-decoration: none !important;
 }
 .download-btn.git-btn {
   background: var(--vp-c-bg-alt);
