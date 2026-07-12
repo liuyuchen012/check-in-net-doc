@@ -12,6 +12,7 @@ export default defineConfig({
     
     // 顶部导航栏
     nav: [
+      { text: '下载', link: '/download' },
       { text: '使用指南', link: '/guide' },
       { text: '功能特性', link: '/features' },
       { text: 'API 文档', link: '/api' },
@@ -29,6 +30,16 @@ export default defineConfig({
 
     // 侧边栏
     sidebar: {
+      '/download': [
+        {
+          text: '版本下载',
+          items: [
+            { text: 'Windows', link: '/download' },
+            { text: 'Linux', link: '/download' },
+            { text: 'macOS', link: '/download' },
+          ]
+        }
+      ],
       '/guide': [
         {
           text: '快速开始',
