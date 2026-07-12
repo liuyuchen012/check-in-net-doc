@@ -21,8 +21,8 @@ export default defineConfig({
       {
         text: 'v2.7',
         items: [
-          { text: '更新日志', link: 'https://github.com/liuyuchen012/check-in/releases' },
-          { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/check-in' }
+          { text: '更新日志', link: 'https://github.com/liuyuchen012/AgoraIn/releases' },
+          { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/AgoraIn' }
         ]
       }
     ],
@@ -120,7 +120,7 @@ export default defineConfig({
 
     // 社交链接
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/liuyuchen012/check-in' }
+      { icon: 'github', link: 'https://github.com/liuyuchen012/AgoraIn' }
     ],
 
     // 页脚
