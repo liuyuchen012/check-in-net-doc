@@ -73,6 +73,14 @@
 
 ---
 
+## 课堂管理小程序
+
+- [项目简介](/miniprogram/) — 项目概览、功能特性、技术栈介绍
+- [快速开始](/miniprogram/quickstart) — 使用微信开发者工具运行小程序
+- [目录结构](/miniprogram/structure) — 小程序项目目录说明
+
+---
+
 ## 外部链接
 
 - [GitHub 仓库](https://github.com/liuyuchen012/check-in) — 项目源码

@@ -12,6 +12,13 @@ export default defineConfig({
     
     // 顶部导航栏
     nav: [
+      {
+        text: '项目',
+        items: [
+          { text: 'AgoraIn 桌面端', link: '/' },
+          { text: '课堂管理小程序', link: '/miniprogram/' }
+        ]
+      },
       { text: '下载', link: '/download' },
       {
         text: '使用指南',
@@ -21,9 +28,7 @@ export default defineConfig({
           { text: '部署指南', link: '/deploy' },
           { text: '常见问题', link: '/faq' },
         ]
-      },
-      { text: '功能特性', link: '/features' },
-      { text: '站点地图', link: '/sitemap' },
+      }, 
       {
         text: 'v2.7',
         items: [
@@ -35,6 +40,16 @@ export default defineConfig({
 
     // 侧边栏
     sidebar: {
+      '/miniprogram/': [
+        {
+          text: '课堂管理小程序',
+          items: [
+            { text: '项目简介', link: '/miniprogram/' },
+            { text: '快速开始', link: '/miniprogram/quickstart' },
+            { text: '目录结构', link: '/miniprogram/structure' }
+          ]
+        }
+      ],
       '/download': [
         {
           text: '版本下载',
