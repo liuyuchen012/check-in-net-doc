@@ -75,7 +75,8 @@
 
 ## 课堂管理小程序
 
-- [项目简介](/miniprogram/) — 项目概览、功能特性、技术栈介绍
+- [项目简介](/miniprogram/) — 项目概览、功能亮点、技术栈介绍
+- [功能特性](/miniprogram/features) — 课堂签到、课堂打卡、课时划消三大模块详解
 - [快速开始](/miniprogram/quickstart) — 使用微信开发者工具运行小程序
 - [目录结构](/miniprogram/structure) — 小程序项目目录说明
 

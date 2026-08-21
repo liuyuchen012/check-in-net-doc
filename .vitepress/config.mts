@@ -45,6 +45,7 @@ export default defineConfig({
           text: '课堂管理小程序',
           items: [
             { text: '项目简介', link: '/miniprogram/' },
+            { text: '功能特性', link: '/miniprogram/features' },
             { text: '快速开始', link: '/miniprogram/quickstart' },
             { text: '目录结构', link: '/miniprogram/structure' }
           ]

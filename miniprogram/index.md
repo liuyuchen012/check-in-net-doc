@@ -1,64 +1,48 @@
 ---
-title: 项目简介
----
+layout: home
 
-# 课堂管理与组件演示小程序
+hero:
+  name: 课堂管理小程序
+  text: 微信小程序移动端扩展
+  tagline: AgoraIn 课堂签到的移动端入口<br>内置课堂打卡与课时划消本地工具
+  image:
+    src: /favicon.svg
+    alt: AgoraIn Mini
+  actions:
+    - theme: brand
+      text: 快速开始
+      link: /miniprogram/quickstart
+    - theme: alt
+      text: 功能特性
+      link: /miniprogram/features
 
-基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具小程序。
+features:
+  - icon: 📱
+    title: AgoraIn 课堂签到
+    details: 扫码 / 输码签到、考勤统计、任务管理，完整对接桌面端服务器
+  - icon: 🗓
+    title: 课堂打卡
+    details: 班级课程配置与每日打卡记录，数据保存在本机，无需服务器
+  - icon: ⏱
+    title: 课时划消
+    details: 课时管理、排课与自动销课时，支持 Excel / CSV 批量导入导出
+  - icon: 🧩
+    title: TDesign 组件库
+    details: 基于 TDesign 微信小程序组件库，深色模式适配，开箱即用
+  - icon: 🔍
+    title: mDNS 服务器发现
+    details: 局域网自动发现 AgoraIn 服务器地址，也可手动填写
+  - icon: 📊
+    title: 数据导入导出
+    details: JSON 完整备份恢复、CSV 学生清单导出、数据复制到剪贴板
 
-本项目是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn)（大屏打卡程序）的**微信小程序移动端扩展**，在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。
+## 项目简介
 
-## 功能特性
+**课堂管理与组件演示小程序** 是基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具小程序，是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn) 的微信小程序移动端扩展。在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。项目使用文档见官网：https://doc.615mc.top
 
-### 1. AgoraIn 课堂签到（checkin）
+## 适用场景
 
-对接局域网 AgoraIn 打卡服务器，实现课堂签到全流程（数据通过 `wx.request` 与服务器交互，Bearer Token 认证）：
-
-- **登录认证**：账号密码登录，区分管理员 / 普通教师 / 学生 / 家长四种角色；登录后按角色自动跳转对应首页，支持登出
-- **管理端仪表盘**：设备在线状态、今日签到统计、活跃签到任务概览；支持设备重命名 / 删除、快速创建签到任务
-- **签到任务管理**：签到任务列表，支持查看任务二维码、签到情况
-- **生成签到**：选择打卡设备、填写课程 / 教室 / 签到密码 / 学生名单，一键生成签到码与二维码海报
-- **学生签到**：扫码或手动输入签到码完成签到，提交姓名与签到密码，实时显示签到结果与名次
-- **考勤详情**：按任务或设备维度查看应到 / 已签 / 未签人数与签到率
-- **个人历史**：学生视角查看历史签到记录与累计统计
-- **用户管理**：管理员创建用户并分配角色（学生 / 家长 / 教师 / 管理员）
-- **服务器发现**：支持 mDNS 局域网自动发现服务器地址，也可手动填写
-
-### 2. 课堂打卡（本地版）
-
-独立的本地课堂打卡模块（数据存储键前缀 `ck_`，不依赖服务器，数据保存在本机）：
-
-- 班级 / 课程配置：学校、年级、班级、课程名称，座位网格布局（行 × 列）
-- 学生名单管理
-- 每日打卡记录：按日期存储签到名单与签到时间
-
-### 3. 课时划消（classhours）
-
-独立的本地课时管理工具（数据存储键前缀 `ch_`，与课堂打卡数据完全隔离）：
-
-- **课时管理**：添加学生、设置初始课时、扣课时 / 加课时（支持填写变动原因）
-- **课时明细**：学生详情页展示课时变动记录与剩余课时，支持编辑学生信息（姓名 / 课程 / 备注）、删除学生
-- **课时进度可视化**：列表页展示每个学生的课时进度
-- **批量导入**：Excel / CSV 批量导入学生，支持下载导入模板、重复数据自动跳过
-- **数据导入 / 导出**：JSON 完整备份与恢复导入（含课时设置）、CSV 学生清单导出、数据复制到剪贴板
-- **排课管理**：按日期添加上课时间段（如 12:00-14:00）并勾选学生，详情展示每个时间段的时长与预计课时 / 人，支持排课数据导出 / 导入（自动兼容旧版数据结构）
-- **自动销课时**：在课时设置中配置每小时消耗课时数（支持小数），一键按排课时间段自动扣除每位学生的课时（时长 × 费率），已销课的记录自动跳过、不重复扣减
-
-## 技术栈
-
-| 类别 | 说明 |
-| ---- | ---- |
-| 框架 | 原生微信小程序（JavaScript + WXML + WXSS，ES6 模块） |
-| UI 组件 | TDesign 微信小程序组件库 |
-| 渲染 | WebView / Skyline（部分页面） |
-| 基础库 | 3.6.3 |
-| 数据存储 | 本地存储（wx.setStorageSync） |
-| 网络 | wx.request 封装（Bearer Token 认证） |
-| 其他 | 深色模式（darkmode）、分包加载（lazyCodeLoading）、mDNS 局域网发现 |
-
-## 相关链接
-
-- [AgoraIn 上游项目（GitHub）](https://github.com/liuyuchen012/AgoraIn)
-- [AgoraIn 项目官网 / 使用文档](https://doc.615mc.top)
-- [TDesign 小程序组件库文档](https://tdesign.tencent.com/miniprogram/overview)
-- [微信小程序开发文档](https://developers.weixin.qq.com/miniprogram/dev/framework/)
+- 📱 教师移动端远程发起签到与考勤管理
+- 🏫 学生扫码签到与历史记录查询
+- 📋 培训机构课时划消与排课管理
+- 🗓 每日课堂打卡记录
