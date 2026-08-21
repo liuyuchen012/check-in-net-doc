@@ -11,6 +11,7 @@ const platforms = [
   { key: 'windows', label: 'Windows', icon: '⊞' },
   { key: 'linux', label: 'Linux', icon: '🐧' },
   { key: 'macos', label: 'macOS', icon: '🍎' },
+  { key: 'android', label: 'Android', icon: '🤖' },
 ]
 
 // 从 GitHub API 获取最新版本信息
@@ -101,6 +102,20 @@ const downloads = computed(() => {
         icon: '⚙',
         tag: '必装',
         tagColor: '#10b981',
+      },
+    ],
+    android: [
+      {
+        title: '安卓客户端（APK）',
+        desc: '移动端独立 App，支持课堂签到、课堂打卡与课时划消，功能与微信小程序一致。',
+        filename: 'AgoraIn-Mobile.apk',
+        ext: 'apk',
+        url: 'https://wwbcf.lanzoul.com/ilmxB43wr0ob',
+        filesize: 0,
+        icon: '🤖',
+        tag: '安卓',
+        tagColor: '#22c55e',
+        password: '2hxr',
       },
     ],
   }
@@ -353,6 +368,7 @@ const downloads = computed(() => {
       <span>📦</span>
       <span class="ext-badge">.{{ item.ext }}</span>
       <span>{{ item.filename }}</span>
+      <span v-if="item.password" style="color:var(--vp-c-warning-1);">🔑 访问密码 {{ item.password }}</span>
       <span v-if="item.filesize" style="margin-left:auto;flex-shrink:0;">{{ fmtSize(item.filesize) }}</span>
     </div>
     <a
