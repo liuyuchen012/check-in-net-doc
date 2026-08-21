@@ -2,14 +2,17 @@
 layout: home
 
 hero:
-  name: 课堂管理小程序
-  text: 微信小程序移动端扩展
+  name: 移动多端应用
+  text: 微信小程序 + Android 客户端
   tagline: AgoraIn 课堂签到的移动端入口<br>内置课堂打卡与课时划消本地工具
   image:
     src: /favicon.svg
-    alt: AgoraIn Mini
+    alt: AgoraIn Mobile
   actions:
     - theme: brand
+      text: 下载 Android 版
+      link: /miniprogram/download
+    - theme: alt
       text: 快速开始
       link: /miniprogram/quickstart
     - theme: alt
@@ -20,6 +23,9 @@ features:
   - icon: 📱
     title: AgoraIn 课堂签到
     details: 扫码 / 输码签到、考勤统计、任务管理，完整对接桌面端服务器
+  - icon: 📲
+    title: 双端覆盖
+    details: 微信小程序无需安装即用，Android 独立 App 功能一致
   - icon: 🗓
     title: 课堂打卡
     details: 班级课程配置与每日打卡记录，数据保存在本机，无需服务器
@@ -32,14 +38,11 @@ features:
   - icon: 🔍
     title: mDNS 服务器发现
     details: 局域网自动发现 AgoraIn 服务器地址，也可手动填写
-  - icon: 📊
-    title: 数据导入导出
-    details: JSON 完整备份恢复、CSV 学生清单导出、数据复制到剪贴板
 ---
 
 ## 项目简介
 
-**课堂管理与组件演示小程序** 是基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具小程序，是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn) 的微信小程序移动端扩展。在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。项目使用文档见官网：https://doc.615mc.top
+**移动多端应用** 是基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具，是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn) 的移动端扩展，提供**微信小程序**与 **Android 客户端**两个平台。在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。项目使用文档见官网：https://doc.615mc.top
 
 ## 适用场景
 
@@ -47,3 +50,11 @@ features:
 - 🏫 学生扫码签到与历史记录查询
 - 📋 培训机构课时划消与排课管理
 - 🗓 每日课堂打卡记录
+
+## 客户端平台
+
+| 平台 | 说明 |
+| ---- | ---- |
+| 微信小程序 | 微信内即用，无需安装 |
+| Android | 独立 App，[点击下载](/miniprogram/download)（蓝奏云，密码 `2hxr`） |
+| iOS | 暂未提供（无开发者证书，无法签名构建） |

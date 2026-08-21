@@ -16,7 +16,7 @@ export default defineConfig({
         text: '项目',
         items: [
           { text: 'AgoraIn 桌面端', link: '/' },
-          { text: '课堂管理小程序', link: '/miniprogram/' }
+          { text: '移动多端应用', link: '/miniprogram/' }
         ]
       },
       { text: '下载', link: '/download' },
@@ -42,9 +42,10 @@ export default defineConfig({
     sidebar: {
       '/miniprogram/': [
         {
-          text: '课堂管理小程序',
+          text: '移动多端应用',
           items: [
             { text: '项目简介', link: '/miniprogram/' },
+            { text: '客户端下载', link: '/miniprogram/download' },
             { text: '功能特性', link: '/miniprogram/features' },
             { text: '快速开始', link: '/miniprogram/quickstart' },
             { text: '目录结构', link: '/miniprogram/structure' }
