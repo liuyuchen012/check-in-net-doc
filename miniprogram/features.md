@@ -61,6 +61,6 @@ title: 功能特性
 ## 相关链接
 
 - [AgoraIn 上游项目（GitHub）](https://github.com/liuyuchen012/AgoraIn)
-- [AgoraIn 项目官网 / 使用文档](https://doc.615mc.top)
+- [AgoraIn 项目官网 / 使用文档](https://doc.615mc.cn)
 - [TDesign 小程序组件库文档](https://tdesign.tencent.com/miniprogram/overview)
 - [微信小程序开发文档](https://developers.weixin.qq.com/miniprogram/dev/framework/)

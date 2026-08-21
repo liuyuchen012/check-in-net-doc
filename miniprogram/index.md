@@ -42,7 +42,7 @@ features:
 
 ## 项目简介
 
-**移动多端应用** 是基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具，是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn) 的移动端扩展，提供**微信小程序**与 **Android 客户端**两个平台。在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。项目使用文档见官网：https://doc.615mc.top
+**移动多端应用** 是基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具，是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn) 的移动端扩展，提供**微信小程序**与 **Android 客户端**两个平台。在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。项目使用文档见官网：https://doc.615mc.cn
 
 ## 适用场景
 
