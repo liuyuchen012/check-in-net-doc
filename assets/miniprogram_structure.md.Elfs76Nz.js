@@ -1,0 +1,35 @@
+import{_ as n,o as a,c as p,a2 as e}from"./chunks/framework.BWuWLRhz.js";const u=JSON.parse('{"title":"目录结构","description":"","frontmatter":{"title":"目录结构"},"headers":[],"relativePath":"miniprogram/structure.md","filePath":"miniprogram/structure.md","lastUpdated":1787402204000}'),l={name:"miniprogram/structure.md"};function i(c,s,t,o,r,d){return a(),p("div",null,[...s[0]||(s[0]=[e(`<h1 id="目录结构" tabindex="-1">目录结构 <a class="header-anchor" href="#目录结构" aria-label="Permalink to &quot;目录结构&quot;">​</a></h1><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>miniprogram-1/</span></span>
+<span class="line"><span>├── app.js                  # 小程序入口</span></span>
+<span class="line"><span>├── app.json                # 全局配置（页面路由、分包、组件）</span></span>
+<span class="line"><span>├── app.wxss                # 全局样式</span></span>
+<span class="line"><span>├── theme.json              # 深色模式主题变量</span></span>
+<span class="line"><span>├── behaviors/              # 自定义 behaviors（Skyline 相关）</span></span>
+<span class="line"><span>├── components/             # 自定义组件（demo 展示用）</span></span>
+<span class="line"><span>├── pages/</span></span>
+<span class="line"><span>│   ├── index/              # 入口页</span></span>
+<span class="line"><span>│   ├── home/               # 首页</span></span>
+<span class="line"><span>│   ├── checkin/            # AgoraIn 课堂签到业务</span></span>
+<span class="line"><span>│   │   ├── login/          #   登录页</span></span>
+<span class="line"><span>│   │   ├── dashboard/      #   管理端仪表盘</span></span>
+<span class="line"><span>│   │   ├── tasks/          #   签到任务列表</span></span>
+<span class="line"><span>│   │   ├── qrcode/         #   生成签到二维码</span></span>
+<span class="line"><span>│   │   ├── scan/           #   学生签到（扫码 / 输码）</span></span>
+<span class="line"><span>│   │   ├── attendance/     #   考勤详情</span></span>
+<span class="line"><span>│   │   ├── history/        #   个人签到历史</span></span>
+<span class="line"><span>│   │   ├── users/          #   用户管理</span></span>
+<span class="line"><span>│   │   └── settings        #   设置页</span></span>
+<span class="line"><span>│   ├── classhours/         # 课时划消业务</span></span>
+<span class="line"><span>│   │   ├── classhours      #   课时列表页（含课时设置 / 数据导入导出）</span></span>
+<span class="line"><span>│   │   ├── schedule        #   排课管理页（时间段 / 自动销课时 / 排课数据导入导出）</span></span>
+<span class="line"><span>│   │   └── student         #   学生课时详情页</span></span>
+<span class="line"><span>│   └── ...                 # TDesign 组件演示页（button、tabs、icon 等）</span></span>
+<span class="line"><span>├── utils/</span></span>
+<span class="line"><span>│   ├── api.js              # 网络请求封装（AgoraIn 服务器）</span></span>
+<span class="line"><span>│   ├── auth.js             # 登录认证 / 角色管理 / Token 持久化</span></span>
+<span class="line"><span>│   ├── checkin.js          # 课堂打卡本地数据逻辑（ck_）</span></span>
+<span class="line"><span>│   ├── classhours.js       # 课时划消数据逻辑（ch_）</span></span>
+<span class="line"><span>│   ├── mdns.js             # 局域网服务发现</span></span>
+<span class="line"><span>│   └── xlsx.js             # Excel 文件解析 / 生成</span></span>
+<span class="line"><span>├── miniprogram_npm/        # npm 依赖（tdesign-miniprogram）</span></span>
+<span class="line"><span>├── i18n/                   # 国际化资源</span></span>
+<span class="line"><span>└── project.config.json     # 项目配置</span></span></code></pre></div>`,2)])])}const h=n(l,[["render",i]]);export{u as __pageData,h as default};
