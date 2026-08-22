@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
 import { useData, useRoute } from 'vitepress'
-import { watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
 import type { DefaultTheme as Theme } from 'vitepress/theme'
 
 const route = useRoute()
-const { site, theme } = useData()
+const { site, theme, frontmatter } = useData()
+
+// 首页（home 布局）默认不显示 VitePress 页脚，需单独挂备案号
+const isHome = computed(() => frontmatter.value.layout === 'home')
+
+const icpText = '津ICP备2026010061号-1'
+const gonganText = '津公网安备12011602301146号'
 
 // 项目切换栏（两端一致）
 const projectSwitch = {
@@ -57,5 +63,15 @@ watchEffect(() => {
 </script>
 
 <template>
-  <DefaultTheme.Layout />
+  <DefaultTheme.Layout>
+    <template #layout-bottom>
+      <div v-if="isHome" class="home-footer">
+        <span>© 2026 刘宇晨</span>
+        <span class="home-footer-sep">·</span>
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">{{ icpText }}</a>
+        <span class="home-footer-sep">·</span>
+        <a href="https://beian.mps.gov.cn/" target="_blank" rel="noopener">{{ gonganText }}</a>
+      </div>
+    </template>
+  </DefaultTheme.Layout>
 </template>

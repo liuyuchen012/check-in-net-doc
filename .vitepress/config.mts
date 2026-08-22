@@ -160,7 +160,7 @@ export default defineConfig({
     // 页脚
     footer: {
       message: '基于 GNU General Public License v3 发布',
-      copyright: '© 2026 刘宇晨'
+      copyright: '© 2026 刘宇晨 · <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">津ICP备2026010061号-1</a> · <a href="https://beian.mps.gov.cn/" target="_blank" rel="noopener">津公网安备12011602301146号</a>'
     },
 
     // 搜索

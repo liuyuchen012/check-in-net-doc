@@ -109,6 +109,47 @@
   border-top: 1px solid var(--vp-c-divider);
 }
 
+.VPFooter .message a,
+.VPFooter .copyright a {
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.VPFooter .message a:hover,
+.VPFooter .copyright a:hover {
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
+}
+
+/* 首页备案页脚（home 布局不渲染 VPFooter，用 layout-bottom 补充） */
+.home-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--vp-c-divider);
+  color: var(--vp-c-text-3);
+  font-size: 0.88rem;
+}
+
+.home-footer a {
+  color: var(--vp-c-text-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.home-footer a:hover {
+  color: var(--vp-c-brand-1);
+  text-decoration: underline;
+}
+
+.home-footer-sep {
+  color: var(--vp-c-divider);
+}
+
 /* 响应式优化 */
 @media (min-width: 960px) {
   .VPSidebar {
