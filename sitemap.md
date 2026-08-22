@@ -73,10 +73,15 @@
 
 ---
 
+## 资源下载
+
+- [下载中心](/download) — 全部平台资源（Windows / Linux / macOS / Android），独立于各项目
+
+---
+
 ## 移动多端应用
 
 - [项目简介](/miniprogram/) — 项目概览、功能亮点、双端平台介绍
-- [客户端下载](/miniprogram/download) — Android APK 下载（蓝奏云）与 iOS 说明
 - [功能特性](/miniprogram/features) — 课堂签到、课堂打卡、课时划消三大模块详解
 - [快速开始](/miniprogram/quickstart) — 微信小程序运行与 Android 安装指南
 - [目录结构](/miniprogram/structure) — 项目目录说明

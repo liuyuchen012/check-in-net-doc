@@ -45,7 +45,6 @@ export default defineConfig({
           text: '移动多端应用',
           items: [
             { text: '项目简介', link: '/miniprogram/' },
-            { text: '客户端下载', link: '/miniprogram/download' },
             { text: '功能特性', link: '/miniprogram/features' },
             { text: '快速开始', link: '/miniprogram/quickstart' },
             { text: '目录结构', link: '/miniprogram/structure' }
@@ -145,6 +144,8 @@ export default defineConfig({
             { text: 'API 文档', link: '/sitemap#api-文档' },
             { text: '部署指南', link: '/sitemap#部署指南' },
             { text: '常见问题', link: '/sitemap#常见问题' },
+            { text: '资源下载', link: '/sitemap#资源下载' },
+            { text: '移动多端应用', link: '/sitemap#移动多端应用' },
             { text: '外部链接', link: '/sitemap#外部链接' }
           ]
         }

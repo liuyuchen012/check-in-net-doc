@@ -115,3 +115,21 @@
     width: 240px;
   }
 }
+
+/* ===== 多端应用页面：隐藏默认电脑端导航，仅保留迷你切换栏 ===== */
+html.route-miniprogram .VPNav,
+html.route-miniprogram .VPLocalNav {
+  display: none;
+}
+
+/* 迷你导航栏固定顶部，内容区顶部留白对齐 */
+html.route-miniprogram .VPContent {
+  padding-top: var(--vp-nav-height) !important;
+}
+
+@media (max-width: 959px) {
+  html.route-miniprogram .VPContent {
+    padding-top: var(--vp-nav-height) !important;
+  }
+}
+

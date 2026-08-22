@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: 下载 Android 版
-      link: /miniprogram/download
+      link: /download
     - theme: alt
       text: 快速开始
       link: /miniprogram/quickstart
@@ -56,5 +56,5 @@ features:
 | 平台 | 说明 |
 | ---- | ---- |
 | 微信小程序 | 微信内即用，无需安装 |
-| Android | 独立 App，[点击下载](/miniprogram/download)（蓝奏云，密码 `2hxr`） |
+| Android | 独立 App，[点击下载](/download)（蓝奏云，密码 `2hxr`） |
 | iOS | 暂未提供（无开发者证书，无法签名构建） |

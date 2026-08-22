@@ -333,7 +333,7 @@ const downloads = computed(() => {
 
 <div class="download-hero">
   <h1>AgoraIn 资源库</h1>
-  <p class="subtitle">请选择服务端平台，点击按钮直接下载</p>
+  <p class="subtitle">请选择平台，点击按钮直接下载</p>
   <div class="version-info">
     <span class="version-badge">{{ version }}</span>
     <span v-if="publishedAt" class="pub-date">发布于 {{ publishedAt }}</span>

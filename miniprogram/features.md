@@ -43,7 +43,7 @@ title: 功能特性
 | 平台 | 说明 |
 | ---- | ---- |
 | 微信小程序 | 微信内即用，无需安装，功能完整 |
-| Android | 独立 App，[点击下载](/miniprogram/download) |
+| Android | 独立 App，[点击下载](/download) |
 | iOS | 暂未提供（无开发者证书，无法签名构建） |
 
 ## 技术栈
