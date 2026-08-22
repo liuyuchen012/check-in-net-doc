@@ -1,26 +1,61 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
-import { useRoute } from 'vitepress'
-import { computed, watchEffect } from 'vue'
-import MiniNavBar from './components/MiniNavBar.vue'
+import { useData, useRoute } from 'vitepress'
+import { watchEffect } from 'vue'
+import type { DefaultTheme as Theme } from 'vitepress/theme'
 
 const route = useRoute()
+const { site, theme } = useData()
 
-// 多端应用路由：/miniprogram/ 前缀
-const isMini = computed(() => route.path.startsWith('/miniprogram/'))
+// 项目切换栏（两端一致）
+const projectSwitch = {
+  text: '项目',
+  items: [
+    { text: 'AgoraIn 桌面端', link: '/' },
+    { text: '移动多端应用', link: '/miniprogram/' },
+  ],
+}
 
-// 给 <html> 打标记，用于 CSS 隐藏默认的电脑端导航栏
+// 电脑端导航
+const desktopNav: Theme.NavItem[] = [
+  { ...projectSwitch, activeMatch: '^/(?!miniprogram/)' },
+  { text: '下载', link: '/download' },
+  {
+    text: '使用指南',
+    items: [
+      { text: '使用指南', link: '/guide' },
+      { text: 'API 文档', link: '/api' },
+      { text: '部署指南', link: '/deploy' },
+      { text: '常见问题', link: '/faq' },
+    ],
+  },
+  { text: '功能特性', link: '/features' },
+  { text: '站点地图', link: '/sitemap' },
+  {
+    text: 'v2.7',
+    items: [
+      { text: '更新日志', link: 'https://github.com/liuyuchen012/AgoraIn/releases' },
+      { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/AgoraIn' },
+    ],
+  },
+]
+
+// 多端应用导航（布局一致，页面换成多端应用的）
+const miniNav: Theme.NavItem[] = [
+  { ...projectSwitch, activeMatch: '^/miniprogram/' },
+  { text: '下载', link: '/download' },
+  { text: '功能特性', link: '/miniprogram/features' },
+  { text: '快速开始', link: '/miniprogram/quickstart' },
+  { text: '目录结构', link: '/miniprogram/structure' },
+]
+
 watchEffect(() => {
-  if (typeof document !== 'undefined') {
-    document.documentElement.classList.toggle('route-miniprogram', isMini.value)
-  }
+  const isMini = route.path.startsWith('/miniprogram/')
+  theme.value.nav = isMini ? miniNav : desktopNav
+  site.value.title = isMini ? '移动多端应用 | 课堂管理与演示' : 'AgoraIn | 课堂签到打卡系统'
 })
 </script>
 
 <template>
-  <DefaultTheme.Layout>
-    <template #layout-top>
-      <MiniNavBar v-if="isMini" />
-    </template>
-  </DefaultTheme.Layout>
+  <DefaultTheme.Layout />
 </template>
