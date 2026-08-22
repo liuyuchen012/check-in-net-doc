@@ -108,14 +108,13 @@ const downloads = computed(() => {
       {
         title: '安卓客户端（APK）',
         desc: '移动端独立 App，支持课堂签到、课堂打卡与课时划消，功能与微信小程序一致。',
-        filename: 'AgoraIn-Mobile.apk',
+        filename: 'com.tencent.weauth-1.0.apk',
         ext: 'apk',
-        url: 'https://wwbcf.lanzoul.com/ilmxB43wr0ob',
+        url: 'https://github.com/liuyuchen012/AgoraIn-weixin-amp/releases/download/V1.0/com.tencent.weauth-1.0.apk',
         filesize: 0,
         icon: '🤖',
         tag: '安卓',
         tagColor: '#22c55e',
-        password: '2hxr',
       },
     ],
   }
