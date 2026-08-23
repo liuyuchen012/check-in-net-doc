@@ -7,6 +7,11 @@ export default defineConfig({
   description: '课堂签到打卡系统 — 使用文档与指南',
   head: [['link', { rel: 'icon', href: '/favicon.svg' }]],
 
+  // 自动生成 sitemap.xml（构建时生成，包含所有页面）
+  sitemap: {
+    hostname: 'https://doc.615mc.cn'
+  },
+
   themeConfig: {
     logo: '/favicon.svg',
     
