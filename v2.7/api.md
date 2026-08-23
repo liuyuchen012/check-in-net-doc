@@ -156,7 +156,7 @@ X-Timestamp: <Unix时间戳>
 
 ---
 
-### GET /api/checkin/task/{taskId}
+### GET /api/checkin/task `{taskId}`
 
 获取指定任务的签到记录。
 
@@ -181,7 +181,7 @@ X-Timestamp: <Unix时间戳>
 
 ---
 
-### DELETE /api/checkin/{id}
+### DELETE /api/checkin `{id}`
 
 取消签到记录。
 
@@ -247,7 +247,7 @@ X-Timestamp: <Unix时间戳>
 
 ---
 
-### GET /api/task/{id}
+### GET /api/task `{id}`
 
 获取任务详情。
 
@@ -268,7 +268,7 @@ X-Timestamp: <Unix时间戳>
 
 ---
 
-### PUT /api/task/{id}
+### PUT /api/task `{id}`
 
 更新任务信息。
 
@@ -283,7 +283,7 @@ X-Timestamp: <Unix时间戳>
 
 ---
 
-### DELETE /api/task/{id}
+### DELETE /api/task `{id}`
 
 删除签到任务。
 
@@ -325,7 +325,7 @@ X-Timestamp: <Unix时间戳>
 
 ---
 
-### PUT /api/device/{uuid}
+### PUT /api/device `{uuid}`
 
 更新设备信息（如重命名）。
 
