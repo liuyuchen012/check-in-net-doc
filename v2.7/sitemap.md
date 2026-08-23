@@ -4,7 +4,7 @@
 
 - [主页](/) — v2.8 项目主页
 - [资源下载](/download) — 下载中心（独立于各项目）
-- [快速开始](/guide) — v2.8 使用指南
+- [使用指南](/guide) — v2.8 快速开始
 - [功能特性](/features) — v2.8 功能特性
 - [API 文档](/api) — v2.8 API 参考
 - [部署指南](/deploy) — v2.8 部署指南
@@ -13,7 +13,7 @@
 ## 旧版文档（v2.7）
 
 > [!WARNING]
-> 以下为 **v2.7 旧版归档**，仅作历史参考，不再更新。
+> 以下为 **v2.7 旧版归档**，仅作历史参考。
 
 - [v2.7 主页](/v2.7/) — 旧版项目主页
 - [v2.7 快速开始](/v2.7/guide) — 旧版使用指南
@@ -33,5 +33,5 @@
 
 ## 外部链接
 
-- [GitHub 仓库](https://github.com/liuyuchen012/AgoraIn) — v2.8 项目源码
-- [v2.7 源码（旧版）](https://github.com/liuyuchen012/check-in) — v2.7 项目源码
+- [GitHub 仓库](https://github.com/liuyuchen012/check-in) — v2.7 项目源码
+- [GitHub 最新版](https://github.com/liuyuchen012/AgoraIn) — v2.8 项目源码

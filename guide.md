@@ -1,112 +1,126 @@
-# 🚀 快速开始
+# 🚀 快速开始（v2.8）
 
-本文档将帮助你在 5 分钟内完成 AgoraIn 的部署和运行。
+> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 快速开始](/v2.7/guide)。
+
+AgoraIn v2.8 是"打卡 + 课时管理 + 集控平台"解决方案，包含桌面客户端（大屏模式 / 控制模式）、本地集控服务器和移动端 App。
 
 ## 环境要求
 
-| 环境 | 版本/说明 |
-|------|-----------|
-| **.NET Runtime** | 10.0 或更高版本 |
-| **操作系统（客户端）** | Windows 10/11 |
-| **操作系统（服务器）** | Windows / Linux / macOS |
-| **浏览器** | 现代浏览器（Chrome / Edge / Firefox） |
+| 环境 | 说明 |
+|------|------|
+| 操作系统 | Windows 10/11 |
+| .NET SDK | .NET 10（构建需要） |
+| 移动端构建 | 额外安装 MAUI 工作负载：`dotnet workload install maui` |
 
 ---
 
-## 第一步：下载
+## 第一步：下载安装
 
-前往 [GitHub Releases](https://github.com/liuyuchen012/check-in/releases) 下载最新版本：
+前往 [下载中心](/download) 获取对应平台安装包：
 
-- `CheckIn.Client.zip` — Windows 桌面客户端
-- `CheckIn.Server.zip` — 跨平台服务器
+- **Windows** — 桌面客户端 `AgoraIn.exe`
+- **Android** — 移动端 APK
+- 集控服务器部署包（如需多设备集中管理）
 
-解压到本地目录。
+## 第二步：启动集控服务器（可选）
 
----
-
-## 第二步：启动服务器
-
-### Windows 上启动
+如需多设备集中控制、二维码签到与移动端同步，需部署集控服务器：
 
 ```powershell
-# 进入服务器目录
-cd CheckIn.Server
-
-# 启动服务器（默认端口 5000）
-dotnet CheckIn.Server.dll --urls "http://0.0.0.0:5000"
+# 启动集控服务器（默认端口 5250）
+dotnet run --project Server\CheckIn.Server.csproj
 ```
 
-### Linux / macOS 上启动
+首次运行自动生成 `ServerPassword` 并写入 `config.json`，请打开该文件查看密码并妥善保存。
 
-```bash
-# 进入服务器目录
-cd CheckIn.Server
-
-# 启动服务器
-./CheckIn.Server --urls "http://0.0.0.0:5000"
-```
-
-::: tip
-服务器启动后，在浏览器中访问 `http://localhost:5000` 即可打开 Web 管理面板。
-:::
-
----
-
-## 第三步：启动客户端
+## 第三步：启动桌面客户端
 
 ```powershell
-# 进入客户端目录
-cd CheckIn.Client
-
-# 启动客户端
-dotnet CheckIn.Client.dll
+# 启动（默认进入大屏模式）
+.\AgoraInPro\bin\Debug\net10.0-windows\AgoraIn.exe
 ```
 
-或者在 Windows 上直接双击 `CheckIn.Client.exe`。
+或直接双击 `AgoraIn.exe`。
 
-::: warning
-请确保客户端已正确配置服务器地址。客户端默认连接 `http://localhost:5000`。
-:::
+## 第四步：配置服务器连接
 
----
-
-## 第四步：开始打卡
-
-### 桌面端打卡
-
-1. 在客户端界面，点击学生姓名
-2. **左键点击** 完成签到 ✅
-3. **右键点击** 取消签到 ↩
-
-### 远程签到
-
-1. 教师通过 Web 管理面板创建签到任务
-2. 系统生成短链接和二维码
-3. 学生扫码或点击链接完成签到
+1. 菜单栏 **远程 → 远程服务器设置**
+2. 填写服务器 IP、端口（默认 `5250`）与密码
+3. 连接成功后顶栏状态行显示绿色在线指示灯
 
 ---
+
+## 使用指南
+
+### 模式切换
+
+点击主窗口标题栏右侧的**模式下拉框**切换：
+
+- **大屏模式**：进入打卡面板（默认）
+- **控制模式**：进入控制中心（划课 / 集控平台）
+
+### 大屏打卡
+
+1. 左侧任务树选择任务（或点「+」新建标签页，双击标签重命名）
+2. 点击学生按钮即可打卡，已打卡学生按钮变蓝
+3. 左侧排名区实时显示最早打卡的学生，前三名金/银/铜高亮
+4. 右键已打卡学生可**取消打卡**；任务树右键可**清空打卡记录**
+5. 在线模式下打卡数据自动同步到服务器（顶栏状态行显示在线/离线）
+6. 需要学生扫码时：**远程 → 创建签到**，生成二维码 / 短码链接，可设签到密码、教室、科目
+
+### 课时划消
+
+1. 进入 **控制模式 → 划课**
+2. 左侧学生列表选中学生（支持添加 / 删除，添加时可设初始课时）
+3. 输入课时数，点击**划消课时**（扣减）或**增加课时**（赠送），可填备注
+4. 课时记录写入右侧流水（红扣绿增），学生剩余课时以蓝色徽章展示
+
+### 排课
+
+1. 月历中选择日期（选中日期蓝框高亮，今日带 **"今" 徽章**）
+2. 从「选择学生」列表点击学生添加排课，**必须填写上课 / 下课时间**（HH:mm，下课不等于上课，支持跨天如 23:00–01:00）才能提交
+3. 已排课学生可修改时间或移除；重复排课会被拦截
+4. 工具按钮：
+   - **设为不排课日 / 恢复**：自动清空当日排课，周末默认提示（粉底"休"标记）
+   - **清空排课**：清除选中日期全部排课
+   - **复制排课…**：把某日排课复制到多个日期，可跳过不排课日
+5. 设置项中开启「自动扣减课时」后，系统每 30 秒检查一次，当日排课结束后自动按 `实际时长 × 每小时课时消耗` 扣减学生课时（幂等去重，不会重复扣）
+
+### 集控平台
+
+1. **控制模式 → 集控平台列表 → 打开控制台**
+2. 输入服务器地址（如 `http://192.168.1.100:5250`）并登录（JWT 认证）
+3. 查看仪表盘、设备列表、任务中心、考勤记录，管理用户与设备分配
+
+### 自测模式
+
+桌面客户端内置自测命令，退出码 0 表示全部通过：
+
+```powershell
+& .\AgoraInPro\bin\Debug\net10.0-windows\AgoraIn.exe --selftest
+```
 
 ## 项目结构
 
 ```
-check-in/
-├── Client/          # WPF 桌面客户端（MVVM 架构）
-│   ├── Models/      # 数据模型
-│   ├── ViewModels/  # 视图模型
-│   ├── Views/       # XAML 视图
-│   └── Services/    # 客户端服务层
-├── Server/          # ASP.NET Core 服务器
-│   ├── Program.cs   # Minimal API 端点
-│   ├── Models/      # 数据模型
-│   └── Services/    # 业务逻辑
-└── Shared/          # 共享数据模型
-    ├── CheckInModels.cs       # 签到数据模型
-    ├── ClientConfig.cs        # 客户端配置
-    └── DeviceInfo.cs          # 设备信息
+check-in-net/
+├── AgoraInPro/              # 桌面客户端（WPF，主程序 AgoraIn.exe）
+│   ├── MainWindow.xaml(.cs)          # 主窗口：任务树、标签栏、打卡面板、模式切换
+│   ├── ControlCenterView.cs          # 控制中心视图
+│   ├── ClassHoursPanelControl.xaml   # 课时划消与排课页
+│   ├── ServerControlWindow.xaml(.cs) # 集控平台控制窗口
+│   ├── Models/                       # AppConfig、ClassHourModels 等
+│   ├── ViewModels/                   # MainViewModel、ClassHoursViewModel 等
+│   └── Services/                     # ServerService、ClassHourStore 等
+├── Server/                  # 集控服务器（ASP.NET + EF Core + SQLite）
+│   └── config.json                  # Port(5250)、ServerName、ServerPassword、DebugMode
+├── Client.Mobile/           # 移动端（.NET MAUI）
+└── CheckIn.slnx             # 解决方案文件
 ```
 
 ## 下一步
 
 - 了解完整的 [功能特性 →](/features)
-- 查看 [部署指南 →](/deploy)
-- 阅读 [常见问题 →](/faq)
+- 查看 [API 文档 →](/api)
+- 阅读 [部署指南 →](/deploy)
+- 查看 [常见问题 →](/faq)

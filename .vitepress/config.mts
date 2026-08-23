@@ -28,14 +28,16 @@ export default defineConfig({
       {
         text: '使用指南',
         items: [
-          { text: '使用指南', link: '/guide' },
+          { text: '快速开始', link: '/guide' },
+          { text: '功能特性', link: '/features' },
           { text: 'API 文档', link: '/api' },
           { text: '部署指南', link: '/deploy' },
           { text: '常见问题', link: '/faq' },
         ]
-      }, 
+      },
+      { text: '旧版文档（v2.7）', link: '/v2.7/' },
       {
-        text: 'v2.7',
+        text: 'v2.8',
         items: [
           { text: '更新日志', link: 'https://github.com/liuyuchen012/AgoraIn/releases' },
           { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/AgoraIn' }
@@ -71,10 +73,11 @@ export default defineConfig({
           text: '快速开始',
           items: [
             { text: '环境要求', link: '/guide#环境要求' },
-            { text: '第一步：下载', link: '/guide#第一步-下载' },
-            { text: '第二步：启动服务器', link: '/guide#第二步-启动服务器' },
-            { text: '第三步：启动客户端', link: '/guide#第三步-启动客户端' },
-            { text: '第四步：开始打卡', link: '/guide#第四步-开始打卡' },
+            { text: '第一步：下载安装', link: '/guide#第一步-下载安装' },
+            { text: '第二步：启动集控服务器', link: '/guide#第二步-启动集控服务器可选' },
+            { text: '第三步：启动桌面客户端', link: '/guide#第三步-启动桌面客户端' },
+            { text: '第四步：配置服务器连接', link: '/guide#第四步-配置服务器连接' },
+            { text: '使用指南', link: '/guide#使用指南' },
             { text: '项目结构', link: '/guide#项目结构' }
           ]
         }
@@ -83,14 +86,12 @@ export default defineConfig({
         {
           text: '功能特性',
           items: [
-            { text: '签到操作', link: '/features#签到操作' },
-            { text: '数据统计', link: '/features#数据统计' },
-            { text: '多任务管理', link: '/features#多任务管理' },
-            { text: '远程签到', link: '/features#远程签到' },
-            { text: 'Web 管理面板', link: '/features#web-管理面板' },
-            { text: '数据管理', link: '/features#数据管理' },
-            { text: '安全机制', link: '/features#安全机制' },
-            { text: '技术架构一览', link: '/features#技术架构一览' }
+            { text: '大屏模式（打卡）', link: '/features#大屏模式打卡' },
+            { text: '控制模式（控制中心）', link: '/features#控制模式控制中心' },
+            { text: '集控服务器', link: '/features#集控服务器server' },
+            { text: '移动端', link: '/features#移动端client-mobilemaui' },
+            { text: '技术栈', link: '/features#技术栈' },
+            { text: '版本历史', link: '/features#版本历史' }
           ]
         }
       ],
@@ -99,12 +100,11 @@ export default defineConfig({
           text: '部署指南',
           items: [
             { text: '架构概览', link: '/deploy#架构概览' },
-            { text: 'Windows 部署', link: '/deploy#windows-部署' },
-            { text: 'Linux 部署', link: '/deploy#linux-部署' },
-            { text: 'macOS 部署', link: '/deploy#macos-部署' },
-            { text: '局域网部署', link: '/deploy#局域网部署' },
-            { text: '数据库管理', link: '/deploy#数据库管理' },
-            { text: '版本升级', link: '/deploy#版本升级' }
+            { text: '构建', link: '/deploy#构建' },
+            { text: '运行', link: '/deploy#运行' },
+            { text: '服务器部署', link: '/deploy#服务器部署' },
+            { text: '局域网部署', link: '/deploy#局域网部署推荐方案' },
+            { text: '数据存储', link: '/deploy#数据存储' }
           ]
         }
       ],
@@ -112,17 +112,10 @@ export default defineConfig({
         {
           text: 'API 文档',
           items: [
-            { text: '概述', link: '/api#1-概述' },
-            { text: '配置说明', link: '/api#2-配置说明' },
-            { text: '认证机制', link: '/api#3-认证机制' },
-            { text: '数据模型', link: '/api#4-数据模型' },
-            { text: 'API 接口一览', link: '/api#5-api-接口一览' },
-            { text: '客户端 API', link: '/api#6-客户端-api-详解' },
-            { text: 'Web 面板 API', link: '/api#7-web-面板-api-详解' },
-            { text: '签到功能 API', link: '/api#8-签到功能-api-详解v27-新增' },
-            { text: '认证页面接口', link: '/api#9-认证页面接口' },
-            { text: '管理面板页面', link: '/api#10-web-管理面板页面' },
-            { text: '调用示例', link: '/api#11-调用示例' }
+            { text: '基础信息', link: '/api#基础信息' },
+            { text: '端点一览', link: '/api#端点一览' },
+            { text: '认证机制', link: '/api#认证机制' },
+            { text: '配置说明', link: '/api#配置说明' }
           ]
         }
       ],
@@ -130,11 +123,10 @@ export default defineConfig({
         {
           text: '常见问题',
           items: [
-            { text: '服务器相关', link: '/faq#服务器相关' },
-            { text: '客户端相关', link: '/faq#客户端相关' },
-            { text: '数据相关', link: '/faq#数据相关' },
-            { text: '远程签到', link: '/faq#远程签到' },
-            { text: '版本与更新', link: '/faq#版本与更新' },
+            { text: '构建与运行', link: '/faq#构建与运行' },
+            { text: '服务器与连接', link: '/faq#服务器与连接' },
+            { text: '排课与课时', link: '/faq#排课与课时' },
+            { text: '数据与安全', link: '/faq#数据与安全' },
             { text: '其他', link: '/faq#其他' }
           ]
         }
@@ -143,15 +135,26 @@ export default defineConfig({
         {
           text: '站点地图',
           items: [
-            { text: '首页', link: '/sitemap#首页' },
-            { text: '使用指南', link: '/sitemap#使用指南' },
-            { text: '功能特性', link: '/sitemap#功能特性' },
-            { text: 'API 文档', link: '/sitemap#api-文档' },
-            { text: '部署指南', link: '/sitemap#部署指南' },
-            { text: '常见问题', link: '/sitemap#常见问题' },
-            { text: '资源下载', link: '/sitemap#资源下载' },
+            { text: '最新版本（v2.8）', link: '/sitemap#最新版本v28' },
+            { text: '旧版文档（v2.7）', link: '/sitemap#旧版文档v27' },
             { text: '移动多端应用', link: '/sitemap#移动多端应用' },
             { text: '外部链接', link: '/sitemap#外部链接' }
+          ]
+        }
+      ],
+      // v2.7 旧版归档文档
+      '/v2.7/': [
+        {
+          text: '旧版文档（v2.7）',
+          collapsed: false,
+          items: [
+            { text: 'v2.7 主页', link: '/v2.7/' },
+            { text: '快速开始', link: '/v2.7/guide' },
+            { text: '功能特性', link: '/v2.7/features' },
+            { text: 'API 文档', link: '/v2.7/api' },
+            { text: '部署指南', link: '/v2.7/deploy' },
+            { text: '常见问题', link: '/v2.7/faq' },
+            { text: '站点地图', link: '/v2.7/sitemap' }
           ]
         }
       ]

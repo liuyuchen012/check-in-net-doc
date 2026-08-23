@@ -1,6 +1,8 @@
-# 📦 部署指南
+# 📦 部署指南（v2.8）
 
-本指南详细介绍如何在不同环境下部署 AgoraIn 签到系统。
+> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 部署指南](/v2.7/deploy)。
+
+本指南介绍 AgoraIn v2.8 的构建、部署与配置。
 
 ---
 
@@ -8,160 +10,104 @@
 
 ```
 ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  WPF 客户端 #1  │     │  WPF 客户端 #2  │     │   Web 浏览器    │
-│  (大屏白板)     │─▶  │  (教师电脑)     │─▶  │  (远程管理)     │
+│  大屏客户端 #1   │     │  大屏客户端 #2   │     │  移动端 App     │
+│  (AgoraIn.exe)  │─▶  │  (教室白板)     │─▶  │  (MAUI)         │
 └────────┬────────┘     └────────┬────────┘     └────────┬────────┘
          │                       │                       │
          └───────────────────────┼───────────────────────┘
                                  │
                                  ▼
                     ┌────────────────────────┐
-                    │   ASP.NET Core 服务器   │
-                    │   (SQLite 数据库)       │
-                    │   端口: 5000            │
+                    │    集控服务器 (Server)  │
+                    │   ASP.NET + SQLite      │
+                    │   端口: 5250            │
                     └────────────────────────┘
 ```
 
 ---
 
-## Windows 部署
+## 构建
 
-### 环境准备
-
-1. 安装 [.NET 10.0 Runtime](https://dotnet.microsoft.com/download/dotnet/10.0)
-2. 下载最新 Release 包
-
-### 服务器部署
+### 桌面客户端（输出 AgoraIn.exe）
 
 ```powershell
-# 解压服务器文件
-Expand-Archive CheckIn.Server.zip -DestinationPath .\CheckIn.Server
-
-# 进入目录
-cd CheckIn.Server
-
-# 启动服务器
-dotnet CheckIn.Server.dll --urls "http://0.0.0.0:5000"
+dotnet build AgoraInPro\CheckIn.Client.csproj
 ```
 
-### 客户端部署
+### 集控服务器
 
 ```powershell
-# 解压客户端文件
-Expand-Archive CheckIn.Client.zip -DestinationPath .\CheckIn.Client
-
-# 进入目录
-cd CheckIn.Client
-
-# 启动客户端
-dotnet CheckIn.Client.dll
+dotnet build Server\CheckIn.Server.csproj
 ```
 
-### 配置说明
+### 移动端
 
-客户端配置文件位于 `CheckIn.Client/appsettings.json`：
+```powershell
+# 需先安装 MAUI 工作负载
+dotnet workload install maui
+
+dotnet build Client.Mobile\AgoraIn.Client.Mobile.csproj
+```
+
+> 提示：构建前如输出文件被占用，请先结束旧进程：
+> `Stop-Process -Name AgoraIn -Force`
+
+---
+
+## 运行
+
+### 桌面客户端
+
+```powershell
+.\AgoraInPro\bin\Debug\net10.0-windows\AgoraIn.exe
+```
+
+### 集控服务器
+
+```powershell
+dotnet run --project Server\CheckIn.Server.csproj
+```
+
+首次运行自动创建 SQLite 数据库与表结构，默认端口 **5250**。
+
+### 自测模式
+
+```powershell
+& .\AgoraInPro\bin\Debug\net10.0-windows\AgoraIn.exe --selftest
+```
+
+退出码 0 表示全部通过。
+
+---
+
+## 服务器部署
+
+1. 将 `Server` 发布产物复制到目标机器
+2. 编辑 `config.json` 设置 `Port`、`ServerName`、`ServerPassword`
+3. 运行服务器程序，首次启动自动创建 SQLite 数据库与表结构
+4. 局域网内客户端「远程 → 远程服务器设置」填入 IP、端口与密码即可连接
+
+### 服务器 `config.json`
 
 ```json
 {
-  "ServerUrl": "http://localhost:5000",
-  "DeviceName": "一班白板",
-  "AutoConnect": true
+  "Port": 5250,
+  "ServerName": "集控服务器",
+  "ServerPassword": "自动生成或手动填写",
+  "DebugMode": false
 }
 ```
 
-| 配置项 | 说明 | 默认值 |
-|--------|------|--------|
-| `ServerUrl` | 服务器地址 | `http://localhost:5000` |
-| `DeviceName` | 设备名称（用于分组） | 自动生成 |
-| `AutoConnect` | 启动时自动连接 | `true` |
-
----
-
-## Linux 部署
-
-### 环境准备
-
-```bash
-# Ubuntu / Debian 安装 .NET Runtime
-wget https://dot.net/v1/dotnet-install.sh
-chmod +x dotnet-install.sh
-./dotnet-install.sh --channel 10.0 --runtime aspnetcore
-
-# 或使用包管理器
-sudo apt update
-sudo apt install dotnet-runtime-10.0
-```
-
-### 服务器部署
-
-```bash
-# 解压服务器文件
-unzip CheckIn.Server.zip -d CheckIn.Server
-cd CheckIn.Server
-
-# 赋予执行权限
-chmod +x CheckIn.Server
-
-# 启动服务器
-./CheckIn.Server --urls "http://0.0.0.0:5000"
-```
-
-### 使用 systemd 管理服务
-
-创建服务文件 `/etc/systemd/system/signwave.service`：
-
-```ini
-[Unit]
-Description=AgoraIn CheckIn Server
-After=network.target
-
-[Service]
-WorkingDirectory=/opt/signwave/CheckIn.Server
-ExecStart=/opt/signwave/CheckIn.Server/CheckIn.Server --urls "http://0.0.0.0:5000"
-Restart=always
-RestartSec=10
-User=www-data
-
-[Install]
-WantedBy=multi-user.target
-```
-
-启用并启动服务：
-
-```bash
-sudo systemctl daemon-reload
-sudo systemctl enable signwave
-sudo systemctl start signwave
-sudo systemctl status signwave
-```
-
----
-
-## macOS 部署
-
-### 环境准备
-
-```bash
-# 安装 .NET Runtime
-brew install dotnet-sdk
-```
-
-### 服务器部署
-
-```bash
-# 解压
-unzip CheckIn.Server.zip -d CheckIn.Server
-cd CheckIn.Server
-
-# 启动
-./CheckIn.Server --urls "http://0.0.0.0:5000"
-```
+| 字段 | 默认值 | 说明 |
+| ---- | ---- | -- |
+| `Port` | `5250` | 监听端口 |
+| `ServerName` | `""` | 服务器名称 |
+| `ServerPassword` | `""` | 服务器连接密码（未配置时首次运行自动生成随机密码并回写） |
+| `DebugMode` | `false` | 调试模式开关 |
 
 ---
 
 ## 局域网部署（推荐方案）
-
-在学校局域网环境中，推荐以下部署方案：
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -170,84 +116,52 @@ cd CheckIn.Server
 │  ┌──────────┐    ┌──────────┐    ┌──────────┐        │
 │  │ 教室白板  │    │ 教师电脑  │    │ 学生手机  │        │
 │  │ 192.168.1.10│  │192.168.1.11│  │192.168.1.x│       │
-│  └─────┬─────┘    └─────┬─────┘    └─────┬─────┘        │
-│        │               │               │              │
-│        └───────────────┼───────────────┘              │
-│                        │                              │
-│                 ┌──────┴──────┐                       │
-│                 │   服务器     │                       │
-│                 │ 192.168.1.5 │                       │
-│                 │   :5000     │                       │
-│                 └─────────────┘                       │
+│  └─────┬─────┘    └─────┬─────┘    └─────┬─────┘    │
+│        │               │               │             │
+│        └───────────────┼───────────────┘             │
+│                        │                             │
+│                 ┌──────┴──────┐                      │
+│                 │  集控服务器  │                      │
+│                 │ 192.168.1.5 │                      │
+│                 │   :5250     │                      │
+│                 └─────────────┘                      │
 └──────────────────────────────────────────────────────┘
 ```
 
 ### 配置步骤
 
-1. **在服务器电脑上**：
-
-```bash
-./CheckIn.Server --urls "http://0.0.0.0:5000"
-```
-
-2. **在客户端电脑上**修改 `appsettings.json`：
-
-```json
-{
-  "ServerUrl": "http://192.168.1.5:5000"
-}
-```
-
-3. **开放防火墙端口**（如果需要）：
+1. **服务器电脑**：运行集控服务器（端口 5250）
+2. **客户端电脑**：菜单「远程 → 远程服务器设置」，填入服务器 IP、端口（5250）与密码
+3. **开放防火墙端口**（如需跨设备访问）：
 
 ```powershell
 # Windows 防火墙
-netsh advfirewall firewall add rule name="AgoraIn" dir=in action=allow protocol=TCP localport=5000
-```
-
-```bash
-# Linux (ufw)
-sudo ufw allow 5000/tcp
+netsh advfirewall firewall add rule name="AgoraIn" dir=in action=allow protocol=TCP localport=5250
 ```
 
 ---
 
-## 数据库管理
+## 数据存储
 
-AgoraIn 使用 SQLite 数据库，数据库文件位于服务器目录：
+| 数据 | 位置 | 说明 |
+| ---- | -- | -- |
+| 工作区状态 | `workspace.json`（客户端目录） | 打开的标签页列表、活动标签页（自动恢复） |
+| 打卡数据 / 学生名单 | 任务数据目录 | 打卡记录与学生名单 |
+| 课时数据 | `data/classhours.json`（客户端目录） | 学生课时、流水、排课、不排课日、自动划消设置 |
+| 服务器数据 | SQLite 数据库（服务器目录） | 设备、任务、考勤、用户、签到任务、设备分配 |
 
-```
-CheckIn.Server/
-└── data/
-    └── signwave.db
-```
+### 课时数据 `data/classhours.json`（版本 v3）
 
-### 备份数据库
+| 字段 | 说明 |
+| ---- | -- |
+| `Version` | 数据版本号（v3：排课细分时间 + 自动划消设置） |
+| `Students` | 学生列表（姓名、总课时、已划课时、备注、创建时间） |
+| `Records` | 课时记录流水（日期、课时数正负、备注、SlotKey 去重键） |
+| `Schedule` | 排课数据：日期 → 排课条目（学生 + 上课/下课时间，支持跨天） |
+| `OffDays` | 不排课日集合 |
+| `HoursPerHour` | 每小时上课消耗课时（支持小数，默认 1） |
+| `AutoDeduct` | 是否自动划消课时 |
 
-```powershell
-# Windows
-Copy-Item .\CheckIn.Server\data\signwave.db .\backup\signwave_$(Get-Date -Format yyyyMMdd).db
-```
+### 备份
 
-```bash
-# Linux / macOS
-cp ./CheckIn.Server/data/signwave.db ./backup/signwave_$(date +%Y%m%d).db
-```
-
-### 恢复数据库
-
-将备份文件覆盖回 `data/signwave.db` 即可，恢复前请停止服务器。
-
----
-
-## 版本升级
-
-1. 备份当前数据库
-2. 停止服务器
-3. 下载新版本 Release 包
-4. 解压覆盖服务器文件
-5. 重启服务器
-
-::: warning
-升级前务必备份数据库文件！
-:::
+直接复制对应数据文件即可完成备份；恢复时覆盖原文件（恢复前建议停止程序）。

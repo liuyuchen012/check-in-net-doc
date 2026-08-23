@@ -23,16 +23,16 @@ const desktopNav: Theme.NavItem[] = [
   {
     text: '使用指南',
     items: [
-      { text: '使用指南', link: '/guide' },
+      { text: '快速开始', link: '/guide' },
+      { text: '功能特性', link: '/features' },
       { text: 'API 文档', link: '/api' },
       { text: '部署指南', link: '/deploy' },
       { text: '常见问题', link: '/faq' },
     ],
   },
-  { text: '功能特性', link: '/features' },
-  { text: '站点地图', link: '/sitemap' },
+  { text: '旧版文档（v2.7）', link: '/v2.7/' },
   {
-    text: 'v2.7',
+    text: 'v2.8',
     items: [
       { text: '更新日志', link: 'https://github.com/liuyuchen012/AgoraIn/releases' },
       { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/AgoraIn' },

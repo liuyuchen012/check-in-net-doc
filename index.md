@@ -3,62 +3,71 @@ layout: home
 
 hero:
   name: AgoraIn
-  text: 课堂签到打卡系统
-  tagline: 大屏打卡程序，适用于班级电子白板<br>现代化桌面 + Web 双端打卡解决方案
+  text: 课堂签到打卡系统（v2.8）
+  tagline: 大屏签到 + 课时划消与排课 + 集控平台<br>多端协同的现代化课堂管理解决方案
   image:
     src: /favicon.svg
-    alt: AgoraIn
+    alt: AgoraIn v2.8
   actions:
     - theme: brand
       text: 快速开始
       link: /guide
     - theme: alt
-      text: 查看 GitHub
-      link: https://github.com/liuyuchen012/check-in
+      text: 下载中心
+      link: /download
+    - theme: alt
+      text: 旧版文档（v2.7）
+      link: /v2.7/
 
 features:
   - icon: 🖥
-    title: 桌面客户端
-    details: WPF 原生应用，大屏适配，操作流畅
+    title: 大屏模式
+    details: 课堂签到打卡，适配电子白板大屏，学生点击即签到
+  - icon: 🎛
+    title: 控制模式
+    details: 课时划消与排课、集控平台，一站式管理课堂事务
+  - icon: 📅
+    title: 课时划消与排课
+    details: 课时管理、排课表、自动销课时，培训机构必备
   - icon: 🌐
-    title: Web 管理面板
-    details: 浏览器访问即可远程管理数据
+    title: 集控服务器
+    details: 多设备集中控制，Web 管理面板远程管理
   - icon: 📱
-    title: 远程签到
-    details: 学生扫码或点击短链完成签到
+    title: 移动端扩展
+    details: 微信小程序与 Android App，随时随地签到与查看
   - icon: 🔐
-    title: RSA 加密通信
-    details: RSA-2048 签名验证，安全可靠
-  - icon: 📊
-    title: 实时统计
-    details: 出勤率、排行榜、打卡时间一目了然
-  - icon: 🏗
-    title: 跨平台服务器
-    details: Linux / macOS / Windows 均可运行
+    title: 数据安全
+    details: 本地数据 + 服务器同步，SQLite 存储，安全可靠
 ---
 
 ## 项目简介
 
-**AgoraIn** 是一款专为班级课堂场景设计的签到打卡系统。教师可通过桌面客户端一键发起签到，学生通过电子白板完成打卡，同时支持远程扫码签到和浏览器管理面板。系统采用 C/S 架构，支持多任务并行管理和跨平台服务器部署。
+**AgoraIn v2.8**（AgoraInPro）是课堂签到打卡系统的全新重构版本，由 **大屏模式**（课堂签到打卡）、**控制模式**（课时划消与排课 + 集控平台）和**移动端**（微信小程序 / Android）组成，覆盖课堂签到、课时管理、设备集控的完整教学场景。
+
+旧版 v2.7 文档已归档，可在 [旧版文档入口](/v2.7/) 查看历史内容。
+
+## 核心模块
+
+| 模块 | 说明 |
+| ---- | ---- |
+| 大屏模式 | 班级电子白板大屏签到，点击学生姓名完成打卡 |
+| 控制模式 | 课时划消与排课、集控平台（多设备集中控制） |
+| 集控服务器 | 多设备数据集中管理，Web 管理面板 |
+| 移动端 | 微信小程序 + Android 客户端（移动多端应用） |
 
 ## 适用场景
 
 - 🏫 中小学班级课堂签到
-- 🎓 培训机构考勤管理
-- 📋 会议活动快速签到
-- 👥 社团活动人员统计
+- 🎓 培训机构课时划消与排课
+- 📋 多教室多设备集中管控
+- 📱 移动端远程签到与查看
 
 ## 技术栈
 
-| 组件 | 技术 | 版本 |
-|------|------|------|
-| 桌面客户端 | WPF (.NET) | .NET 10.0 |
-| 服务器 | ASP.NET Core Minimal API | .NET 10.0 |
-| 数据库 | SQLite (via EF Core) | — |
-| 通信安全 | RSA-2048 签名 (SHA256) + HMAC-SHA256 | — |
-| 二维码 | QRCoder | 1.6.0 |
-| 架构模式 | MVVM (MainViewModel + TaskTabViewModel) | — |
-
-## 开源协议
-
-本项目基于 **GNU General Public License v3** 协议开源。
+| 组件 | 技术 |
+| ---- | ---- |
+| 桌面客户端 | WPF（.NET 10） |
+| 移动端 | .NET MAUI |
+| 集控服务器 | ASP.NET Core（.NET 8） |
+| 数据库 | SQLite |
+| 架构模式 | MVVM |
