@@ -1,7 +1,13 @@
+<script setup lang="ts">
+defineProps<{ compact?: boolean }>()
+</script>
+
 <template>
-  <div class="vs-mobile">
-    <div class="vs-mobile-title" aria-label="移动多端协同">移动多端协同</div>
-    <div class="vs-mobile-sub">教师、学生、家长多角色随时随地接入课堂</div>
+  <div class="vs-mobile" :class="{ 'is-compact': compact }">
+    <div class="vs-side-txt">
+      <div class="vs-mobile-title" aria-label="移动多端协同">移动多端协同</div>
+      <div class="vs-mobile-sub">教师、学生、家长多角色随时随地接入课堂</div>
+    </div>
 
     <div class="vs-mobile-grid">
       <div class="vs-mobile-card android">

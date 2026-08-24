@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { screenWindowSvg } from '../windows'
+
+defineProps<{ compact?: boolean }>()
 </script>
 
 <template>
-  <section class="vstage vs-scr">
-    <div class="vstage-title">大屏模式 · 课堂签到打卡</div>
-    <div class="vstage-sub">学生点击即签到 · 实时排名 · 迟到一目了然</div>
-    <div class="vstage-chips">
-      <span>多任务标签</span>
-      <span>金/银/铜排行榜</span>
-      <span>二维码签到</span>
-      <span>Web 签到</span>
-      <span>实时统计</span>
-      <span>缺勤提醒</span>
+  <section class="vstage vs-scr" :class="{ 'is-compact': compact }">
+    <div class="vs-side-txt">
+      <div class="vstage-title">大屏模式 · 课堂签到打卡</div>
+      <div class="vstage-sub">学生点击即签到 · 实时排名 · 迟到一目了然</div>
+      <div class="vstage-chips">
+        <span>多任务标签</span>
+        <span>金/银/铜排行榜</span>
+        <span>二维码签到</span>
+        <span>Web 签到</span>
+        <span>实时统计</span>
+        <span>缺勤提醒</span>
+      </div>
     </div>
 
     <div class="vs-scr-wrap">

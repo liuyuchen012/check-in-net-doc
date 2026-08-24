@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { controlWindowSvg } from '../windows'
+
+defineProps<{ compact?: boolean }>()
 </script>
 
 <template>
-  <section class="vstage vs-ctl">
-    <div class="vstage-title">控制模式 · 课时划消与排课</div>
-    <div class="vstage-sub">选课划课 · 日历排课 · 课时记录自动留存</div>
-    <div class="vstage-chips">
-      <span>批量划消/增加</span>
-      <span>课时流水记录</span>
-      <span>月历排课</span>
-      <span>不排课日</span>
-      <span>自动扣减</span>
-      <span>复制排课</span>
+  <section class="vstage vs-ctl" :class="{ 'is-compact': compact }">
+    <div class="vs-side-txt">
+      <div class="vstage-title">控制模式 · 课时划消与排课</div>
+      <div class="vstage-sub">选课划课 · 日历排课 · 课时记录自动留存</div>
+      <div class="vstage-chips">
+        <span>批量划消/增加</span>
+        <span>课时流水记录</span>
+        <span>月历排课</span>
+        <span>不排课日</span>
+        <span>自动扣减</span>
+        <span>复制排课</span>
+      </div>
     </div>
 
     <div class="vs-ctl-wrap">

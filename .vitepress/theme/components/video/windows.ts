@@ -404,3 +404,80 @@ export const faviconSvg = `
   <path d="M20,90 C35,75 50,105 65,90 C80,75 95,105 110,90 C125,75 140,105 155,90" fill="none" stroke="white" stroke-width="3" opacity="0.2" stroke-linecap="round"/>
   <path d="M48,72 L66,90 L102,52" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`
+
+// 结尾动画版主标识（SMIL：弹入 + 波浪律动 + 对勾勾画 + 扫光 + 呼吸发光），与 public/favicon.svg 一致
+export const faviconOutroSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#7C3AED" />
+    </linearGradient>
+    <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#93C5FD" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#93C5FD" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="shineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0" />
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+    <clipPath id="clip"><circle cx="75" cy="75" r="72" /></clipPath>
+  </defs>
+
+  <circle cx="75" cy="75" r="72" fill="url(#haloGrad)" opacity="0">
+    <animate attributeName="opacity" values="0;0.7;1;0.7;0" keyTimes="0;0.15;0.35;0.85;1" dur="3.2s" begin="0.2s" repeatCount="indefinite" />
+    <animate attributeName="r" values="70;94;70" dur="3.2s" begin="0.2s" repeatCount="indefinite" />
+  </circle>
+
+  <g transform="translate(75,75)">
+    <g opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.15s" begin="0.05s" fill="freeze" />
+      <animateTransform attributeName="transform" type="scale"
+        values="0.3;1.12;1" keyTimes="0;0.55;1" dur="0.8s" begin="0.05s" fill="freeze"
+        calcMode="spline" keySplines="0.22 1.4 0.36 1;0.4 0 0.2 1" />
+      <circle cx="0" cy="0" r="72" fill="url(#bgGrad)" />
+    </g>
+  </g>
+
+  <g stroke="white" stroke-width="3" stroke-linecap="round" fill="none" opacity="0">
+    <animate attributeName="opacity" values="0;0.25" dur="0.45s" begin="0.35s" fill="freeze" />
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="-3,0;3,0;-3,0" dur="2.2s" begin="1.7s" repeatCount="indefinite" />
+      <path d="M20,60 C35,45 50,75 65,60 C80,45 95,75 110,60 C125,45 140,75 155,60" />
+    </g>
+  </g>
+
+  <g stroke="white" stroke-width="4" stroke-linecap="round" fill="none" opacity="0">
+    <animate attributeName="opacity" values="0;0.5" dur="0.45s" begin="0.5s" fill="freeze" />
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="3,0;-3,0;3,0" dur="2.6s" begin="1.85s" repeatCount="indefinite" />
+      <path d="M20,75 C35,60 50,90 65,75 C80,60 95,90 110,75 C125,60 140,90 155,75" />
+    </g>
+  </g>
+
+  <g stroke="white" stroke-width="3" stroke-linecap="round" fill="none" opacity="0">
+    <animate attributeName="opacity" values="0;0.25" dur="0.45s" begin="0.65s" fill="freeze" />
+    <g>
+      <animateTransform attributeName="transform" type="translate" values="-2,0;2,0;-2,0" dur="2s" begin="2s" repeatCount="indefinite" />
+      <path d="M20,90 C35,75 50,105 65,90 C80,75 95,105 110,90 C125,75 140,105 155,90" />
+    </g>
+  </g>
+
+  <g fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M48,72 L66,90 L102,52" stroke-dasharray="120" stroke-dashoffset="120" opacity="0">
+      <animate attributeName="opacity" values="0;1" dur="0.05s" begin="0.75s" fill="freeze" />
+      <animate attributeName="stroke-dashoffset" values="120;0" dur="0.55s" begin="0.75s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" />
+    </path>
+    <path d="M48,72 L66,90 L102,52" stroke-width="14" opacity="0">
+      <animate attributeName="opacity" values="0;0.45;0" dur="2.4s" begin="1.9s" repeatCount="indefinite" />
+    </path>
+  </g>
+
+  <g clip-path="url(#clip)" transform="rotate(-25 75 75)">
+    <rect x="-120" y="-40" width="46" height="230" fill="url(#shineGrad)" opacity="0">
+      <animate attributeName="opacity" values="0;0.9;0" keyTimes="0;0.3;1" dur="1s" begin="1.5s" fill="freeze" />
+      <animateTransform attributeName="transform" type="translate" values="0,0;340,0" dur="1s" begin="1.5s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" />
+    </rect>
+  </g>
+</svg>`

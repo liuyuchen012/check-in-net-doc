@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { faviconSvg } from '../windows'
+import { faviconOutroSvg } from '../windows'
 </script>
 
 <template>
   <section class="vstage vs-out">
-    <div class="vs-out-logo" v-html="faviconSvg"></div>
+    <div class="vs-out-logo" v-html="faviconOutroSvg"></div>
     <h2 class="vs-out-title">让课堂管理更简单</h2>
     <p class="vs-out-sub">AgoraIn v2.8 全新发布</p>
     <div class="vs-out-links">

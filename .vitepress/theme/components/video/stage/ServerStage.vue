@@ -1,14 +1,20 @@
+<script setup lang="ts">
+defineProps<{ compact?: boolean }>()
+</script>
+
 <template>
-  <section class="vstage vs-srv">
-    <div class="vstage-title">集控服务器 · 多设备集中管理</div>
-    <div class="vstage-sub">一台服务器集中管理所有教室设备 · 数据实时同步</div>
-    <div class="vstage-chips srv">
-      <span>设备注册</span>
-      <span>任务下发</span>
-      <span>签到数据同步</span>
-      <span>Web 管理面板</span>
-      <span>REST API</span>
-      <span>SQLite 数据存储</span>
+  <section class="vstage vs-srv" :class="{ 'is-compact': compact }">
+    <div class="vs-side-txt">
+      <div class="vstage-title">集控服务器 · 多设备集中管理</div>
+      <div class="vstage-sub">一台服务器集中管理所有教室设备 · 数据实时同步</div>
+      <div class="vstage-chips srv">
+        <span>设备注册</span>
+        <span>任务下发</span>
+        <span>签到数据同步</span>
+        <span>Web 管理面板</span>
+        <span>REST API</span>
+        <span>SQLite 数据存储</span>
+      </div>
     </div>
 
     <div class="vs-srv-stage">
