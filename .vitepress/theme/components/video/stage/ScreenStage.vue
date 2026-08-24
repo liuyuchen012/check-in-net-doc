@@ -6,6 +6,14 @@ import { screenWindowSvg } from '../windows'
   <section class="vstage vs-scr">
     <div class="vstage-title">大屏模式 · 课堂签到打卡</div>
     <div class="vstage-sub">学生点击即签到 · 实时排名 · 迟到一目了然</div>
+    <div class="vstage-chips">
+      <span>多任务标签</span>
+      <span>金/银/铜排行榜</span>
+      <span>二维码签到</span>
+      <span>Web 签到</span>
+      <span>实时统计</span>
+      <span>缺勤提醒</span>
+    </div>
 
     <div class="vs-scr-wrap">
       <div v-html="screenWindowSvg"></div>
@@ -30,6 +38,24 @@ import { screenWindowSvg } from '../windows'
 </template>
 
 <style>
+.vstage-chips {
+  margin-top: 1.2%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  opacity: 0;
+  animation: v-fade-up 0.7s ease 1.6s forwards;
+}
+.vstage-chips span {
+  font-size: clamp(10px, 1vw, 13px);
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(96, 165, 250, 0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
 .vs-scr-wrap {
   position: relative;
   width: min(94%, 1120px);
@@ -58,11 +84,11 @@ import { screenWindowSvg } from '../windows'
   font-weight: 800;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
-.s26 { left: 47.03%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 12s forwards; }
-.s27 { left: 57.42%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 13.5s forwards; }
-.s28 { left: 67.81%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 15s forwards; }
-.s29 { left: 78.2%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 16.5s forwards; }
-.s30 { left: 88.59%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 18s forwards; }
+.s26 { left: 47.03%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 6s forwards; }
+.s27 { left: 57.42%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 7s forwards; }
+.s28 { left: 67.81%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 8s forwards; }
+.s29 { left: 78.2%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 9s forwards; }
+.s30 { left: 88.59%; top: 49.65%; width: 9.8%; height: 6.12%; animation: v-pop-in 0.7s ease 10s forwards; }
 
 /* 统计条更新 */
 .vs-stat {
@@ -83,7 +109,7 @@ import { screenWindowSvg } from '../windows'
   white-space: nowrap;
   overflow: hidden;
   opacity: 0;
-  animation: v-show-in 0.7s ease 20s forwards;
+  animation: v-show-in 0.7s ease 11s forwards;
   box-shadow: 0 0 18px rgba(59, 130, 246, 0.45);
 }
 
@@ -103,7 +129,7 @@ import { screenWindowSvg } from '../windows'
   font-weight: 600;
   white-space: nowrap;
   opacity: 0;
-  animation: v-show-in 0.7s ease 22s forwards;
+  animation: v-show-in 0.7s ease 12s forwards;
 }
 .vs-rank::before {
   content: "";
@@ -131,6 +157,6 @@ import { screenWindowSvg } from '../windows'
   letter-spacing: 1px;
   white-space: nowrap;
   opacity: 0;
-  animation: v-show-in 0.7s ease 28s forwards;
+  animation: v-show-in 0.7s ease 14s forwards;
 }
 </style>

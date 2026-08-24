@@ -27,7 +27,7 @@ import { faviconSvg } from '../windows'
   aspect-ratio: 1;
   margin: 0 auto;
   opacity: 0;
-  animation: v-logo-pop 1.2s cubic-bezier(0.22, 0.68, 0.35, 1) 1s forwards;
+  animation: v-logo-pop 1s cubic-bezier(0.22, 0.68, 0.35, 1) 0.6s forwards;
   filter: drop-shadow(0 16px 38px rgba(37, 99, 235, 0.55));
 }
 @keyframes v-logo-pop {
@@ -38,13 +38,15 @@ import { faviconSvg } from '../windows'
   font-size: clamp(28px, 4vw, 52px);
   font-weight: 800;
   letter-spacing: 3px;
+  line-height: 1.2;
+  padding-bottom: 0.05em;
   margin: 1.6% 0 0;
   background: linear-gradient(135deg, #93c5fd, #ffffff 55%, #67e8f9);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   opacity: 0;
-  animation: v-fade-up 0.9s ease 2.4s forwards;
+  animation: v-fade-up 0.9s ease 1.8s forwards;
 }
 .vs-out-sub {
   font-size: clamp(13px, 1.4vw, 18px);
@@ -52,7 +54,7 @@ import { faviconSvg } from '../windows'
   margin: 1% 0 0;
   letter-spacing: 2px;
   opacity: 0;
-  animation: v-fade-up 0.8s ease 3.8s forwards;
+  animation: v-fade-up 0.8s ease 3s forwards;
 }
 .vs-out-links {
   margin-top: 2.6%;
@@ -63,7 +65,7 @@ import { faviconSvg } from '../windows'
   font-size: clamp(11px, 1.2vw, 15px);
   color: #7dd3fc;
   opacity: 0;
-  animation: v-fade-up 0.8s ease 5.6s forwards;
+  animation: v-fade-up 0.8s ease 4.4s forwards;
 }
 .vs-out-links .sep { color: #475569; }
 .vs-out-copy {
@@ -72,6 +74,6 @@ import { faviconSvg } from '../windows'
   color: #64748b;
   letter-spacing: 1px;
   opacity: 0;
-  animation: v-fade-up 0.8s ease 9s forwards;
+  animation: v-fade-up 0.8s ease 6.2s forwards;
 }
 </style>

@@ -22,7 +22,7 @@ import { faviconSvg } from '../windows'
   height: auto;
   aspect-ratio: 1;
   opacity: 0;
-  animation: v-logo-in 1.4s cubic-bezier(0.22, 0.68, 0.35, 1) 0.2s forwards;
+  animation: v-logo-in 1.2s cubic-bezier(0.22, 0.68, 0.35, 1) 0.1s forwards;
   filter: drop-shadow(0 14px 34px rgba(37, 99, 235, 0.5));
 }
 @keyframes v-logo-in {
@@ -33,13 +33,15 @@ import { faviconSvg } from '../windows'
   font-size: clamp(40px, 6vw, 76px);
   font-weight: 800;
   letter-spacing: 6px;
+  line-height: 1.15;
+  padding-bottom: 0.05em;
   margin: 1.5% 0 0;
   background: linear-gradient(135deg, #93c5fd, #ffffff 55%, #67e8f9);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   opacity: 0;
-  animation: v-fade-up 0.9s ease 1.8s forwards;
+  animation: v-fade-up 0.9s ease 1.5s forwards;
 }
 .vs-intro-badge {
   display: inline-block;
@@ -53,7 +55,7 @@ import { faviconSvg } from '../windows'
   border: 1px solid rgba(96, 165, 250, 0.5);
   background: rgba(37, 99, 235, 0.18);
   opacity: 0;
-  animation: v-fade-up 0.7s ease 3.2s forwards;
+  animation: v-fade-up 0.7s ease 2.6s forwards;
 }
 .vs-intro-tag {
   font-size: clamp(13px, 1.4vw, 18px);
@@ -61,14 +63,14 @@ import { faviconSvg } from '../windows'
   margin: 0.6% 0 0;
   opacity: 0;
 }
-.vs-intro-tag.t1 { animation: v-fade-up 0.8s ease 4.6s forwards; }
-.vs-intro-tag.t2 { animation: v-fade-up 0.8s ease 5.6s forwards; }
+.vs-intro-tag.t1 { animation: v-fade-up 0.8s ease 3.6s forwards; }
+.vs-intro-tag.t2 { animation: v-fade-up 0.8s ease 4.6s forwards; }
 .vs-intro-hint {
   margin-top: 3%;
   font-size: clamp(11px, 1vw, 13px);
   color: #64748b;
   letter-spacing: 3px;
   opacity: 0;
-  animation: v-fade-up 0.8s ease 7.6s forwards;
+  animation: v-fade-up 0.8s ease 6.2s forwards;
 }
 </style>

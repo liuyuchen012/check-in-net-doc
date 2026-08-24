@@ -6,6 +6,14 @@ import { controlWindowSvg } from '../windows'
   <section class="vstage vs-ctl">
     <div class="vstage-title">控制模式 · 课时划消与排课</div>
     <div class="vstage-sub">选课划课 · 日历排课 · 课时记录自动留存</div>
+    <div class="vstage-chips">
+      <span>批量划消/增加</span>
+      <span>课时流水记录</span>
+      <span>月历排课</span>
+      <span>不排课日</span>
+      <span>自动扣减</span>
+      <span>复制排课</span>
+    </div>
 
     <div class="vs-ctl-wrap">
       <div v-html="controlWindowSvg"></div>
@@ -34,6 +42,24 @@ import { controlWindowSvg } from '../windows'
 </template>
 
 <style>
+.vstage-chips {
+  margin-top: 1.2%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  opacity: 0;
+  animation: v-fade-up 0.7s ease 1.6s forwards;
+}
+.vstage-chips span {
+  font-size: clamp(10px, 1vw, 13px);
+  color: #a7f3d0;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  padding: 4px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
 .vs-ctl-wrap {
   position: relative;
   width: min(94%, 1120px);
@@ -61,7 +87,7 @@ import { controlWindowSvg } from '../windows'
   font-size: clamp(8px, 0.85vw, 11px);
   font-weight: 700;
   opacity: 0;
-  animation: v-pop-in 0.6s ease 12s forwards;
+  animation: v-pop-in 0.6s ease 6s forwards;
   box-shadow: 0 0 12px rgba(37, 99, 235, 0.7);
 }
 
@@ -80,7 +106,7 @@ import { controlWindowSvg } from '../windows'
   box-shadow: 0 4px 12px rgba(2, 6, 23, 0.16);
   white-space: nowrap;
   opacity: 0;
-  animation: v-show-in 0.6s ease 15s forwards;
+  animation: v-show-in 0.6s ease 8s forwards;
 }
 .vs-c-record .d { color: #64748b; }
 .vs-c-record .m { color: #d32f2f; font-weight: 800; }
@@ -100,7 +126,7 @@ import { controlWindowSvg } from '../windows'
   border-radius: 4px;
   padding: 0.3% 0;
   opacity: 0;
-  animation: v-pop-in 0.6s ease 18s forwards;
+  animation: v-pop-in 0.6s ease 10s forwards;
 }
 
 /* 排课面板新增王五 */
@@ -119,7 +145,7 @@ import { controlWindowSvg } from '../windows'
   box-shadow: 0 6px 16px rgba(2, 6, 23, 0.2);
   white-space: nowrap;
   opacity: 0;
-  animation: v-show-in 0.6s ease 21s forwards;
+  animation: v-show-in 0.6s ease 12s forwards;
 }
 .vs-c-sched .n { color: #1e293b; font-weight: 700; font-size: clamp(8px, 0.9vw, 12px); }
 .vs-c-sched .tm {
@@ -135,5 +161,22 @@ import { controlWindowSvg } from '../windows'
   background: #fdecea;
   border-radius: 8px;
   padding: 0.4% 2.6%;
+}
+.vs-tip {
+  position: absolute;
+  left: 50%;
+  bottom: -9%;
+  transform: translateX(-50%);
+  padding: 8px 24px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #bfdbfe;
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: v-show-in 0.7s ease 14s forwards;
 }
 </style>

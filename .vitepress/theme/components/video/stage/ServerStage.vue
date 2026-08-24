@@ -2,6 +2,14 @@
   <section class="vstage vs-srv">
     <div class="vstage-title">集控服务器 · 多设备集中管理</div>
     <div class="vstage-sub">一台服务器集中管理所有教室设备 · 数据实时同步</div>
+    <div class="vstage-chips srv">
+      <span>设备注册</span>
+      <span>任务下发</span>
+      <span>签到数据同步</span>
+      <span>Web 管理面板</span>
+      <span>REST API</span>
+      <span>SQLite 数据存储</span>
+    </div>
 
     <div class="vs-srv-stage">
       <!-- 连线 + 数据包 -->
@@ -10,13 +18,13 @@
         <line class="vs-srv-line" x1="140" y1="280" x2="700" y2="280" />
         <line class="vs-srv-line" x1="140" y1="470" x2="700" y2="280" />
         <circle class="vs-srv-pkt p1" r="7" fill="#22d3ee">
-          <animateMotion dur="2.2s" repeatCount="indefinite" begin="8s" path="M140,90 L700,280" />
+          <animateMotion dur="1.6s" repeatCount="indefinite" begin="4s" path="M140,90 L700,280" />
         </circle>
         <circle class="vs-srv-pkt p2" r="7" fill="#34d399">
-          <animateMotion dur="2.6s" repeatCount="indefinite" begin="9s" path="M140,280 L700,280" />
+          <animateMotion dur="1.9s" repeatCount="indefinite" begin="4.5s" path="M140,280 L700,280" />
         </circle>
         <circle class="vs-srv-pkt p3" r="7" fill="#a78bfa">
-          <animateMotion dur="3s" repeatCount="indefinite" begin="10s" path="M140,470 L700,280" />
+          <animateMotion dur="2.2s" repeatCount="indefinite" begin="5s" path="M140,470 L700,280" />
         </circle>
       </svg>
 
@@ -60,12 +68,17 @@
         </div>
       </div>
 
-      <div class="vs-tip">设备状态 · 任务下发 · 签到数据，统一汇聚</div>
+      <div class="vs-srv-tip">设备状态 · 任务下发 · 签到数据，统一汇聚</div>
     </div>
   </section>
 </template>
 
 <style>
+.vstage-chips.srv span {
+  color: #67e8f9 !important;
+  background: rgba(6, 182, 212, 0.12) !important;
+  border-color: rgba(34, 211, 238, 0.25) !important;
+}
 .vs-srv-stage {
   position: relative;
   width: min(92%, 1100px);
@@ -86,7 +99,7 @@
   opacity: 0;
   animation-name: v-dash, v-line-in;
   animation-duration: 1.4s, 0.6s;
-  animation-delay: 0s, 5.4s;
+  animation-delay: 0s, 3.2s;
   animation-iteration-count: infinite, 1;
   animation-fill-mode: forwards, forwards;
 }
@@ -99,7 +112,7 @@
 }
 .vs-srv-pkt {
   opacity: 0;
-  animation: v-pkt-glow 1s ease 7.8s forwards;
+  animation: v-pkt-glow 1s ease 5.2s forwards;
 }
 @keyframes v-pkt-glow {
   to { opacity: 1; }
@@ -129,9 +142,9 @@
   font-weight: 600;
 }
 .vs-srv-node .st.on { color: #34d399; background: rgba(52, 211, 153, 0.14); }
-.nd-a { left: 3%; top: 10%; animation-delay: 2.4s; }
-.nd-b { left: 3%; top: 44%; animation-delay: 3.4s; }
-.nd-c { left: 3%; top: 78%; animation-delay: 4.4s; }
+.nd-a { left: 3%; top: 10%; animation-delay: 1.4s; }
+.nd-b { left: 3%; top: 44%; animation-delay: 2s; }
+.nd-c { left: 3%; top: 78%; animation-delay: 2.6s; }
 
 /* 服务器核心 */
 .vs-srv-core {
@@ -146,7 +159,7 @@
   border: 1px solid rgba(56, 189, 248, 0.45);
   box-shadow: 0 0 40px rgba(56, 189, 248, 0.35), 0 18px 40px rgba(2, 6, 23, 0.5);
   opacity: 0;
-  animation: v-show-in 0.8s ease 1.6s forwards;
+  animation: v-show-in 0.8s ease 1s forwards;
 }
 .vs-srv-core-ic {
   width: clamp(44px, 4.4vw, 60px);
@@ -173,4 +186,22 @@
 .vs-srv-core-stats .v { font-size: clamp(16px, 1.8vw, 24px); font-weight: 800; color: #67e8f9; }
 .vs-srv-core-stats .v.on2 { color: #34d399; }
 .vs-srv-core-stats .l { font-size: clamp(8px, 0.8vw, 11px); color: #94a3b8; }
+
+.vs-srv-tip {
+  position: absolute;
+  left: 50%;
+  bottom: -9%;
+  transform: translateX(-50%);
+  padding: 8px 24px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(96, 165, 250, 0.4);
+  color: #bfdbfe;
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: v-show-in 0.7s ease 6.2s forwards;
+}
 </style>

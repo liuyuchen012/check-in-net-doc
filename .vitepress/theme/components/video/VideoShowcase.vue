@@ -8,14 +8,14 @@ import ServerStage from './stage/ServerStage.vue'
 import MobileStage from './stage/MobileStage.vue'
 import OutroStage from './stage/OutroStage.vue'
 
-// 时间线（秒）：总长 164s ≈ 2:44
+// 时间线（秒）：总长 130s ≈ 2:10，节奏更紧凑、不人为拖长
 const timeline = [
-  { id: 'intro', dur: 10 },
-  { id: 'update', dur: 24 },
-  { id: 'screen', dur: 36 },
-  { id: 'control', dur: 36 },
-  { id: 'server', dur: 26 },
-  { id: 'mobile', dur: 18 },
+  { id: 'intro', dur: 12 },
+  { id: 'update', dur: 18 },
+  { id: 'screen', dur: 25 },
+  { id: 'control', dur: 25 },
+  { id: 'server', dur: 20 },
+  { id: 'mobile', dur: 16 },
   { id: 'outro', dur: 14 },
 ]
 const totalSec = timeline.reduce((s, t) => s + t.dur, 0)
