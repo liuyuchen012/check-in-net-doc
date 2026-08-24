@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import DefaultTheme from 'vitepress/theme'
 import { useData, useRoute } from 'vitepress'
-import { watchEffect } from 'vue'
+import { computed, watchEffect } from 'vue'
 import type { DefaultTheme as Theme } from 'vitepress/theme'
+import HomeShowcase from './components/HomeShowcase.vue'
 
 const route = useRoute()
 const { site, theme } = useData()
+
+// 仅 v2.8 桌面端首页展示全新 UI（软件更新动画 + 3 svg logo）
+const isHome = computed(() => route.path === '/')
 
 // 项目切换栏（两端一致）
 const projectSwitch = {
@@ -57,5 +61,10 @@ watchEffect(() => {
 </script>
 
 <template>
-  <DefaultTheme.Layout />
+  <DefaultTheme.Layout>
+    <!-- 首页功能模块前：全新 UI 展示区（软件更新动画 + 3 svg logo） -->
+    <template #home-features-before>
+      <HomeShowcase v-if="isHome" />
+    </template>
+  </DefaultTheme.Layout>
 </template>
