@@ -52,6 +52,24 @@
   color: #3b82f6;
 }
 
+/* hero 图片区域：承载全新 UI 动画（加载进度条 + 更新动画 + 窗口逐个出现），加宽展示 */
+.VPHero .image {
+  width: 520px;
+  max-width: 100%;
+}
+@media (min-width: 960px) {
+  .VPHero .image {
+    width: 520px;
+  }
+}
+@media (max-width: 640px) {
+  .VPHero .image,
+  .VPHero .image-container {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
 /* 导航栏 */
 .VPNavBar {
   border-bottom: 1px solid var(--vp-c-divider);

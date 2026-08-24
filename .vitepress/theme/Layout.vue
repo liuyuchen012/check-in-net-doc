@@ -62,8 +62,8 @@ watchEffect(() => {
 
 <template>
   <DefaultTheme.Layout>
-    <!-- 首页功能模块前：全新 UI 展示区（软件更新动画 + 3 svg logo） -->
-    <template #home-features-before>
+    <!-- 首页 hero logo 位置：全新 UI 展示（页面加载进度条 + 更新动画 + 窗口逐个出现 + 3 svg） -->
+    <template #home-hero-image>
       <HomeShowcase v-if="isHome" />
     </template>
   </DefaultTheme.Layout>

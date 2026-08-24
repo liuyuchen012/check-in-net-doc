@@ -1,42 +1,66 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-type Phase = 'update' | 'screen' | 'control' | 'final'
+type Phase = 'loading' | 'update' | 'screen' | 'control' | 'final'
 
-const phase = ref<Phase>('update')
-const pct = ref(0)
+const phase = ref<Phase>('loading')
+const loadPct = ref(0) // 页面加载进度
+const upPct = ref(0)   // 更新动画进度
 const steps = ['下载更新包', '校验完整性', '安装核心组件', '配置本地服务', '界面初始化']
 
 const timers: number[] = []
-let pctTimer: number | undefined
+let loadTimer: number | undefined
+let upPctTimer: number | undefined
 
 const clearAll = () => {
   timers.forEach((t) => window.clearTimeout(t))
   timers.length = 0
-  if (pctTimer) window.clearInterval(pctTimer)
+  if (loadTimer) window.clearInterval(loadTimer)
+  if (upPctTimer) window.clearInterval(upPctTimer)
 }
 
-const play = () => {
-  clearAll()
+// 播放一遍动画（不自动重播）
+const playUpdate = () => {
+  if (upPctTimer) window.clearInterval(upPctTimer)
   phase.value = 'update'
-  pct.value = 0
-  pctTimer = window.setInterval(() => {
-    pct.value = Math.min(100, pct.value + 2)
+  upPct.value = 0
+  upPctTimer = window.setInterval(() => {
+    upPct.value = Math.min(100, upPct.value + 2)
   }, 45)
-  // 更新界面 3.2s
+  // 更新界面 3.2s → 大屏窗口 6.4s → 控制窗口 6.4s → 完成（结束）
   timers.push(window.setTimeout(() => {
-    if (pctTimer) window.clearInterval(pctTimer)
+    if (upPctTimer) window.clearInterval(upPctTimer)
     phase.value = 'screen'
   }, 3200))
-  // 大屏模式窗口 6.4s
   timers.push(window.setTimeout(() => { phase.value = 'control' }, 9600))
-  // 控制模式窗口 6.4s
   timers.push(window.setTimeout(() => { phase.value = 'final' }, 16000))
-  // 3 svg 并排停留 7.6s 后循环
-  timers.push(window.setTimeout(play, 23600))
 }
 
-onMounted(play)
+// 页面所有元素加载完成后开始动画
+const finishLoading = () => {
+  window.removeEventListener('load', finishLoading)
+  if (loadTimer) window.clearInterval(loadTimer)
+  const step = window.setInterval(() => {
+    loadPct.value = Math.min(loadPct.value + 7, 100)
+    if (loadPct.value >= 100) {
+      window.clearInterval(step)
+      timers.push(window.setTimeout(playUpdate, 420))
+    }
+  }, 28)
+}
+
+onMounted(() => {
+  // 页面加载期间推进进度条（真实完成以 window load 为准）
+  loadTimer = window.setInterval(() => {
+    loadPct.value = Math.min(loadPct.value + Math.random() * 9 + 3, 88)
+  }, 160)
+  if (document.readyState === 'complete') {
+    finishLoading()
+  } else {
+    window.addEventListener('load', finishLoading)
+  }
+})
+
 onBeforeUnmount(clearAll)
 
 // ---------- 内联 SVG ----------
@@ -464,51 +488,61 @@ const controlSvg = `
 
 <template>
   <div class="hs-showcase">
-    <button class="hs-replay" type="button" @click="play">↻ 重播动画</button>
+    <button class="hs-replay" type="button" @click="playUpdate">↻ 重播动画</button>
 
     <Transition name="hs-fade" mode="out-in">
-      <!-- 阶段一：软件更新动画 -->
-      <div v-if="phase === 'update'" key="update" class="hs-update">
+      <!-- 阶段一：页面加载进度条（所有元素加载完成后开始动画） -->
+      <div v-if="phase === 'loading'" key="loading" class="hs-loading">
+        <div class="hs-loading-card">
+          <div class="hs-loading-logo" v-html="faviconUp"></div>
+          <p class="hs-loading-text">正在加载页面…</p>
+          <div class="hs-loading-bar">
+            <div class="hs-loading-fill" :style="{ width: loadPct + '%' }"></div>
+          </div>
+          <div class="hs-loading-pct">{{ Math.round(loadPct) }}%</div>
+        </div>
+      </div>
+
+      <!-- 阶段二：软件更新动画 -->
+      <div v-else-if="phase === 'update'" key="update" class="hs-update">
         <div class="hs-update-card">
           <div class="hs-update-logo" v-html="faviconUp"></div>
           <h3 class="hs-update-title">正在更新 AgoraIn</h3>
           <p class="hs-update-sub">v2.7 → v2.8 · 课堂签到打卡系统</p>
           <div class="hs-update-bar">
-            <div class="hs-update-fill" :style="{ width: pct + '%' }"></div>
+            <div class="hs-update-fill" :style="{ width: upPct + '%' }"></div>
           </div>
-          <div class="hs-update-pct">{{ pct }}%</div>
+          <div class="hs-update-pct">{{ upPct }}%</div>
           <div class="hs-update-steps">
-            <span v-for="(s, i) in steps" :key="s" :class="{ done: pct >= (i + 1) * 20 }">{{ pct >= (i + 1) * 20 ? '✓' : '·' }} {{ s }}</span>
+            <span v-for="(s, i) in steps" :key="s" :class="{ done: upPct >= (i + 1) * 20 }">{{ upPct >= (i + 1) * 20 ? '✓' : '·' }} {{ s }}</span>
           </div>
         </div>
       </div>
 
-      <!-- 阶段二：大屏模式窗口逐个元素出现 -->
+      <!-- 阶段三：大屏模式窗口逐个元素出现 -->
       <div v-else-if="phase === 'screen'" key="screen" class="hs-stage">
         <div class="hs-stage-tag"><span class="hs-dot"></span>大屏模式 · 课堂签到打卡</div>
         <div v-html="screenSvg"></div>
       </div>
 
-      <!-- 阶段三：控制模式窗口逐个元素出现 -->
+      <!-- 阶段四：控制模式窗口逐个元素出现 -->
       <div v-else-if="phase === 'control'" key="control" class="hs-stage">
         <div class="hs-stage-tag"><span class="hs-dot"></span>控制模式 · 课时划消与排课 + 集控平台</div>
         <div v-html="controlSvg"></div>
       </div>
 
-      <!-- 阶段四：3 个 svg 并排（主页 logo） -->
+      <!-- 阶段五：3 个 svg（主页 logo）→ 完成，不重播 -->
       <div v-else key="final" class="hs-final">
-        <div class="hs-final-title">AgoraIn v2.8 · 全新界面已就绪</div>
+        <div class="hs-final-top">
+          <div class="hs-final-icon" v-html="faviconFinal"></div>
+          <div class="hs-final-title">全新界面已就绪</div>
+        </div>
         <div class="hs-final-row">
-          <div class="hs-final-card hs-final-logo" style="--d:0s">
-            <div class="hs-final-icon" v-html="faviconFinal"></div>
-            <div class="hs-final-name">AgoraIn 主标识</div>
-            <div class="hs-final-desc">SignWave · 课堂签到</div>
-          </div>
-          <div class="hs-final-card hs-final-wide" style="--d:.25s">
+          <div class="hs-final-card" style="--d:0s">
             <div v-html="screenSvg"></div>
             <div class="hs-final-name">大屏模式</div>
           </div>
-          <div class="hs-final-card hs-final-wide" style="--d:.5s">
+          <div class="hs-final-card" style="--d:.25s">
             <div v-html="controlSvg"></div>
             <div class="hs-final-name">控制模式</div>
           </div>
@@ -519,22 +553,20 @@ const controlSvg = `
 </template>
 
 <style>
-/* ===== HomeShowcase：软件更新动画 + 窗口逐个元素出现 ===== */
+/* ===== HomeShowcase：hero logo 位置，加载进度条 + 更新动画 + 窗口逐个出现 ===== */
 .hs-showcase {
   position: relative;
-  max-width: 1180px;
-  margin: 0 auto;
-  padding: 8px 24px 0;
+  width: 100%;
 }
 
 .hs-replay {
   position: absolute;
-  top: 0;
-  right: 24px;
+  top: -6px;
+  right: 0;
   z-index: 5;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 1;
-  padding: 6px 14px;
+  padding: 5px 12px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 999px;
   background: var(--vp-c-bg);
@@ -549,47 +581,94 @@ const controlSvg = `
 
 .hs-fade-enter-active,
 .hs-fade-leave-active {
-  transition: opacity 0.55s ease;
+  transition: opacity 0.5s ease;
 }
 .hs-fade-enter-from,
 .hs-fade-leave-to {
   opacity: 0;
 }
 
+/* ---- 加载进度条 ---- */
+.hs-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  width: 100%;
+}
+.hs-loading-card {
+  width: 100%;
+  background: linear-gradient(160deg, #0f172a 0%, #1e3a8a 55%, #0c4a6e 100%);
+  border-radius: 18px;
+  padding: 34px 34px 30px;
+  text-align: center;
+  color: #fff;
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.3);
+}
+.hs-loading-logo {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  filter: drop-shadow(0 10px 20px rgba(37, 99, 235, 0.45));
+}
+.hs-loading-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 18px;
+}
+.hs-loading-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+.hs-loading-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #38bdf8, #34d399);
+  transition: width 0.12s linear;
+}
+.hs-loading-pct {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 9px;
+  color: #7dd3fc;
+}
+
 /* ---- 更新界面 ---- */
 .hs-update {
   display: flex;
   justify-content: center;
-  padding: 34px 0 44px;
+  width: 100%;
 }
 .hs-update-card {
-  width: min(540px, 100%);
+  width: 100%;
   background: linear-gradient(160deg, #0f172a 0%, #1e3a8a 55%, #0c4a6e 100%);
-  border-radius: 22px;
-  padding: 42px 46px 38px;
+  border-radius: 18px;
+  padding: 34px 34px 30px;
   text-align: center;
   color: #fff;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.3);
 }
 .hs-update-logo {
-  width: 76px;
-  height: 76px;
-  margin: 0 auto 18px;
-  filter: drop-shadow(0 10px 22px rgba(37, 99, 235, 0.45));
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 14px;
+  filter: drop-shadow(0 10px 20px rgba(37, 99, 235, 0.45));
 }
 .hs-update-title {
-  font-size: 22px;
+  font-size: 19px;
   font-weight: 700;
   margin: 0 0 6px;
   letter-spacing: 0.5px;
 }
 .hs-update-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: rgba(255, 255, 255, 0.65);
-  margin: 0 0 28px;
+  margin: 0 0 22px;
 }
 .hs-update-bar {
-  height: 10px;
+  height: 8px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.15);
   overflow: hidden;
@@ -601,20 +680,20 @@ const controlSvg = `
   transition: width 0.1s linear;
 }
 .hs-update-pct {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  margin-top: 10px;
+  margin-top: 9px;
   color: #7dd3fc;
 }
 .hs-update-steps {
-  margin-top: 22px;
+  margin-top: 18px;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: 7px 14px;
   justify-content: center;
 }
 .hs-update-steps span {
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.55);
   transition: color 0.2s;
 }
@@ -624,18 +703,16 @@ const controlSvg = `
 
 /* ---- 窗口阶段 ---- */
 .hs-stage {
-  padding: 26px 0 10px;
-  max-width: 1020px;
-  margin: 0 auto;
+  width: 100%;
 }
 .hs-stage-tag {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--vp-c-text-2);
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 .hs-dot {
   width: 8px;
@@ -652,7 +729,7 @@ const controlSvg = `
   display: block;
   width: 100%;
   border-radius: 12px;
-  filter: drop-shadow(0 18px 40px rgba(15, 23, 42, 0.18));
+  filter: drop-shadow(0 14px 30px rgba(15, 23, 42, 0.16));
 }
 
 /* SVG 内元素逐个出现 */
@@ -667,15 +744,27 @@ const controlSvg = `
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ---- 3 svg 并排 ---- */
+/* ---- 3 svg 完成界面 ---- */
 .hs-final {
-  padding: 34px 0 14px;
+  width: 100%;
   text-align: center;
 }
+.hs-final-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.hs-final-icon {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  filter: drop-shadow(0 8px 18px rgba(37, 99, 235, 0.3));
+}
 .hs-final-title {
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 700;
-  margin-bottom: 24px;
   background: linear-gradient(135deg, #1d4ed8, #06b6d4);
   -webkit-background-clip: text;
   background-clip: text;
@@ -683,66 +772,40 @@ const controlSvg = `
 }
 .hs-final-row {
   display: flex;
-  gap: 20px;
+  gap: 14px;
   align-items: stretch;
   justify-content: center;
-  flex-wrap: wrap;
 }
 .hs-final-card {
-  flex: 1 1 280px;
-  max-width: 440px;
+  flex: 1 1 0;
+  min-width: 0;
   background: var(--vp-c-bg-soft);
   border: 1px solid var(--vp-c-divider);
-  border-radius: 16px;
-  padding: 22px 22px 18px;
+  border-radius: 14px;
+  padding: 14px 14px 12px;
   opacity: 0;
   animation: hs-card-in 0.6s ease forwards;
   animation-delay: var(--d, 0s);
 }
 @keyframes hs-card-in {
-  from { opacity: 0; transform: translateY(18px); }
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.hs-final-logo {
-  flex: 1 1 240px;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 240px;
-}
-.hs-final-icon {
-  width: 108px;
-  height: 108px;
-  margin-bottom: 14px;
-  filter: drop-shadow(0 12px 26px rgba(37, 99, 235, 0.35));
+.hs-final-card .hs-win {
+  border-radius: 8px;
+  filter: drop-shadow(0 8px 18px rgba(15, 23, 42, 0.12));
 }
 .hs-final-name {
-  margin-top: 14px;
-  font-size: 15px;
+  margin-top: 10px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--vp-c-text-1);
 }
-.hs-final-desc {
-  font-size: 12px;
-  color: var(--vp-c-text-2);
-  margin-top: 4px;
-}
-.hs-final-wide .hs-win {
-  border-radius: 10px;
-  filter: drop-shadow(0 10px 24px rgba(15, 23, 42, 0.12));
-}
 
-/* 响应式 */
-@media (max-width: 960px) {
-  .hs-update-card { padding: 34px 26px 30px; }
-  .hs-final-row { gap: 14px; }
-  .hs-final-logo { min-height: auto; }
-}
+/* 移动端 */
 @media (max-width: 640px) {
-  .hs-showcase { padding: 4px 12px 0; }
-  .hs-replay { right: 12px; }
-  .hs-stage-tag { font-size: 12px; }
+  .hs-loading, .hs-update { min-height: 220px; }
+  .hs-loading-card, .hs-update-card { padding: 26px 22px 24px; }
+  .hs-final-row { gap: 10px; }
 }
 </style>

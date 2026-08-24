@@ -5,6 +5,9 @@ hero:
   name: AgoraIn
   text: 课堂签到打卡系统（v2.8）
   tagline: 大屏签到 + 课时划消与排课 + 集控平台<br>多端协同的现代化课堂管理解决方案
+  image:
+    src: /placeholder.svg
+    alt: AgoraIn v2.8
   actions:
     - theme: brand
       text: 快速开始
