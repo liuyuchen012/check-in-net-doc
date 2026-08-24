@@ -48,7 +48,7 @@ import { screenWindowSvg } from '../windows'
   animation: v-fade-up 0.7s ease 1.6s forwards;
 }
 .vstage-chips span {
-  font-size: clamp(10px, 1vw, 13px);
+  font-size: 13px;
   color: #93c5fd;
   background: rgba(37, 99, 235, 0.12);
   border: 1px solid rgba(96, 165, 250, 0.25);
@@ -80,7 +80,7 @@ import { screenWindowSvg } from '../windows'
 }
 .vs-over .vs-chk {
   color: #fff;
-  font-size: clamp(18px, 1.7vw, 26px);
+  font-size: 26px;
   font-weight: 800;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
 }
@@ -104,7 +104,7 @@ import { screenWindowSvg } from '../windows'
   background: #dbeafe;
   border: 1px solid #93c5fd;
   color: #2563eb;
-  font-size: clamp(11px, 1.15vw, 15px);
+  font-size: 15px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -125,7 +125,7 @@ import { screenWindowSvg } from '../windows'
   background: #fff;
   box-shadow: 0 6px 18px rgba(2, 6, 23, 0.18);
   color: #334155;
-  font-size: clamp(10px, 1.05vw, 14px);
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   opacity: 0;
@@ -152,7 +152,7 @@ import { screenWindowSvg } from '../windows'
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(96, 165, 250, 0.4);
   color: #bfdbfe;
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 1px;
   white-space: nowrap;

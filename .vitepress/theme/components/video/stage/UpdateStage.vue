@@ -37,14 +37,14 @@ const steps = ['下载更新包', '校验完整性', '安装核心组件', '配�
   animation: v-show-in 0.9s ease 0.3s forwards;
 }
 .vs-upd-logo {
-  width: clamp(58px, 6.5vw, 84px);
+  width: 84px;
   margin: 0 auto 3%;
   filter: drop-shadow(0 12px 26px rgba(37, 99, 235, 0.5));
   opacity: 0;
   animation: v-fade-up 0.7s ease 0.8s forwards;
 }
 .vs-upd-title {
-  font-size: clamp(20px, 2.4vw, 30px);
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: 1px;
   margin: 0 0 1%;
@@ -52,7 +52,7 @@ const steps = ['下载更新包', '校验完整性', '安装核心组件', '配�
   animation: v-fade-up 0.7s ease 1.1s forwards;
 }
 .vs-upd-sub {
-  font-size: clamp(12px, 1.2vw, 15px);
+  font-size: 15px;
   color: #94a3b8;
   margin: 0 0 4%;
   opacity: 0;
@@ -86,7 +86,7 @@ const steps = ['下载更新包', '校验完整性', '安装核心组件', '配�
   justify-content: center;
 }
 .vs-upd-step {
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: 14px;
   color: #64748b;
   padding: 4px 12px;
   border-radius: 999px;
@@ -103,7 +103,7 @@ const steps = ['下载更新包', '校验完整性', '安装核心组件', '配�
   align-items: center;
   justify-content: center;
   gap: 10px;
-  font-size: clamp(13px, 1.3vw, 16px);
+  font-size: 16px;
   font-weight: 600;
   color: #7dd3fc;
   opacity: 0;

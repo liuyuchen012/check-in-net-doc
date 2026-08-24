@@ -52,7 +52,7 @@ import { controlWindowSvg } from '../windows'
   animation: v-fade-up 0.7s ease 1.6s forwards;
 }
 .vstage-chips span {
-  font-size: clamp(10px, 1vw, 13px);
+  font-size: 13px;
   color: #a7f3d0;
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(52, 211, 153, 0.25);
@@ -84,7 +84,7 @@ import { controlWindowSvg } from '../windows'
   border-radius: 999px;
   background: #2563eb;
   color: #fff;
-  font-size: clamp(8px, 0.85vw, 11px);
+  font-size: 11px;
   font-weight: 700;
   opacity: 0;
   animation: v-pop-in 0.6s ease 6s forwards;
@@ -99,7 +99,7 @@ import { controlWindowSvg } from '../windows'
   display: flex;
   gap: 3%;
   align-items: center;
-  font-size: clamp(8px, 0.9vw, 11.5px);
+  font-size: 11.5px;
   background: #fff;
   padding: 0.4% 1.2%;
   border-radius: 6px;
@@ -119,7 +119,7 @@ import { controlWindowSvg } from '../windows'
   top: 82.21%;
   width: 5.55%;
   text-align: center;
-  font-size: clamp(8px, 0.9vw, 11.5px);
+  font-size: 11.5px;
   font-weight: 700;
   color: #16a34a;
   background: rgba(34, 197, 94, 0.16);
@@ -147,17 +147,17 @@ import { controlWindowSvg } from '../windows'
   opacity: 0;
   animation: v-show-in 0.6s ease 12s forwards;
 }
-.vs-c-sched .n { color: #1e293b; font-weight: 700; font-size: clamp(8px, 0.9vw, 12px); }
+.vs-c-sched .n { color: #1e293b; font-weight: 700; font-size: 12px; }
 .vs-c-sched .tm {
   color: #334155;
-  font-size: clamp(7px, 0.8vw, 11px);
+  font-size: 11px;
   border: 1px solid #d0d6dd;
   border-radius: 6px;
   padding: 0.3% 2.4%;
 }
 .vs-c-sched .rm {
   color: #d32f2f;
-  font-size: clamp(7px, 0.8vw, 10px);
+  font-size: 10px;
   background: #fdecea;
   border-radius: 8px;
   padding: 0.4% 2.6%;
@@ -172,7 +172,7 @@ import { controlWindowSvg } from '../windows'
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(96, 165, 250, 0.4);
   color: #bfdbfe;
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 1px;
   white-space: nowrap;

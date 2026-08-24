@@ -23,7 +23,7 @@ import { faviconSvg } from '../windows'
   text-align: center;
 }
 .vs-out-logo {
-  width: clamp(84px, 9vw, 120px);
+  width: 120px;
   aspect-ratio: 1;
   margin: 0 auto;
   opacity: 0;
@@ -35,7 +35,7 @@ import { faviconSvg } from '../windows'
   to { opacity: 1; transform: scale(1); }
 }
 .vs-out-title {
-  font-size: clamp(28px, 4vw, 52px);
+  font-size: 52px;
   font-weight: 800;
   letter-spacing: 3px;
   line-height: 1.2;
@@ -49,7 +49,7 @@ import { faviconSvg } from '../windows'
   animation: v-fade-up 0.9s ease 1.8s forwards;
 }
 .vs-out-sub {
-  font-size: clamp(13px, 1.4vw, 18px);
+  font-size: 18px;
   color: #cbd5e1;
   margin: 1% 0 0;
   letter-spacing: 2px;
@@ -62,7 +62,7 @@ import { faviconSvg } from '../windows'
   gap: 2%;
   justify-content: center;
   align-items: center;
-  font-size: clamp(11px, 1.2vw, 15px);
+  font-size: 15px;
   color: #7dd3fc;
   opacity: 0;
   animation: v-fade-up 0.8s ease 4.4s forwards;
@@ -70,7 +70,7 @@ import { faviconSvg } from '../windows'
 .vs-out-links .sep { color: #475569; }
 .vs-out-copy {
   margin-top: 3.4%;
-  font-size: clamp(9px, 0.9vw, 12px);
+  font-size: 12px;
   color: #64748b;
   letter-spacing: 1px;
   opacity: 0;

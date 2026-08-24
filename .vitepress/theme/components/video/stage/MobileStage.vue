@@ -57,7 +57,7 @@
   padding: 3%;
 }
 .vs-mobile-title {
-  font-size: clamp(22px, 3.2vw, 42px);
+  font-size: 42px;
   font-weight: 800;
   letter-spacing: 2px;
   color: #e2e8f0;
@@ -65,7 +65,7 @@
   animation: v-fade-up 0.8s ease 0.2s forwards;
 }
 .vs-mobile-sub {
-  font-size: clamp(12px, 1.3vw, 16px);
+  font-size: 16px;
   color: #94a3b8;
   margin: 0.6% 0 0;
   opacity: 0;
@@ -83,7 +83,7 @@
   background: rgba(15, 23, 42, 0.75);
   border: 1px solid rgba(96, 165, 250, 0.25);
   border-radius: 20px;
-  padding: clamp(16px, 2vw, 28px);
+  padding: 28px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -108,7 +108,7 @@
 .android-icon { background: rgba(16, 185, 129, 0.16); color: #34d399; }
 .web-icon { background: rgba(37, 99, 235, 0.16); color: #60a5fa; }
 .vs-card-title {
-  font-size: clamp(15px, 1.6vw, 20px);
+  font-size: 20px;
   font-weight: 700;
   color: #f1f5f9;
   margin-bottom: 10px;
@@ -124,7 +124,7 @@
 .vs-card-list li {
   position: relative;
   padding-left: 16px;
-  font-size: clamp(11px, 1.05vw, 14px);
+  font-size: 14px;
   color: #cbd5e1;
   line-height: 1.45;
   opacity: 0;
@@ -154,7 +154,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: 14px;
   color: #7dd3fc;
   background: rgba(37, 99, 235, 0.12);
   border: 1px solid rgba(96, 165, 250, 0.3);

@@ -133,10 +133,10 @@
   opacity: 0;
   animation: v-show-in 0.7s ease forwards;
 }
-.vs-srv-node .ic { font-size: clamp(22px, 2.4vw, 34px); line-height: 1; }
-.vs-srv-node .nm { font-size: clamp(10px, 1vw, 13px); color: #e2e8f0; white-space: nowrap; }
+.vs-srv-node .ic { font-size: 34px; line-height: 1; }
+.vs-srv-node .nm { font-size: 13px; color: #e2e8f0; white-space: nowrap; }
 .vs-srv-node .st {
-  font-size: clamp(9px, 0.9vw, 11px);
+  font-size: 11px;
   padding: 2px 12px;
   border-radius: 999px;
   font-weight: 600;
@@ -162,17 +162,17 @@
   animation: v-show-in 0.8s ease 1s forwards;
 }
 .vs-srv-core-ic {
-  width: clamp(44px, 4.4vw, 60px);
+  width: 60px;
   height: auto;
   margin: 0 auto 8px;
 }
 .vs-srv-core-name {
-  font-size: clamp(14px, 1.5vw, 19px);
+  font-size: 19px;
   font-weight: 700;
   color: #e0f2fe;
 }
 .vs-srv-core-port {
-  font-size: clamp(9px, 0.9vw, 12px);
+  font-size: 12px;
   color: #7dd3fc;
   margin-top: 4px;
 }
@@ -183,9 +183,9 @@
   margin-top: 12px;
 }
 .vs-srv-core-stats .st { display: flex; flex-direction: column; gap: 2px; }
-.vs-srv-core-stats .v { font-size: clamp(16px, 1.8vw, 24px); font-weight: 800; color: #67e8f9; }
+.vs-srv-core-stats .v { font-size: 24px; font-weight: 800; color: #67e8f9; }
 .vs-srv-core-stats .v.on2 { color: #34d399; }
-.vs-srv-core-stats .l { font-size: clamp(8px, 0.8vw, 11px); color: #94a3b8; }
+.vs-srv-core-stats .l { font-size: 11px; color: #94a3b8; }
 
 .vs-srv-tip {
   position: absolute;
@@ -197,7 +197,7 @@
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid rgba(96, 165, 250, 0.4);
   color: #bfdbfe;
-  font-size: clamp(11px, 1.1vw, 14px);
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 1px;
   white-space: nowrap;

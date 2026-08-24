@@ -31,6 +31,17 @@ const showTool = ref(true)
 const timers: number[] = []
 let clock: number | undefined
 
+// 舞台基准尺寸 1920x1080，按视口等比缩放：
+// 4K / 1080p（16:9）满屏等大，1920x1280 等非 16:9 屏幕居中并等比缩放
+const BASE_W = 1920
+const BASE_H = 1080
+const scale = ref(1)
+function updateScale() {
+  const w = window.innerWidth
+  const h = window.innerHeight
+  scale.value = Math.min(w / BASE_W, h / BASE_H)
+}
+
 const fmt = (s: number) =>
   `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`
 
@@ -49,10 +60,15 @@ const play = () => {
   })
 }
 
-onMounted(play)
+onMounted(() => {
+  play()
+  updateScale()
+  window.addEventListener('resize', updateScale)
+})
 onBeforeUnmount(() => {
   timers.forEach((t) => window.clearTimeout(t))
   if (clock) window.clearInterval(clock)
+  window.removeEventListener('resize', updateScale)
 })
 </script>
 
@@ -65,17 +81,19 @@ onBeforeUnmount(() => {
       <i v-for="n in 14" :key="n" :style="{ '--p-delay': (n * 0.9) + 's', '--p-x': (n * 7.3) % 100 + '%', '--p-size': (3 + (n % 5) * 2) + 'px' }"></i>
     </div>
 
-    <!-- 16:9 舞台 -->
-    <div class="vshow-stage">
-      <Transition name="v-fade" mode="out-in">
-        <IntroStage v-if="idx === 0" key="intro" />
-        <UpdateStage v-else-if="idx === 1" key="update" />
-        <ScreenStage v-else-if="idx === 2" key="screen" />
-        <ControlStage v-else-if="idx === 3" key="control" />
-        <ServerStage v-else-if="idx === 4" key="server" />
-        <MobileStage v-else-if="idx === 5" key="mobile" />
-        <OutroStage v-else key="outro" />
-      </Transition>
+    <!-- 16:9 舞台：固定 1920x1080 基准，整容器等比缩放适配任意分辨率 -->
+    <div class="vshow-scale" :style="{ transform: 'scale(' + scale + ')' }">
+      <div class="vshow-stage">
+        <Transition name="v-fade" mode="out-in">
+          <IntroStage v-if="idx === 0" key="intro" />
+          <UpdateStage v-else-if="idx === 1" key="update" />
+          <ScreenStage v-else-if="idx === 2" key="screen" />
+          <ControlStage v-else-if="idx === 3" key="control" />
+          <ServerStage v-else-if="idx === 4" key="server" />
+          <MobileStage v-else-if="idx === 5" key="mobile" />
+          <OutroStage v-else key="outro" />
+        </Transition>
+      </div>
     </div>
 
     <!-- 录制辅助工具（可隐藏） -->
@@ -126,13 +144,21 @@ onBeforeUnmount(() => {
   100% { transform: translateY(-90vh) translateX(40px); opacity: 0; }
 }
 
-.vshow-stage {
+/* 等比缩放容器：将 1920x1080 舞台缩放适配任意视口，内容比例始终一致 */
+.vshow-scale {
   position: absolute;
   inset: 0;
-  margin: auto;
-  width: min(1280px, 100vw);
-  aspect-ratio: 16 / 9;
-  max-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+}
+.vshow-stage {
+  position: relative;
+  width: 1920px;
+  height: 1080px;
+  flex: none;
 }
 
 .v-fade-enter-active,
@@ -189,7 +215,7 @@ onBeforeUnmount(() => {
   padding: 3% 5%;
 }
 .vstage-title {
-  font-size: clamp(20px, 2.4vw, 30px);
+  font-size: 30px;
   font-weight: 700;
   letter-spacing: 1px;
   margin-bottom: 2.2%;
@@ -197,7 +223,7 @@ onBeforeUnmount(() => {
   animation: v-fade-up 0.8s ease 0.5s forwards;
 }
 .vstage-sub {
-  font-size: clamp(12px, 1.2vw, 15px);
+  font-size: 15px;
   color: #94a3b8;
   margin-bottom: 3%;
   opacity: 0;
