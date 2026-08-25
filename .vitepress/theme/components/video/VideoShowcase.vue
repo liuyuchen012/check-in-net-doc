@@ -28,8 +28,6 @@ timeline.forEach((t) => { starts.push(acc); acc += t.dur })
 const idx = ref(0)
 const now = ref(0)
 const showTool = ref(true)
-// 小屏横版模式：模块介绍文字浮在左下角，主视觉居中
-const compact = ref(false)
 const timers: number[] = []
 let clock: number | undefined
 
@@ -89,10 +87,10 @@ onBeforeUnmount(() => {
         <Transition name="v-fade" mode="out-in">
           <IntroStage v-if="idx === 0" key="intro" />
           <UpdateStage v-else-if="idx === 1" key="update" />
-          <ScreenStage v-else-if="idx === 2" key="screen" :compact="compact" />
-          <ControlStage v-else-if="idx === 3" key="control" :compact="compact" />
-          <ServerStage v-else-if="idx === 4" key="server" :compact="compact" />
-          <MobileStage v-else-if="idx === 5" key="mobile" :compact="compact" />
+          <ScreenStage v-else-if="idx === 2" key="screen" />
+          <ControlStage v-else-if="idx === 3" key="control" />
+          <ServerStage v-else-if="idx === 4" key="server" />
+          <MobileStage v-else-if="idx === 5" key="mobile" />
           <OutroStage v-else key="outro" />
         </Transition>
       </div>
@@ -102,7 +100,6 @@ onBeforeUnmount(() => {
     <div v-if="showTool" class="vshow-tool">
       <span class="vshow-clock">{{ fmt(now) }} / {{ fmt(totalSec) }}</span>
       <button class="vshow-btn" type="button" @click="play">↻ 重播</button>
-      <button class="vshow-btn" :class="{ on: compact }" type="button" @click="compact = !compact">小屏版</button>
       <button class="vshow-btn" type="button" @click="showTool = false">隐藏</button>
     </div>
   </div>
@@ -206,11 +203,6 @@ onBeforeUnmount(() => {
   border-color: #60a5fa;
   color: #60a5fa;
 }
-.vshow-btn.on {
-  border-color: #60a5fa;
-  background: rgba(37, 99, 235, 0.28);
-  color: #fff;
-}
 
 /* 阶段通用 */
 .vstage {
@@ -221,21 +213,9 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   padding: 3% 5%;
-}
-.vstage-title {
-  font-size: 30px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 2.2%;
-  opacity: 0;
-  animation: v-fade-up 0.8s ease 0.5s forwards;
-}
-.vstage-sub {
-  font-size: 15px;
-  color: #94a3b8;
-  margin-bottom: 3%;
-  opacity: 0;
-  animation: v-fade-up 0.8s ease 0.9s forwards;
+  /* 镜头推近：以舞台左上角为原点缩放/平移 */
+  transform-origin: 0 0;
+  will-change: transform;
 }
 @keyframes v-fade-up {
   from { opacity: 0; transform: translateY(18px); }
@@ -254,76 +234,9 @@ onBeforeUnmount(() => {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== 小屏横版模式：介绍文字浮在左下角，主视觉居中 ===== */
-.is-compact .vs-side-txt {
-  position: absolute;
-  left: 2.8%;
-  bottom: 4.5%;
-  z-index: 20;
-  max-width: 660px;
-  text-align: left;
-  padding: 20px 30px 24px;
-  border-radius: 18px;
-  background: rgba(11, 18, 32, 0.8);
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.5);
-  opacity: 0;
-  animation: v-show-in 0.8s ease 0.3s forwards;
-}
-.is-compact .vs-side-txt .vstage-title,
-.is-compact .vs-side-txt .vs-mobile-title {
-  font-size: 30px;
-  margin-bottom: 8px;
-  letter-spacing: 1px;
-}
-.is-compact .vs-side-txt .vstage-sub,
-.is-compact .vs-side-txt .vs-mobile-sub {
-  font-size: 15px;
-  margin-bottom: 12px;
-}
-.is-compact .vs-side-txt .vstage-chips {
-  margin-top: 0;
-  justify-content: flex-start;
-}
-.is-compact .vs-side-txt .vstage-chips span {
-  font-size: 12.5px;
-}
-/* 浮层内文字不再各自播放入场动画，由浮层统一淡入 */
-.is-compact .vs-side-txt .vstage-title,
-.is-compact .vs-side-txt .vstage-sub,
-.is-compact .vs-side-txt .vstage-chips,
-.is-compact .vs-side-txt .vs-mobile-title,
-.is-compact .vs-side-txt .vs-mobile-sub {
-  animation: none;
-  opacity: 1;
-}
-/* 小屏模式下主视觉适当收窄，为左下角文字留出空间 */
-.is-compact .vs-scr-wrap,
-.is-compact .vs-ctl-wrap {
-  width: min(88%, 1080px);
-}
-.is-compact .vs-srv-stage {
-  width: min(86%, 1000px);
-}
-.vs-mobile.is-compact .vs-mobile-grid {
-  width: min(80%, 1020px);
-}
-.vs-mobile.is-compact .vs-mobile-card {
-  padding: 20px;
-}
-.vs-mobile.is-compact .vs-card-list li {
-  font-size: 13px;
-}
-
-/* 通用淡入（演示叠加层用） */
+/* 通用淡入 */
 @keyframes v-show-in {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
-}
-@keyframes v-pop-in {
-  from { opacity: 0; transform: scale(0.6); }
-  30% { opacity: 1; transform: scale(1.08); }
-  to { opacity: 1; transform: scale(1); }
 }
 </style>
