@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
-import { faviconSvg } from '../windows'
+import { faviconSvg } from './windows'
 
 /* ================= 演播状态 ================= */
 const cursor = ref({ x: 0, y: 0, visible: false, pressed: false })
