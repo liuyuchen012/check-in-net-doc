@@ -3,9 +3,9 @@ import { ref, computed, onMounted } from 'vue'
 
 const activePlatform = ref('windows')
 const loading = ref(true)
-const version = ref('V2.7')
+const version = ref('V2.8')
 const publishedAt = ref('')
-const releaseUrl = ref('https://github.com/liuyuchen012/AgoraIn/releases/tag/V2.7')
+const releaseUrl = ref('https://github.com/liuyuchen012/AgoraIn/releases/latest')
 
 const platforms = [
   { key: 'windows', label: 'Windows', icon: '⊞' },
@@ -16,10 +16,12 @@ const platforms = [
 
 // 从 GitHub API 获取最新版本信息
 const assets = ref<Record<string, { size: number; url: string }>>({
-  'AgoraIn-Windows-x64-Client.exe': { size: 0, url: '' },
-  'AgoraIn-Windows-x64-Server.exe': { size: 0, url: '' },
-  'AgoraIn-Linux-x64-Server.zip': { size: 0, url: '' },
-  'AgoraIn-MacOS-x64-Server.zip': { size: 0, url: '' },
+  'Client.win-x64.zip': { size: 0, url: '' },
+  'Server.win-x64.zip': { size: 0, url: '' },
+  'Server.linux-x64.zip': { size: 0, url: '' },
+  'Server.osx-x64.zip': { size: 0, url: '' },
+  'Server.osx-arm64.zip': { size: 0, url: '' },
+  'Mobile.Android.zip': { size: 0, url: '' },
 })
 
 function fmtSize(bytes: number) {
@@ -33,7 +35,7 @@ async function fetchRelease() {
     const res = await fetch('https://api.github.com/repos/liuyuchen012/AgoraIn/releases/latest')
     if (!res.ok) throw new Error('API error')
     const data = await res.json()
-    version.value = data.tag_name || 'V2.7'
+    version.value = data.tag_name || 'V2.8'
     publishedAt.value = new Date(data.published_at).toLocaleDateString('zh-CN')
     releaseUrl.value = data.html_url || releaseUrl.value
 
@@ -57,11 +59,11 @@ const downloads = computed(() => {
     windows: [
       {
         title: '桌面客户端',
-        desc: 'WPF 桌面应用，适用于班级电子白板',
-        filename: 'AgoraIn-Windows-x64-Client.exe',
-        ext: 'exe',
-        url: a['AgoraIn-Windows-x64-Client.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-        filesize: a['AgoraIn-Windows-x64-Client.exe']?.size || 0,
+        desc: 'WPF 桌面应用，适用于班级电子白板。解压后运行 AgoraIn.exe 即可。',
+        filename: 'Client.win-x64.zip',
+        ext: 'zip',
+        url: a['Client.win-x64.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Client.win-x64.zip']?.size || 0,
         icon: '🖥',
         tag: '必装',
         tagColor: '#7c3aed',
@@ -69,10 +71,10 @@ const downloads = computed(() => {
       {
         title: '服务器端（集控平台）',
         desc: 'ASP.NET Core 服务，Windows x64 独立部署包。如需使用多设备管理、扫码打卡功能必须部署此包。',
-        filename: 'AgoraIn-Windows-x64-Server.exe',
-        ext: 'exe',
-        url: a['AgoraIn-Windows-x64-Server.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-        filesize: a['AgoraIn-Windows-x64-Server.exe']?.size || 0,
+        filename: 'Server.win-x64.zip',
+        ext: 'zip',
+        url: a['Server.win-x64.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Server.win-x64.zip']?.size || 0,
         icon: '⚙',
         tag: '推荐',
         tagColor: '#10b981',
@@ -82,10 +84,10 @@ const downloads = computed(() => {
       {
         title: '服务器端',
         desc: 'ASP.NET Core 服务，Linux x64 独立部署包。如需使用多设备管理、扫码打卡功能必须部署此包。',
-        filename: 'AgoraIn-Linux-x64-Server.zip',
+        filename: 'Server.linux-x64.zip',
         ext: 'zip',
-        url: a['AgoraIn-Linux-x64-Server.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-        filesize: a['AgoraIn-Linux-x64-Server.zip']?.size || 0,
+        url: a['Server.linux-x64.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Server.linux-x64.zip']?.size || 0,
         icon: '⚙',
         tag: '必装',
         tagColor: '#10b981',
@@ -93,14 +95,25 @@ const downloads = computed(() => {
     ],
     macos: [
       {
-        title: '服务器端',
-        desc: 'ASP.NET Core 服务，macOS x64 独立部署包。如需使用多设备管理、扫码打卡功能必须部署此包。',
-        filename: 'AgoraIn-MacOS-x64-Server.zip',
+        title: '服务器端（Intel）',
+        desc: 'ASP.NET Core 服务，macOS x64 独立部署包，适用于 Intel 芯片的 Mac。',
+        filename: 'Server.osx-x64.zip',
         ext: 'zip',
-        url: a['AgoraIn-MacOS-x64-Server.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-        filesize: a['AgoraIn-MacOS-x64-Server.zip']?.size || 0,
+        url: a['Server.osx-x64.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Server.osx-x64.zip']?.size || 0,
         icon: '⚙',
         tag: '必装',
+        tagColor: '#10b981',
+      },
+      {
+        title: '服务器端（Apple Silicon）',
+        desc: 'ASP.NET Core 服务，macOS ARM64 独立部署包，适用于 M 系列芯片的 Mac。',
+        filename: 'Server.osx-arm64.zip',
+        ext: 'zip',
+        url: a['Server.osx-arm64.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Server.osx-arm64.zip']?.size || 0,
+        icon: '⚙',
+        tag: '推荐',
         tagColor: '#10b981',
       },
     ],
@@ -115,6 +128,17 @@ const downloads = computed(() => {
         icon: '🤖',
         tag: '安卓',
         tagColor: '#22c55e',
+      },
+      {
+        title: '安卓构建包（.aab）',
+        desc: '面向开发者的 Play 商店上传包，内含签名版与未签名版 .aab，普通用户请使用上方 APK。',
+        filename: 'Mobile.Android.zip',
+        ext: 'zip',
+        url: a['Mobile.Android.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Mobile.Android.zip']?.size || 0,
+        icon: '📦',
+        tag: '开发者',
+        tagColor: '#64748b',
       },
     ],
   }
