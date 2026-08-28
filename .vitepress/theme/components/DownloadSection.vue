@@ -22,6 +22,7 @@ const assets = ref<Record<string, { size: number; url: string }>>({
   'Server.osx-x64.zip': { size: 0, url: '' },
   'Server.osx-arm64.zip': { size: 0, url: '' },
   'Mobile.Android.zip': { size: 0, url: '' },
+  'Mobile.macOS.zip': { size: 0, url: '' },
 })
 
 function fmtSize(bytes: number) {
@@ -94,6 +95,17 @@ const downloads = computed(() => {
       },
     ],
     macos: [
+      {
+        title: '桌面客户端（Mac Catalyst）',
+        desc: 'macOS 客户端 .pkg 安装包（Mac Catalyst）。若安装后被 Gatekeeper 拦截，请到 系统设置 → 隐私与安全性 点击"仍要打开"。',
+        filename: 'Mobile.macOS.zip',
+        ext: 'zip',
+        url: a['Mobile.macOS.zip']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['Mobile.macOS.zip']?.size || 0,
+        icon: '🖥',
+        tag: '必装',
+        tagColor: '#7c3aed',
+      },
       {
         title: '服务器端（Intel）',
         desc: 'ASP.NET Core 服务，macOS x64 独立部署包，适用于 Intel 芯片的 Mac。',
