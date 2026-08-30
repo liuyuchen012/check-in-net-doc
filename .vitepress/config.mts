@@ -30,6 +30,7 @@ export default defineConfig({
         items: [
           { text: '快速开始', link: '/guide' },
           { text: '功能特性', link: '/features' },
+          { text: '连接插件端', link: '/plugin' },
           { text: 'API 文档', link: '/api' },
           { text: '部署指南', link: '/deploy' },
           { text: '常见问题', link: '/faq' },
@@ -98,6 +99,20 @@ export default defineConfig({
             { text: '移动端', link: '/features#移动端client-mobilemaui' },
             { text: '技术栈', link: '/features#技术栈' },
             { text: '版本历史', link: '/features#版本历史' }
+          ]
+        }
+      ],
+      '/plugin': [
+        {
+          text: '连接插件端',
+          items: [
+            { text: '插件端是什么', link: '/plugin#插件端是什么' },
+            { text: '环境要求', link: '/plugin#环境要求' },
+            { text: '安装插件', link: '/plugin#第一步-安装插件' },
+            { text: '配置连接', link: '/plugin#第二步-配置连接' },
+            { text: '验证连接', link: '/plugin#第三步-验证连接' },
+            { text: '常见问题', link: '/plugin#常见问题' },
+            { text: '相关链接', link: '/plugin#相关链接' }
           ]
         }
       ],
