@@ -63,13 +63,16 @@ async function fetchRelease() {
 
 onMounted(fetchRelease)
 
+function withMirror(item: { url: string }) {
+  return { ...item, directUrl: item.url, url: mirrorUrl(item.url) }
+}
+
 function withMirrorList(items: { url: string }[]) {
   return items.map(withMirror)
 }
 
 const downloads = computed(() => {
   const a = assets.value
-  const withMirror = (item: { url: string }) => ({ ...item, directUrl: item.url, url: mirrorUrl(item.url) })
   return {
     windows: [
 
