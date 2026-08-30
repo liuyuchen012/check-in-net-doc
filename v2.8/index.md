@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /guide
+      link: /v2.8/guide
     - theme: alt
       text: 下载中心
       link: /download
