@@ -6,7 +6,7 @@ type Phase = 'loading' | 'update' | 'screen' | 'control' | 'final'
 const phase = ref<Phase>('loading')
 const loadPct = ref(0) // 页面加载进度
 const upPct = ref(0)   // 更新动画进度
-const steps = ['下载更新包', '校验完整性', '安装核心组件', '配置本地服务', '界面初始化']
+const steps = ['拉取最新版本', '校验完整性', '安装核心组件', '配置本地服务', '界面初始化']
 
 const timers: number[] = []
 let loadTimer: number | undefined
@@ -508,7 +508,7 @@ const controlSvg = `
         <div class="hs-update-card">
           <div class="hs-update-logo" v-html="faviconUp"></div>
           <h3 class="hs-update-title">正在更新 AgoraIn</h3>
-          <p class="hs-update-sub">v2.7 → v2.8 · 课堂签到打卡系统</p>
+          <p class="hs-update-sub">v3.2 · 课堂签到打卡系统</p>
           <div class="hs-update-bar">
             <div class="hs-update-fill" :style="{ width: upPct + '%' }"></div>
           </div>

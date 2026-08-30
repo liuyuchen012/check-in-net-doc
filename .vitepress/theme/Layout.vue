@@ -20,7 +20,7 @@ const projectSwitch = {
   ],
 }
 
-// 电脑端导航
+// 电脑端导航（V3.2：旧版文档改为 v2.8 / v2.7 归档下拉）
 const desktopNav: Theme.NavItem[] = [
   { ...projectSwitch, activeMatch: '^/(?!miniprogram/)' },
   { text: '下载', link: '/download' },
@@ -34,9 +34,15 @@ const desktopNav: Theme.NavItem[] = [
       { text: '常见问题', link: '/faq' },
     ],
   },
-  { text: '旧版文档（v2.7）', link: '/v2.7/' },
   {
-    text: 'v2.8',
+    text: '旧版文档',
+    items: [
+      { text: 'v2.8 归档', link: '/v2.8/' },
+      { text: 'v2.7 归档', link: '/v2.7/' },
+    ],
+  },
+  {
+    text: 'v3.2',
     items: [
       { text: '更新日志', link: 'https://github.com/liuyuchen012/AgoraIn/releases' },
       { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/AgoraIn' },
