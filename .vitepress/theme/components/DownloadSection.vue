@@ -42,7 +42,7 @@ function fmtSize(bytes: number) {
 
 async function fetchRelease() {
   try {
-    const res = await fetch('https://api.github.com/repos/liuyuchen012/AgoraIn/releases/latest')
+    const res = await fetch('https://api.github.com/repos/liuyuchen012/AgoraIn/releases/latest?_=' + Date.now())
     if (!res.ok) throw new Error('API error')
     const data = await res.json()
     version.value = data.tag_name || 'V3.2'
