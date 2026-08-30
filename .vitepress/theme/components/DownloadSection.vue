@@ -9,6 +9,10 @@ const releaseUrl = ref('https://github.com/liuyuchen012/AgoraIn/releases/latest'
 
 interface AssetInfo { size: number; url: string }
 
+// GitHub 加速镜像（下载页主链路；卡片内保留官方直链兜底）
+const MIRROR = 'https://ghfast.top'
+const mirrorUrl = (u: string) => (u.startsWith('https://github.com/') ? MIRROR + '/' + u : u)
+
 const platforms = [
   { key: 'windows', label: 'Windows', icon: '⊞', glow: '#7c3aed' },
   { key: 'linux', label: 'Linux', icon: '🐧', glow: '#10b981' },
@@ -59,10 +63,16 @@ async function fetchRelease() {
 
 onMounted(fetchRelease)
 
+function withMirrorList(items: { url: string }[]) {
+  return items.map(withMirror)
+}
+
 const downloads = computed(() => {
   const a = assets.value
+  const withMirror = (item: { url: string }) => ({ ...item, directUrl: item.url, url: mirrorUrl(item.url) })
   return {
     windows: [
+
       {
         title: '桌面客户端（安装包）',
         desc: 'Inno Setup 安装程序，推荐！自动安装到开始菜单并可创建桌面快捷方式，升级安装不会覆盖你的配置数据。',
@@ -196,7 +206,7 @@ const downloads = computed(() => {
       <div class="download-hero">
         <div class="hero-badge">🚀 全新 V3.2 构建 · 多重平台</div>
         <h1 class="hero-title">AgoraIn <span>资源库</span></h1>
-        <p class="subtitle">选择你的平台，一键直达最新构建物</p>
+        <p class="subtitle">选择你的平台，一键直达最新构建物（经国内加速镜像）</p>
         <div class="version-info">
           <span class="version-badge">{{ version }}</span>
           <span v-if="publishedAt" class="pub-date">发布于 {{ publishedAt }}</span>
@@ -221,7 +231,7 @@ const downloads = computed(() => {
 
       <TransitionGroup name="cards" tag="div" class="download-cards">
         <div
-          v-for="item in downloads[activePlatform]"
+          v-for="item in withMirrorList(downloads[activePlatform])"
           :key="item.title"
           class="download-card"
         >
@@ -237,6 +247,9 @@ const downloads = computed(() => {
           <a class="download-btn" :href="item.url" target="_blank" rel="noopener">
             <span class="btn-icon">⬇</span>
             <span>立即下载</span>
+          </a>
+          <a v-if="item.directUrl && item.directUrl !== item.url" class="direct-link" :href="item.directUrl" target="_blank" rel="noopener">
+            镜像不可用？使用 GitHub 官方直链 →
           </a>
         </div>
       </TransitionGroup>
@@ -419,6 +432,11 @@ const downloads = computed(() => {
 @keyframes sweep { 0%, 55% { left: -120%; } 90%, 100% { left: 160%; } }
 .download-btn:hover { background: linear-gradient(135deg, #8b5cf6, #6366f1 55%, #3b82f6); box-shadow: 0 8px 26px rgba(124,58,237,0.5); transform: translateY(-1px); }
 .btn-icon { font-size: 1.05rem; }
+.direct-link {
+  display: block; text-align: center; margin-top: 10px; font-size: 0.78rem;
+  color: rgba(148,163,184,0.8); text-decoration: none; transition: color 0.2s;
+}
+.direct-link:hover { color: #c4b5fd; }
 
 .git-entry { text-align: center; margin-top: 28px; }
 .download-footer { text-align: center; margin-top: 40px; padding: 18px 0 8px; color: rgba(148,163,184,0.6); font-size: 0.88rem; border-top: 1px solid rgba(148,163,184,0.12); }
