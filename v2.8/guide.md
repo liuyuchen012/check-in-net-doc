@@ -1,8 +1,8 @@
-# 🚀 快速开始（v3.2）
+# 🚀 快速开始（v2.8）
 
-> 本文档对应 **AgoraIn v3.2**（AgoraInPro）。历史版本：v2.8 已归档（[v2.8 快速开始](/v2.8/guide)），v2.7 已归档（[v2.7 快速开始](/v2.7/guide)。
+> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 快速开始](/v2.7/guide)。
 
-AgoraIn v3.2 是"打卡 + 课时管理 + 集控平台"解决方案，包含桌面客户端（大屏模式 / 控制模式）、本地集控服务器和移动端 App。
+AgoraIn v2.8 是"打卡 + 课时管理 + 集控平台"解决方案，包含桌面客户端（大屏模式 / 控制模式）、本地集控服务器和移动端 App。
 
 ## 环境要求
 
@@ -92,18 +92,6 @@ dotnet run --project Server\CheckIn.Server.csproj
 2. 输入服务器地址（如 `http://192.168.1.100:5250`）并登录（JWT 认证）
 3. 查看仪表盘、设备列表、任务中心、考勤记录，管理用户与设备分配
 
-### ClassIsland 插件（教室一体机）
-
-1. 在教室一体机安装 **[ClassIsland](https://classisland.tech)**，并从[下载中心](/download)获取 `ClassIsland.Plugin.cipx`
-2. ClassIsland → `设置 → 插件管理 → 本地安装`，选择 cipx 文件；旧版需先卸载
-3. 打开插件设置页 `AgoraIn 联动`：点 **自动探测** 读取本机大屏客户端配置；或手动填写
-   - 平台地址：`http://服务器IP:5250`
-   - 连接密码：与服务器 `config.json` 的 `ServerPassword` 一致
-   - **设备 UUID**：必须填写教师端「控制模式 → 设备列表」中该一体机对应的 UUID，否则收不到呼叫
-4. 保存后插件自动开始轮询（3 秒后、此后每 10 秒）；教师端呼叫时选择与插件配置一致的设备即可
-
-> 提示：**待下课时段通知**只在临近下课（距下课 ≤ 提前分钟数）时弹出；测试请使用**上课应急通知**或**下课传唤**，立即弹窗并语音朗读。
-
 ### 自测模式
 
 桌面客户端内置自测命令，退出码 0 表示全部通过：
@@ -127,7 +115,6 @@ check-in-net/
 ├── Server/                  # 集控服务器（ASP.NET + EF Core + SQLite）
 │   └── config.json                  # Port(5250)、ServerName、ServerPassword、DebugMode
 ├── Client.Mobile/           # 移动端（.NET MAUI）
-├── AgoraIn.ClassIslandPlugin/  # ClassIsland 联动插件（cipx 安装包）
 └── CheckIn.slnx             # 解决方案文件
 ```
 

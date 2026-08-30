@@ -152,3 +152,91 @@
   }
 }
 
+
+/* ===================== 整站视觉升级：深空渐变 + 玻璃拟态 ===================== */
+
+/* 主页 Hero：深空底色 + 光斑动画 */
+.VPHero {
+  position: relative;
+  background: radial-gradient(900px 480px at 18% 0%, rgba(124,58,237,0.28) 0%, transparent 60%),
+    radial-gradient(800px 420px at 85% 15%, rgba(37,99,235,0.22) 0%, transparent 55%),
+    radial-gradient(700px 400px at 50% 110%, rgba(8,145,178,0.18) 0%, transparent 60%);
+}
+.VPHero::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(rgba(255,255,255,0.5) 0.5px, transparent 0.5px);
+  background-size: 4px 4px; opacity: 0.06;
+  animation: heroDrift 40s linear infinite;
+}
+@keyframes heroDrift {
+  from { background-position: 0 0; }
+  to { background-position: 400px 400px; }
+}
+.VPHero .name {
+  background: linear-gradient(92deg, #a78bfa 0%, #60a5fa 50%, #22d3ee 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 6px 30px rgba(124,58,237,0.5));
+}
+.VPHero .text { text-shadow: 0 4px 40px rgba(124,58,237,0.35); }
+.VPHero .action .VPButton.brand {
+  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 55%, #2563eb 100%);
+  border: none;
+  box-shadow: 0 8px 28px rgba(124,58,237,0.5);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.VPHero .action .VPButton.brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(124,58,237,0.7);
+}
+.VPHero .action .VPButton.alt {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148,163,184,0.35);
+}
+
+/* 主页功能卡片：玻璃拟态 + 悬浮光边 */
+.VPFeatures .VPFeature {
+  position: relative;
+  background: linear-gradient(165deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.018) 100%);
+  border: 1px solid rgba(148,163,184,0.18);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  overflow: hidden;
+}
+.VPFeatures .VPFeature::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; border-radius: 16px; padding: 1px;
+  background: linear-gradient(135deg, rgba(167,139,250,0.7), transparent 45%, transparent 60%, rgba(56,189,248,0.55));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s;
+}
+.VPFeatures .VPFeature:hover {
+  transform: translateY(-5px);
+  border-color: transparent;
+  box-shadow: 0 16px 42px rgba(0,0,0,0.35);
+}
+.VPFeatures .VPFeature:hover::after { opacity: 1; }
+.VPFeatures .VPFeature .title {
+  background: linear-gradient(92deg, #c4b5fd, #bae6fd);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  font-weight: 700;
+}
+
+/* 侧边栏/导航品牌色微调 */
+.VPNavBar .VPNavBarTitle .title {
+  background: linear-gradient(92deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+}
+
+/* 正文标题品牌渐变 */
+.VPDoc h2 {
+  border-top: 1px solid var(--vp-c-divider);
+  margin-top: 32px;
+}
+
+/* 移动端 Hero 字号 */
+@media (max-width: 640px) {
+  .VPHero .name { font-size: 2.4rem; }
+}

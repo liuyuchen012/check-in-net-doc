@@ -35,9 +35,15 @@ export default defineConfig({
           { text: '常见问题', link: '/faq' },
         ]
       },
-      { text: '旧版文档（v2.7）', link: '/v2.7/' },
       {
-        text: 'v2.8',
+        text: '旧版文档',
+        items: [
+          { text: 'v2.8 归档', link: '/v2.8/' },
+          { text: 'v2.7 归档', link: '/v2.7/' }
+        ]
+      },
+      {
+        text: 'v3.2',
         items: [
           { text: '更新日志', link: 'https://github.com/liuyuchen012/AgoraIn/releases' },
           { text: 'GitHub 仓库', link: 'https://github.com/liuyuchen012/AgoraIn' }
@@ -139,6 +145,22 @@ export default defineConfig({
             { text: '旧版文档（v2.7）', link: '/sitemap#旧版文档v27' },
             { text: '移动多端应用', link: '/sitemap#移动多端应用' },
             { text: '外部链接', link: '/sitemap#外部链接' }
+          ]
+        }
+      ],
+      // v2.8 历史归档文档
+      '/v2.8/': [
+        {
+          text: '历史文档（v2.8）',
+          collapsed: false,
+          items: [
+            { text: 'v2.8 主页', link: '/v2.8/' },
+            { text: '快速开始', link: '/v2.8/guide' },
+            { text: '功能特性', link: '/v2.8/features' },
+            { text: 'API 文档', link: '/v2.8/api' },
+            { text: '部署指南', link: '/v2.8/deploy' },
+            { text: '常见问题', link: '/v2.8/faq' },
+            { text: '站点地图', link: '/v2.8/sitemap' }
           ]
         }
       ],
