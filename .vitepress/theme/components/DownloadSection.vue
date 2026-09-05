@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 
 const activePlatform = ref('windows')
 const loading = ref(true)
-const version = ref('V3.2')
+const version = ref('V3.2.5')
 const publishedAt = ref('')
 const releaseUrl = ref('https://github.com/liuyuchen012/AgoraIn/releases/latest')
 
@@ -22,8 +22,8 @@ const platforms = [
 
 // 从 GitHub API 获取最新版本信息
 const assets = ref<Record<string, AssetInfo>>({
-  'AgoraIn-Setup-v3.2.0.exe': { size: 0, url: '' },
-  'AgoraIn-Server-Setup-v3.2.0.exe': { size: 0, url: '' },
+  'AgoraIn-Setup-v3.2.5.exe': { size: 0, url: '' },
+  'AgoraIn-Server-Setup-v3.2.5.exe': { size: 0, url: '' },
   'Client.win-x64.zip': { size: 0, url: '' },
   'Server.win-x64.zip': { size: 0, url: '' },
   'Server.linux-x64.zip': { size: 0, url: '' },
@@ -45,7 +45,7 @@ async function fetchRelease() {
     const res = await fetch('https://api.github.com/repos/liuyuchen012/AgoraIn/releases/latest?_=' + Date.now())
     if (!res.ok) throw new Error('API error')
     const data = await res.json()
-    version.value = data.tag_name || 'V3.2'
+    version.value = data.tag_name || 'V3.2.5'
     publishedAt.value = new Date(data.published_at).toLocaleDateString('zh-CN')
     releaseUrl.value = data.html_url || releaseUrl.value
 
@@ -79,10 +79,10 @@ const downloads = computed(() => {
       {
         title: '桌面客户端（安装包）',
         desc: 'Inno Setup 安装程序，推荐！自动安装到开始菜单并可创建桌面快捷方式，升级安装不会覆盖你的配置数据。',
-        filename: 'AgoraIn-Setup-v3.2.0.exe',
+        filename: 'AgoraIn-Setup-v3.2.5.exe',
         ext: 'exe',
-        url: a['AgoraIn-Setup-v3.2.0.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-        filesize: a['AgoraIn-Setup-v3.2.0.exe']?.size || 0,
+        url: a['AgoraIn-Setup-v3.2.5.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['AgoraIn-Setup-v3.2.5.exe']?.size || 0,
         icon: '🖥',
         tag: '推荐',
       },
@@ -99,10 +99,10 @@ const downloads = computed(() => {
       {
         title: '服务器端（安装包）',
         desc: 'Inno Setup 安装程序，一键部署集控服务器（含自动升级能力），升级不覆盖 config.json 与数据库。',
-        filename: 'AgoraIn-Server-Setup-v3.2.0.exe',
+        filename: 'AgoraIn-Server-Setup-v3.2.5.exe',
         ext: 'exe',
-        url: a['AgoraIn-Server-Setup-v3.2.0.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
-        filesize: a['AgoraIn-Server-Setup-v3.2.0.exe']?.size || 0,
+        url: a['AgoraIn-Server-Setup-v3.2.5.exe']?.url || 'https://github.com/liuyuchen012/AgoraIn/releases/latest',
+        filesize: a['AgoraIn-Server-Setup-v3.2.5.exe']?.size || 0,
         icon: '⚙',
         tag: '推荐',
       },
