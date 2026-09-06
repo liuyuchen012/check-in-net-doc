@@ -31,6 +31,7 @@ export default defineConfig({
           { text: '快速开始', link: '/guide' },
           { text: '功能特性', link: '/features' },
           { text: '连接插件端', link: '/plugin' },
+          { text: '使用手册', link: '/manual' },
           { text: 'API 文档', link: '/api' },
           { text: '部署指南', link: '/deploy' },
           { text: '常见问题', link: '/faq' },
