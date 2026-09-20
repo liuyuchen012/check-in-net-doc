@@ -1,0 +1,4344 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Intent Launcher · 用 Intent URI 唤起 Android 原生应用</title>
+<meta name="description" content="在线构造并唤起 Android intent:// URI，由系统自动识别目标应用。">
+<style>
+  :root {
+    --bg: #0c1016;
+    --panel: #151b24;
+    --panel-2: #1b222d;
+    --line: #2a3442;
+    --line-soft: #212a36;
+    --fg: #e6ecf4;
+    --fg-dim: #97a4b6;
+    --fg-faint: #6b7788;
+    --accent: #4ade80;
+    --accent-dark: #16a34a;
+    --accent-ink: #04240f;
+    --warn: #fbbf24;
+    --warn-soft: #2a2213;
+    --err: #f87171;
+    --err-soft: #2b1618;
+    --ok-soft: #10241a;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC",
+            "Microsoft YaHei", sans-serif;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+
+  html { -webkit-text-size-adjust: 100%; }
+
+  body {
+    margin: 0;
+    padding: 0 16px 96px;
+    background:
+      radial-gradient(1100px 420px at 50% -180px, #1a2b22 0%, transparent 70%),
+      var(--bg);
+    color: var(--fg);
+    font: 15px/1.6 var(--sans);
+    overflow-x: hidden;
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; }
+
+  header.top { padding: 28px 0 20px; }
+  .brand { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .brand h1 { font-size: 21px; margin: 0; letter-spacing: .2px; }
+  .brand .logo {
+    width: 26px; height: 26px; border-radius: 7px; flex: none;
+    background: linear-gradient(145deg, var(--accent), var(--accent-dark));
+    display: grid; place-items: center; color: var(--accent-ink);
+    font-weight: 700; font-size: 14px;
+  }
+  header.top p.sub { margin: 8px 0 0; color: var(--fg-dim); font-size: 14px; }
+  .badge {
+    font: 600 11px/1 var(--sans); padding: 5px 8px; border-radius: 999px;
+    border: 1px solid var(--line); color: var(--fg-dim); background: var(--panel);
+  }
+  .badge.ok { color: var(--accent); border-color: #245c3a; background: var(--ok-soft); }
+  .badge.warn { color: var(--warn); border-color: #5a4a1d; background: var(--warn-soft); }
+
+  .notice {
+    border: 1px solid #5a4a1d; background: var(--warn-soft); color: #f6e2ac;
+    border-radius: var(--radius); padding: 12px 14px; margin: 0 0 16px; font-size: 14px;
+  }
+  .notice strong { color: var(--warn); }
+  .notice code { color: #ffe6ac; }
+
+  nav.tabs {
+    display: flex; gap: 4px; padding: 4px; margin-bottom: 18px;
+    background: var(--panel); border: 1px solid var(--line-soft);
+    border-radius: 999px; overflow-x: auto; scrollbar-width: none;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button {
+    flex: 1 0 auto; white-space: nowrap; border: 0; cursor: pointer;
+    background: transparent; color: var(--fg-dim); font: 600 14px var(--sans);
+    padding: 9px 14px; border-radius: 999px;
+  }
+  nav.tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  /* keep all four tabs on one row on a phone instead of clipping the last one */
+  @media (max-width: 470px) {
+    nav.tabs button { padding: 8px 9px; font-size: 13px; }
+  }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--line-soft);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 14px;
+  }
+  .card > h2 { font-size: 15px; margin: 0 0 4px; }
+  .card > h2 + p.hint { margin-top: 0; }
+  p.hint { color: var(--fg-dim); font-size: 13px; margin: 0 0 12px; }
+
+  label.f { display: block; font-size: 13px; font-weight: 600; margin: 12px 0 5px; color: #c8d3e1; }
+  label.f:first-child { margin-top: 0; }
+  label.f .opt { font-weight: 400; color: var(--fg-faint); }
+
+  input[type=text], input[type=number], textarea, select {
+    width: 100%; padding: 10px 11px; border-radius: 9px;
+    background: #0c1119; color: var(--fg); border: 1px solid var(--line);
+    font: 14px/1.5 var(--mono);
+  }
+  input:focus, textarea:focus, select:focus { outline: 2px solid #2f6b48; border-color: transparent; }
+  textarea { resize: vertical; min-height: 76px; }
+  select { font-family: var(--sans); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  @media (max-width: 620px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .row.tight { gap: 6px; }
+  .spacer { flex: 1 1 auto; }
+
+  button.btn, a.btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px 15px; border-radius: 9px; cursor: pointer; text-decoration: none;
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--fg);
+    font: 600 14px var(--sans); white-space: nowrap;
+  }
+  button.btn:hover, a.btn:hover { border-color: #3a4757; }
+  button.btn.primary, a.btn.primary {
+    background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+  }
+  button.btn.primary:hover, a.btn.primary:hover { background: #6ee79a; }
+  a.btn.primary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  button.btn.sm, a.btn.sm { padding: 6px 10px; font-size: 13px; }
+  button.btn[aria-disabled="true"], a.btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; }
+  button.btn.ghost { background: transparent; }
+
+  .uri-box {
+    display: block; width: 100%; margin: 0;
+    padding: 12px; border-radius: 9px; background: #080b11;
+    border: 1px solid var(--line); color: #b9f0ce;
+    font: 12.5px/1.65 var(--mono); word-break: break-all; white-space: pre-wrap;
+    max-height: 260px; overflow: auto;
+  }
+  .uri-box.empty { color: var(--fg-faint); }
+
+  .detect { display: flex; gap: 8px; align-items: flex-start; margin: 10px 0 0; font-size: 13px; }
+  .detect .tag {
+    flex: none; padding: 3px 8px; border-radius: 6px; font: 600 12px var(--sans);
+    background: var(--panel-2); border: 1px solid var(--line); color: var(--fg-dim);
+  }
+  .detect .tag.bad { color: var(--warn); border-color: #5a4a1d; background: var(--warn-soft); }
+  .detect .tag.good { color: var(--accent); border-color: #245c3a; background: var(--ok-soft); }
+  .detect .txt { color: var(--fg-dim); }
+
+  ul.msgs { list-style: none; margin: 10px 0 0; padding: 0; }
+  ul.msgs li {
+    font-size: 13px; padding: 8px 10px; border-radius: 8px; margin-bottom: 6px;
+    display: flex; gap: 7px; align-items: flex-start;
+  }
+  ul.msgs li.err { background: var(--err-soft); color: #ffc9c9; border: 1px solid #5c2a2d; }
+  ul.msgs li.warn { background: var(--warn-soft); color: #f7e3b0; border: 1px solid #5a4a1d; }
+  ul.msgs li::before { flex: none; font-weight: 700; }
+  ul.msgs li.err::before { content: "✕"; color: var(--err); }
+  ul.msgs li.warn::before { content: "!"; color: var(--warn); }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chips label {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+    padding: 7px 10px; border-radius: 8px; background: #0c1119;
+    border: 1px solid var(--line); font-size: 12.5px; font-family: var(--mono);
+  }
+  .chips input { accent-color: var(--accent-dark); margin: 0; }
+
+  details.adv { margin-top: 14px; border-top: 1px solid var(--line-soft); padding-top: 10px; }
+  details.adv > summary {
+    cursor: pointer; font-size: 13px; font-weight: 600; color: #c8d3e1;
+    list-style: none; display: flex; align-items: center; gap: 6px;
+  }
+  details.adv > summary::-webkit-details-marker { display: none; }
+  details.adv > summary::before { content: "▸"; color: var(--fg-faint); }
+  details.adv[open] > summary::before { content: "▾"; }
+
+  .extra-row { display: grid; grid-template-columns: 104px 1fr 1.3fr auto; gap: 6px; margin-bottom: 6px; }
+  .extra-row select, .extra-row input { font-size: 13px; padding: 7px 8px; }
+  @media (max-width: 620px) {
+    .extra-row { grid-template-columns: 1fr 1fr; }
+    .extra-row .k { grid-column: 1 / -1; }
+  }
+  button.icon {
+    border: 1px solid var(--line); background: var(--panel-2); color: var(--fg-dim);
+    border-radius: 8px; width: 34px; height: 34px; cursor: pointer; font-size: 15px; line-height: 1;
+  }
+  button.icon:hover { color: var(--err); border-color: #5c2a2d; }
+
+  .preset-group { margin-bottom: 22px; }
+  .preset-group > h3 {
+    font-size: 14px; margin: 0 0 4px; display: flex; align-items: center; gap: 8px;
+  }
+  .preset-group > p { color: var(--fg-dim); font-size: 13px; margin: 0 0 12px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+  .pcard {
+    background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--radius);
+    padding: 12px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .pcard h4 { margin: 0; font-size: 14px; }
+  .pcard p { margin: 0; color: var(--fg-dim); font-size: 12.5px; line-height: 1.5; }
+  .pcard code {
+    display: block; font: 11.5px/1.5 var(--mono); color: #8fd6a8;
+    word-break: break-all; background: #0a0e14; border: 1px solid var(--line-soft);
+    border-radius: 7px; padding: 6px 8px;
+  }
+  .pcard .row { margin-top: auto; }
+
+  table.doc { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 4px; }
+  table.doc th, table.doc td {
+    text-align: left; padding: 8px 9px; border-bottom: 1px solid var(--line-soft); vertical-align: top;
+  }
+  table.doc th { color: var(--fg-dim); font-weight: 600; white-space: nowrap; }
+  table.doc td code { font: 12px var(--mono); color: #8fd6a8; }
+  table.doc tr:last-child td { border-bottom: 0; }
+  .scroll-x { overflow-x: auto; }
+
+  ol.steps, ul.plain { padding-left: 20px; margin: 8px 0; font-size: 14px; }
+  ol.steps li, ul.plain li { margin-bottom: 6px; }
+  code.inline {
+    font: 12.5px var(--mono); background: #0a0e14; border: 1px solid var(--line-soft);
+    border-radius: 5px; padding: 2px 5px; color: #b9f0ce; word-break: break-all;
+  }
+
+  .modal {
+    position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+    background: rgba(4, 7, 11, .82); padding: 18px; overflow-y: auto;
+  }
+  .modal .sheet {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+    padding: 18px; width: 100%; max-width: 380px; text-align: center;
+  }
+  .modal h3 { margin: 0 0 4px; font-size: 15px; }
+  .modal p { color: var(--fg-dim); font-size: 13px; margin: 0 0 12px; }
+  .qr-wrap {
+    background: #fff; border-radius: 10px; padding: 10px; width: 300px; max-width: 100%;
+    margin: 0 auto 12px; display: grid; place-items: center; min-height: 200px;
+  }
+  .qr-wrap canvas { display: block; width: 100%; height: auto; max-width: 280px; image-rendering: pixelated; }
+  .modal .uri-box { max-height: 90px; text-align: left; margin-bottom: 12px; }
+
+  .hist { list-style: none; margin: 8px 0 0; padding: 0; }
+  .hist li {
+    display: flex; gap: 8px; align-items: center; padding: 7px 0;
+    border-bottom: 1px solid var(--line-soft); font-size: 13px;
+  }
+  .hist li:last-child { border-bottom: 0; }
+  .hist code {
+    flex: 1; font: 12px var(--mono); color: var(--fg-dim);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  footer.foot {
+    color: var(--fg-faint); font-size: 12.5px; text-align: center;
+    padding: 22px 0 0; line-height: 1.8;
+  }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">A</span>
+      <h1>Intent Launcher</h1>
+      <span class="badge" id="ua-badge">检测环境…</span>
+    </div>
+    <p class="sub">
+      构造 <code class="inline">intent://</code> URI 唤起 Android 原生应用。
+      不写死包名，交给系统的 Intent 解析器去匹配 —— 也就是「系统自动识别」。
+    </p>
+  </header>
+
+  <div class="notice" id="ua-warn" hidden></div>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-panel="launch">快速唤起</button>
+    <button role="tab" aria-selected="false" data-panel="build">可视化构建</button>
+    <button role="tab" aria-selected="false" data-panel="presets">常见应用</button>
+    <button role="tab" aria-selected="false" data-panel="docs">语法与限制</button>
+  </nav>
+
+  <!-- ======================= 快速唤起 ======================= -->
+  <section id="panel-launch" role="tabpanel">
+    <div class="card">
+      <h2>粘贴任意链接</h2>
+      <p class="hint">
+        支持 <code class="inline">intent://…</code>、<code class="inline">weixin://…</code>、
+        <code class="inline">smsto:10086</code>（注意没有 //）、<code class="inline">https://…</code>、
+        <code class="inline">android-app://包名</code>。
+      </p>
+
+      <textarea id="quick-input" spellcheck="false" autocapitalize="off" autocorrect="off"
+        placeholder="intent://dl/nav/x#Intent;scheme=weixin;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end"></textarea>
+
+      <div class="detect">
+        <span class="tag" id="quick-tag">—</span>
+        <span class="txt" id="quick-hint">等待输入</span>
+      </div>
+
+      <div class="row" style="margin-top:14px">
+        <label class="chips" style="align-items:center;gap:7px;display:inline-flex"
+               title="自定义 scheme 默认会包一层 intent://，这样会走系统解析器并带上 BROWSABLE">
+          <input type="checkbox" id="quick-wrap" checked>
+          <span style="font-family:var(--sans);font-size:13px">包成 intent:// 再唤起</span>
+        </label>
+        <span class="spacer"></span>
+        <button class="btn sm ghost" id="quick-clear">清空</button>
+      </div>
+
+      <label class="f" style="margin-top:14px">实际会被唤起的链接</label>
+      <code class="uri-box empty" id="quick-out">—</code>
+
+      <div class="row" style="margin-top:12px">
+        <a class="btn primary" id="quick-go" href="#" aria-disabled="true">唤起应用</a>
+        <button class="btn" id="quick-copy">复制链接</button>
+        <button class="btn" id="quick-qr">二维码</button>
+        <button class="btn" id="quick-to-build">载入构建器</button>
+      </div>
+
+      <ul class="msgs" id="quick-msgs"></ul>
+      <div id="quick-launch-hint" hidden style="margin-top:10px"></div>
+    </div>
+
+    <div class="card" id="hist-card" hidden>
+      <div class="row">
+        <h2 style="margin:0">最近唤起</h2>
+        <span class="spacer"></span>
+        <button class="btn sm ghost" id="hist-clear">清空记录</button>
+      </div>
+      <ul class="hist" id="hist-list"></ul>
+    </div>
+  </section>
+
+  <!-- ======================= 可视化构建 ======================= -->
+  <section id="panel-build" role="tabpanel" hidden>
+    <div class="card">
+      <h2>1. 目标 URI（App 最终收到的 data）</h2>
+      <p class="hint">
+        直接粘贴完整的目标链接最省事，例如 <code class="inline">weixin://dl/nav/1</code>。
+        留空则用下面的拆分字段拼。两者都有时，以这一栏为准。
+      </p>
+      <label class="f" for="t-raw">完整目标 URI <span class="opt">（可选）</span></label>
+      <input type="text" id="t-raw" spellcheck="false" autocapitalize="off"
+        placeholder="weixin://dl/nav/x">
+
+      <details class="adv" id="split">
+        <summary>或按字段拆分填写</summary>
+        <div style="margin-top:10px">
+          <div class="row tight" style="margin-bottom:4px">
+            <label class="chips"><input type="radio" name="tmode" value="hierarchical" checked>
+              <span style="font-family:var(--sans)">scheme://host/path</span></label>
+            <label class="chips"><input type="radio" name="tmode" value="opaque">
+              <span style="font-family:var(--sans)">opaque：scheme:value</span></label>
+          </div>
+          <div class="grid2">
+            <div>
+              <label class="f" for="t-scheme">scheme <span class="opt">必需</span></label>
+              <input type="text" id="t-scheme" spellcheck="false" placeholder="weixin">
+            </div>
+            <div>
+              <label class="f" for="t-authority">host / authority <span class="opt">opaque 模式忽略</span></label>
+              <input type="text" id="t-authority" spellcheck="false" placeholder="dl">
+            </div>
+            <div>
+              <label class="f" for="t-path">path</label>
+              <input type="text" id="t-path" spellcheck="false" placeholder="/nav/x 或 opaque 的 10086">
+            </div>
+            <div>
+              <label class="f" for="t-query">query</label>
+              <input type="text" id="t-query" spellcheck="false" placeholder="appId=20000056&amp;name=a b">
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>2. Intent 参数</h2>
+      <p class="hint">这些会拼进 <code class="inline">#Intent; … ;end</code> 参数段。</p>
+
+      <label class="f" for="b-action">action</label>
+      <select id="b-action">
+        <option value="android.intent.action.VIEW">android.intent.action.VIEW（默认）</option>
+        <option value="android.intent.action.SEND">android.intent.action.SEND</option>
+        <option value="android.intent.action.SENDTO">android.intent.action.SENDTO</option>
+        <option value="android.intent.action.DIAL">android.intent.action.DIAL</option>
+        <option value="android.intent.action.CALL">android.intent.action.CALL</option>
+        <option value="android.intent.action.MAIN">android.intent.action.MAIN</option>
+        <option value="android.intent.action.EDIT">android.intent.action.EDIT</option>
+        <option value="android.intent.action.PICK">android.intent.action.PICK</option>
+        <option value="android.intent.action.GET_CONTENT">android.intent.action.GET_CONTENT</option>
+        <option value="android.intent.action.WEB_SEARCH">android.intent.action.WEB_SEARCH</option>
+        <option value="android.media.action.IMAGE_CAPTURE">android.media.action.IMAGE_CAPTURE</option>
+        <option value="android.settings.SETTINGS">android.settings.SETTINGS</option>
+        <option value="android.settings.APPLICATION_DETAILS_SETTINGS">android.settings.APPLICATION_DETAILS_SETTINGS</option>
+        <option value="__none">（不设置 action）</option>
+        <option value="__custom">（自定义…）</option>
+      </select>
+      <input type="text" id="b-action-custom" spellcheck="false" placeholder="android.intent.action.XXX"
+        style="margin-top:6px" hidden>
+
+      <label class="f">category <span class="opt">（BROWSABLE 是从浏览器唤起的前提）</span></label>
+      <div class="chips" id="b-cats">
+        <label><input type="checkbox" value="android.intent.category.BROWSABLE" checked>BROWSABLE</label>
+        <label><input type="checkbox" value="android.intent.category.DEFAULT" checked>DEFAULT</label>
+        <label><input type="checkbox" value="android.intent.category.LAUNCHER">LAUNCHER</label>
+        <label><input type="checkbox" value="android.intent.category.OPENABLE">OPENABLE</label>
+      </div>
+      <label class="f" for="b-cat-custom">其他 category <span class="opt">（逗号分隔）</span></label>
+      <input type="text" id="b-cat-custom" spellcheck="false" placeholder="android.intent.category.XXX">
+
+      <details class="adv">
+        <summary>高级参数（package / component / type / flags / 兜底网址）</summary>
+        <div style="margin-top:10px">
+          <label class="f" for="b-package">package <span class="opt">
+            — 留空 = 系统自动识别（推荐）</span></label>
+          <input type="text" id="b-package" spellcheck="false" placeholder="留空即可，例如 com.tencent.mm">
+          <p class="hint" style="margin:5px 0 0">
+            填了就把 Intent 定向到该包，系统不再自己挑应用；包名写错会直接唤起失败。
+          </p>
+
+          <label class="f" for="b-component">component <span class="opt">— 显式组件，浏览器基本会拦</span></label>
+          <input type="text" id="b-component" spellcheck="false" placeholder="com.example.app/.MainActivity">
+
+          <div class="grid2">
+            <div>
+              <label class="f" for="b-type">type (MIME)</label>
+              <input type="text" id="b-type" spellcheck="false" placeholder="text/plain">
+            </div>
+            <div>
+              <label class="f" for="b-flags">launchFlags <span class="opt">十进制或 0x…</span></label>
+              <input type="text" id="b-flags" spellcheck="false" placeholder="0x10000000">
+            </div>
+          </div>
+
+          <label class="f" for="b-fallback">browser_fallback_url
+            <span class="opt">— 未能唤起时跳转到这个网页</span></label>
+          <input type="text" id="b-fallback" spellcheck="false" placeholder="https://example.com/download">
+          <p class="hint" style="margin:5px 0 0">
+            会写成 <code class="inline">S.browser_fallback_url=…</code>，由 Chrome 读取（App 看不到它）。
+          </p>
+        </div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>3. extras <span class="opt">（可选）</span></h2>
+      <p class="hint">
+        类型前缀按 Android 的 <code class="inline">Intent.parseUri</code> 解析：
+        <code class="inline">S.</code> 字符串、<code class="inline">B.</code> 布尔、
+        <code class="inline">b.</code> 字节 —— 布尔是大写 B，别写反。
+      </p>
+      <div id="extras"></div>
+      <button class="btn sm" id="add-extra" style="margin-top:6px">+ 添加 extra</button>
+    </div>
+
+    <div class="card">
+      <h2>4. 生成结果</h2>
+      <code class="uri-box empty" id="out-uri">—</code>
+      <div class="detect">
+        <span class="tag" id="out-data-tag">data</span>
+        <span class="txt" id="out-data">—</span>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <a class="btn primary" id="out-go" href="#" aria-disabled="true">唤起应用</a>
+        <button class="btn" id="out-copy">复制</button>
+        <button class="btn" id="out-qr">二维码</button>
+        <button class="btn ghost" id="out-reset">重置</button>
+      </div>
+      <ul class="msgs" id="out-msgs"></ul>
+    </div>
+  </section>
+
+  <!-- ======================= 常见应用 ======================= -->
+  <section id="panel-presets" role="tabpanel" hidden>
+    <div class="card">
+      <h2>怎么读这两组预设</h2>
+      <p class="hint" style="margin:0">
+        <strong>系统 Intent</strong> 用的是平台标准 action（<code class="inline">android.settings.*</code>、
+        <code class="inline">action.DIAL</code>、<code class="inline">geo:</code> …），任何设备都有应用应答，
+        而且「哪个应用来处理」完全是系统决定的。
+        <strong>第三方 App</strong> 用的是各 App 自己注册的自定义 scheme，属于约定俗成的值：
+        同一个 App 换个版本就可能改名或收紧，只当测试起点用。
+        两组都<strong>不指定 package</strong>，交给系统解析。
+      </p>
+    </div>
+    <div id="preset-host"></div>
+  </section>
+
+  <!-- ======================= 语法与限制 ======================= -->
+  <section id="panel-docs" role="tabpanel" hidden>
+    <div class="card">
+      <h2>URI 结构</h2>
+      <code class="uri-box" style="color:#cfe9da">intent://&lt;host&gt;&lt;path&gt;?&lt;query&gt;#Intent;scheme=…;action=…;category=…;S.key=value;end</code>
+      <p class="hint" style="margin-top:10px">
+        <code class="inline">#Intent;</code> 之前的部分是 App 最终收到的 data。
+        Android 的还原规则是 <code class="inline">data = scheme + ":" + 去掉 intent: 之后的原文</code>，
+        所以 <code class="inline">intent://dl/nav</code> 配 <code class="inline">scheme=weixin</code>
+        得到 <code class="inline">weixin://dl/nav</code>；
+        而 <code class="inline">intent:10086</code> 配 <code class="inline">scheme=smsto</code>
+        得到 <code class="inline">smsto:10086</code>（没有 //）。
+        这一点最容易写错：像 <code class="inline">tel:</code>、<code class="inline">smsto:</code>、
+        <code class="inline">mailto:</code> 这类 opaque URI 必须写成
+        <code class="inline">intent:号码#Intent;…</code>，多写两个斜杠就变成另一个 URI 了。
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>参数表</h2>
+      <div class="scroll-x">
+        <table class="doc">
+          <thead><tr><th>键</th><th>含义</th></tr></thead>
+          <tbody>
+            <tr><td><code>scheme=</code></td><td>设置 data 的 scheme，和左侧数据部分拼成完整 URI</td></tr>
+            <tr><td><code>action=</code></td><td>Intent action</td></tr>
+            <tr><td><code>category=</code></td><td>可重复出现，每写一次加一个 category</td></tr>
+            <tr><td><code>type=</code></td><td>MIME type，例如 <code>text/plain</code>（斜杠不会被转义）</td></tr>
+            <tr><td><code>package=</code></td><td>定向到某个包；不写则由系统解析</td></tr>
+            <tr><td><code>component=</code></td><td>显式组件 <code>包名/类名</code>；浏览器会清掉它</td></tr>
+            <tr><td><code>launchFlags=</code></td><td>启动 flag，十进制或 <code>0x…</code></td></tr>
+            <tr><td><code>end</code></td><td>参数段结束标记，最后一个分号之后必须是它</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint" style="margin-top:12px">extras 前缀（大小写敏感）：</p>
+      <div class="scroll-x">
+        <table class="doc">
+          <thead><tr><th>前缀</th><th>Bundle 类型</th><th>值怎么写</th></tr></thead>
+          <tbody>
+            <tr><td><code>S.</code></td><td>String</td><td>任意文本，按 UTF-8 百分号编码</td></tr>
+            <tr><td><code>i.</code></td><td>int</td><td>整数</td></tr>
+            <tr><td><code>l.</code></td><td>long</td><td>整数</td></tr>
+            <tr><td><code>s.</code></td><td>short</td><td>整数，-32768…32767</td></tr>
+            <tr><td><code>B.</code></td><td>boolean</td><td><code>true</code> / <code>false</code></td></tr>
+            <tr><td><code>b.</code></td><td>byte</td><td>整数，-128…127</td></tr>
+            <tr><td><code>f.</code></td><td>float</td><td>小数</td></tr>
+            <tr><td><code>d.</code></td><td>double</td><td>小数</td></tr>
+            <tr><td><code>c.</code></td><td>char</td><td>单个字符</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint" style="margin-top:10px">
+        注意 <code class="inline">B.</code> 是布尔、<code class="inline">b.</code> 是字节 ——
+        顺序和很多博客写的相反，以 Android 源码里的
+        <code class="inline">Intent.parseUri</code> 为准。
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>浏览器会在什么情况下拒绝唤起</h2>
+      <p class="hint">
+        链接本身没问题、但点了没反应，绝大多数是下面几条（整理自 Chrome 的
+        external_intents 说明与 Android Intents with Chrome 文档）：
+      </p>
+      <div class="scroll-x">
+        <table class="doc">
+          <tbody>
+            <tr><td>不是用户手势触发</td><td>必须由真实点击/触摸发起。定时器、自动跳转、页面加载时触发都会被拦。</td></tr>
+            <tr><td>指定的 Intent 解析不到应用</td><td>没有任何应用能处理 → 无反应。可以用 <code>S.browser_fallback_url</code> 兜底。</td></tr>
+            <tr><td>显式 Intent（指定 component）</td><td>Chrome 在解析时调用 <code>setComponent(null)</code>，显式组件会被丢掉。</td></tr>
+            <tr><td>缺少 BROWSABLE category</td><td>浏览器只会唤起声明了 BROWSABLE 的 Activity；Chrome 也会自己补上这个 category。</td></tr>
+            <tr><td>链接是从别的 URL 重定向来的</td><td>重定向链路上的 intent 不会被唤起（防滥用）。</td></tr>
+            <tr><td>浏览器自己就能处理的 scheme</td><td>http/https 若 App 没有已验证的 App Link，浏览器会自己打开网页，不交给 App。</td></tr>
+            <tr><td>同一个用户手势里重复唤起</td><td>会被当成指纹探测而拦截，所以不要在一次点击里连发多个链接。</td></tr>
+            <tr><td>file: / content: 等 scheme</td><td>属于受限 scheme，是否放行看浏览器版本。</td></tr>
+            <tr><td>在 App 内置浏览器里</td><td>微信、QQ、微博等内置 WebView 通常直接屏蔽外部 App 唤起，请换 Chrome 打开。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>排错速查</h2>
+      <div class="scroll-x">
+        <table class="doc">
+          <thead><tr><th>现象</th><th>多半是</th></tr></thead>
+          <tbody>
+            <tr><td>点了完全没反应</td><td>目标 App 没装，或者没有应用注册这个 scheme。先用系统 Intent 预设确认页面本身是通的。</td></tr>
+            <tr><td>跳到了浏览器但没进 App</td><td>http/https 目标且 App 未通过 App Link 验证。换成 App 的自定义 scheme，或加上 <code>package=</code>。</td></tr>
+            <tr><td>弹出了应用选择框</td><td>多个应用都能处理。想指定就用 <code>package=</code>。</td></tr>
+            <tr><td>进了 App 但停在了首页</td><td>scheme 只匹配到了首页入口，具体页面需要正确的 host/path，或改用 App 提供的 deep link。</td></tr>
+            <tr><td>微信/QQ 里打不开</td><td>内置浏览器屏蔽了唤起。右上角「在浏览器打开」后再试。</td></tr>
+            <tr><td>唤起成功但读不到 extras</td><td>数据类型不对。检查 <code>B.</code>/<code>b.</code> 有没有写反，数字类型有没有混进非数字。</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>在手机上打开本页</h2>
+      <p class="hint">
+        唤起只能由 Android 设备上的浏览器完成，桌面浏览器点了不会有反应。
+        本页是纯静态文件，把目录交给任意 HTTP 服务即可：
+      </p>
+      <ol class="steps">
+        <li>在仓库目录执行 <code class="inline">python -m http.server 8000</code>（或任意静态服务器）</li>
+        <li>查看电脑局域网 IP，例如 Windows 上 <code class="inline">ipconfig</code>、macOS/Linux 上 <code class="inline">ipconfig getifaddr en0</code> / <code class="inline">hostname -I</code></li>
+        <li>手机与电脑连同一个 Wi-Fi，用 Chrome 打开 <code class="inline">http://&lt;你的IP&gt;:8000/</code></li>
+        <li>或者直接点页面里的「二维码」，用手机扫码把当前链接带过去</li>
+      </ol>
+      <p class="hint" style="margin-top:12px">
+        也可以直接把 index.html 拷到手机上用文件管理器打开，但那样就没有同源限制之外的额外好处，
+        建议还是走 HTTP。电话/短信这类系统 Intent 需要设备上有可应答的应用。
+      </p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    纯静态页面 · 无后端 · 不收集任何数据<br>
+    链接均在本地按 Android <code class="inline">Intent.parseUri</code> 的语法拼装，可直接给 adb / 任意网页复用
+  </footer>
+</div>
+
+<!-- 二维码弹层 -->
+<div class="modal" id="qr-modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="qr-title">
+    <h3 id="qr-title">用手机扫码</h3>
+    <p id="qr-desc">把链接带到手机上</p>
+    <div class="qr-wrap"><canvas id="qr-canvas" width="224" height="224"></canvas></div>
+    <code class="uri-box" id="qr-text"></code>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn sm ghost" id="qr-toggle">换成原始链接</button>
+      <button class="btn sm" id="qr-download">保存图片</button>
+      <button class="btn sm primary" id="qr-close">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- vendor/qrcode.js ---- */
+//---------------------------------------------------------------------
+//
+// QR Code Generator for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//  http://www.opensource.org/licenses/mit-license.php
+//
+// The word 'QR Code' is registered trademark of
+// DENSO WAVE INCORPORATED
+//  http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+
+var qrcode = function() {
+
+  //---------------------------------------------------------------------
+  // qrcode
+  //---------------------------------------------------------------------
+
+  /**
+   * qrcode
+   * @param typeNumber 1 to 40
+   * @param errorCorrectionLevel 'L','M','Q','H'
+   */
+  var qrcode = function(typeNumber, errorCorrectionLevel) {
+
+    var PAD0 = 0xEC;
+    var PAD1 = 0x11;
+
+    var _typeNumber = typeNumber;
+    var _errorCorrectionLevel = QRErrorCorrectionLevel[errorCorrectionLevel];
+    var _modules = null;
+    var _moduleCount = 0;
+    var _dataCache = null;
+    var _dataList = [];
+
+    var _this = {};
+
+    var makeImpl = function(test, maskPattern) {
+
+      _moduleCount = _typeNumber * 4 + 17;
+      _modules = function(moduleCount) {
+        var modules = new Array(moduleCount);
+        for (var row = 0; row < moduleCount; row += 1) {
+          modules[row] = new Array(moduleCount);
+          for (var col = 0; col < moduleCount; col += 1) {
+            modules[row][col] = null;
+          }
+        }
+        return modules;
+      }(_moduleCount);
+
+      setupPositionProbePattern(0, 0);
+      setupPositionProbePattern(_moduleCount - 7, 0);
+      setupPositionProbePattern(0, _moduleCount - 7);
+      setupPositionAdjustPattern();
+      setupTimingPattern();
+      setupTypeInfo(test, maskPattern);
+
+      if (_typeNumber >= 7) {
+        setupTypeNumber(test);
+      }
+
+      if (_dataCache == null) {
+        _dataCache = createData(_typeNumber, _errorCorrectionLevel, _dataList);
+      }
+
+      mapData(_dataCache, maskPattern);
+    };
+
+    var setupPositionProbePattern = function(row, col) {
+
+      for (var r = -1; r <= 7; r += 1) {
+
+        if (row + r <= -1 || _moduleCount <= row + r) continue;
+
+        for (var c = -1; c <= 7; c += 1) {
+
+          if (col + c <= -1 || _moduleCount <= col + c) continue;
+
+          if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
+              || (0 <= c && c <= 6 && (r == 0 || r == 6) )
+              || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+            _modules[row + r][col + c] = true;
+          } else {
+            _modules[row + r][col + c] = false;
+          }
+        }
+      }
+    };
+
+    var getBestMaskPattern = function() {
+
+      var minLostPoint = 0;
+      var pattern = 0;
+
+      for (var i = 0; i < 8; i += 1) {
+
+        makeImpl(true, i);
+
+        var lostPoint = QRUtil.getLostPoint(_this);
+
+        if (i == 0 || minLostPoint > lostPoint) {
+          minLostPoint = lostPoint;
+          pattern = i;
+        }
+      }
+
+      return pattern;
+    };
+
+    var setupTimingPattern = function() {
+
+      for (var r = 8; r < _moduleCount - 8; r += 1) {
+        if (_modules[r][6] != null) {
+          continue;
+        }
+        _modules[r][6] = (r % 2 == 0);
+      }
+
+      for (var c = 8; c < _moduleCount - 8; c += 1) {
+        if (_modules[6][c] != null) {
+          continue;
+        }
+        _modules[6][c] = (c % 2 == 0);
+      }
+    };
+
+    var setupPositionAdjustPattern = function() {
+
+      var pos = QRUtil.getPatternPosition(_typeNumber);
+
+      for (var i = 0; i < pos.length; i += 1) {
+
+        for (var j = 0; j < pos.length; j += 1) {
+
+          var row = pos[i];
+          var col = pos[j];
+
+          if (_modules[row][col] != null) {
+            continue;
+          }
+
+          for (var r = -2; r <= 2; r += 1) {
+
+            for (var c = -2; c <= 2; c += 1) {
+
+              if (r == -2 || r == 2 || c == -2 || c == 2
+                  || (r == 0 && c == 0) ) {
+                _modules[row + r][col + c] = true;
+              } else {
+                _modules[row + r][col + c] = false;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    var setupTypeNumber = function(test) {
+
+      var bits = QRUtil.getBCHTypeNumber(_typeNumber);
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[Math.floor(i / 3)][i % 3 + _moduleCount - 8 - 3] = mod;
+      }
+
+      for (var i = 0; i < 18; i += 1) {
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+        _modules[i % 3 + _moduleCount - 8 - 3][Math.floor(i / 3)] = mod;
+      }
+    };
+
+    var setupTypeInfo = function(test, maskPattern) {
+
+      var data = (_errorCorrectionLevel << 3) | maskPattern;
+      var bits = QRUtil.getBCHTypeInfo(data);
+
+      // vertical
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 6) {
+          _modules[i][8] = mod;
+        } else if (i < 8) {
+          _modules[i + 1][8] = mod;
+        } else {
+          _modules[_moduleCount - 15 + i][8] = mod;
+        }
+      }
+
+      // horizontal
+      for (var i = 0; i < 15; i += 1) {
+
+        var mod = (!test && ( (bits >> i) & 1) == 1);
+
+        if (i < 8) {
+          _modules[8][_moduleCount - i - 1] = mod;
+        } else if (i < 9) {
+          _modules[8][15 - i - 1 + 1] = mod;
+        } else {
+          _modules[8][15 - i - 1] = mod;
+        }
+      }
+
+      // fixed module
+      _modules[_moduleCount - 8][8] = (!test);
+    };
+
+    var mapData = function(data, maskPattern) {
+
+      var inc = -1;
+      var row = _moduleCount - 1;
+      var bitIndex = 7;
+      var byteIndex = 0;
+      var maskFunc = QRUtil.getMaskFunction(maskPattern);
+
+      for (var col = _moduleCount - 1; col > 0; col -= 2) {
+
+        if (col == 6) col -= 1;
+
+        while (true) {
+
+          for (var c = 0; c < 2; c += 1) {
+
+            if (_modules[row][col - c] == null) {
+
+              var dark = false;
+
+              if (byteIndex < data.length) {
+                dark = ( ( (data[byteIndex] >>> bitIndex) & 1) == 1);
+              }
+
+              var mask = maskFunc(row, col - c);
+
+              if (mask) {
+                dark = !dark;
+              }
+
+              _modules[row][col - c] = dark;
+              bitIndex -= 1;
+
+              if (bitIndex == -1) {
+                byteIndex += 1;
+                bitIndex = 7;
+              }
+            }
+          }
+
+          row += inc;
+
+          if (row < 0 || _moduleCount <= row) {
+            row -= inc;
+            inc = -inc;
+            break;
+          }
+        }
+      }
+    };
+
+    var createBytes = function(buffer, rsBlocks) {
+
+      var offset = 0;
+
+      var maxDcCount = 0;
+      var maxEcCount = 0;
+
+      var dcdata = new Array(rsBlocks.length);
+      var ecdata = new Array(rsBlocks.length);
+
+      for (var r = 0; r < rsBlocks.length; r += 1) {
+
+        var dcCount = rsBlocks[r].dataCount;
+        var ecCount = rsBlocks[r].totalCount - dcCount;
+
+        maxDcCount = Math.max(maxDcCount, dcCount);
+        maxEcCount = Math.max(maxEcCount, ecCount);
+
+        dcdata[r] = new Array(dcCount);
+
+        for (var i = 0; i < dcdata[r].length; i += 1) {
+          dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+        }
+        offset += dcCount;
+
+        var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+        var rawPoly = qrPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+        var modPoly = rawPoly.mod(rsPoly);
+        ecdata[r] = new Array(rsPoly.getLength() - 1);
+        for (var i = 0; i < ecdata[r].length; i += 1) {
+          var modIndex = i + modPoly.getLength() - ecdata[r].length;
+          ecdata[r][i] = (modIndex >= 0)? modPoly.getAt(modIndex) : 0;
+        }
+      }
+
+      var totalCodeCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalCodeCount += rsBlocks[i].totalCount;
+      }
+
+      var data = new Array(totalCodeCount);
+      var index = 0;
+
+      for (var i = 0; i < maxDcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < dcdata[r].length) {
+            data[index] = dcdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      for (var i = 0; i < maxEcCount; i += 1) {
+        for (var r = 0; r < rsBlocks.length; r += 1) {
+          if (i < ecdata[r].length) {
+            data[index] = ecdata[r][i];
+            index += 1;
+          }
+        }
+      }
+
+      return data;
+    };
+
+    var createData = function(typeNumber, errorCorrectionLevel, dataList) {
+
+      var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+      var buffer = qrBitBuffer();
+
+      for (var i = 0; i < dataList.length; i += 1) {
+        var data = dataList[i];
+        buffer.put(data.getMode(), 4);
+        buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+        data.write(buffer);
+      }
+
+      // calc num max data.
+      var totalDataCount = 0;
+      for (var i = 0; i < rsBlocks.length; i += 1) {
+        totalDataCount += rsBlocks[i].dataCount;
+      }
+
+      if (buffer.getLengthInBits() > totalDataCount * 8) {
+        throw 'code length overflow. ('
+          + buffer.getLengthInBits()
+          + '>'
+          + totalDataCount * 8
+          + ')';
+      }
+
+      // end code
+      if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+        buffer.put(0, 4);
+      }
+
+      // padding
+      while (buffer.getLengthInBits() % 8 != 0) {
+        buffer.putBit(false);
+      }
+
+      // padding
+      while (true) {
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD0, 8);
+
+        if (buffer.getLengthInBits() >= totalDataCount * 8) {
+          break;
+        }
+        buffer.put(PAD1, 8);
+      }
+
+      return createBytes(buffer, rsBlocks);
+    };
+
+    _this.addData = function(data, mode) {
+
+      mode = mode || 'Byte';
+
+      var newData = null;
+
+      switch(mode) {
+      case 'Numeric' :
+        newData = qrNumber(data);
+        break;
+      case 'Alphanumeric' :
+        newData = qrAlphaNum(data);
+        break;
+      case 'Byte' :
+        newData = qr8BitByte(data);
+        break;
+      case 'Kanji' :
+        newData = qrKanji(data);
+        break;
+      default :
+        throw 'mode:' + mode;
+      }
+
+      _dataList.push(newData);
+      _dataCache = null;
+    };
+
+    _this.isDark = function(row, col) {
+      if (row < 0 || _moduleCount <= row || col < 0 || _moduleCount <= col) {
+        throw row + ',' + col;
+      }
+      return _modules[row][col];
+    };
+
+    _this.getModuleCount = function() {
+      return _moduleCount;
+    };
+
+    _this.make = function() {
+      if (_typeNumber < 1) {
+        var typeNumber = 1;
+
+        for (; typeNumber < 40; typeNumber++) {
+          var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, _errorCorrectionLevel);
+          var buffer = qrBitBuffer();
+
+          for (var i = 0; i < _dataList.length; i++) {
+            var data = _dataList[i];
+            buffer.put(data.getMode(), 4);
+            buffer.put(data.getLength(), QRUtil.getLengthInBits(data.getMode(), typeNumber) );
+            data.write(buffer);
+          }
+
+          var totalDataCount = 0;
+          for (var i = 0; i < rsBlocks.length; i++) {
+            totalDataCount += rsBlocks[i].dataCount;
+          }
+
+          if (buffer.getLengthInBits() <= totalDataCount * 8) {
+            break;
+          }
+        }
+
+        _typeNumber = typeNumber;
+      }
+
+      makeImpl(false, getBestMaskPattern() );
+    };
+
+    _this.createTableTag = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var qrHtml = '';
+
+      qrHtml += '<table style="';
+      qrHtml += ' border-width: 0px; border-style: none;';
+      qrHtml += ' border-collapse: collapse;';
+      qrHtml += ' padding: 0px; margin: ' + margin + 'px;';
+      qrHtml += '">';
+      qrHtml += '<tbody>';
+
+      for (var r = 0; r < _this.getModuleCount(); r += 1) {
+
+        qrHtml += '<tr>';
+
+        for (var c = 0; c < _this.getModuleCount(); c += 1) {
+          qrHtml += '<td style="';
+          qrHtml += ' border-width: 0px; border-style: none;';
+          qrHtml += ' border-collapse: collapse;';
+          qrHtml += ' padding: 0px; margin: 0px;';
+          qrHtml += ' width: ' + cellSize + 'px;';
+          qrHtml += ' height: ' + cellSize + 'px;';
+          qrHtml += ' background-color: ';
+          qrHtml += _this.isDark(r, c)? '#000000' : '#ffffff';
+          qrHtml += ';';
+          qrHtml += '"/>';
+        }
+
+        qrHtml += '</tr>';
+      }
+
+      qrHtml += '</tbody>';
+      qrHtml += '</table>';
+
+      return qrHtml;
+    };
+
+    _this.createSvgTag = function(cellSize, margin, alt, title) {
+
+      var opts = {};
+      if (typeof arguments[0] == 'object') {
+        // Called by options.
+        opts = arguments[0];
+        // overwrite cellSize and margin.
+        cellSize = opts.cellSize;
+        margin = opts.margin;
+        alt = opts.alt;
+        title = opts.title;
+      }
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      // Compose alt property surrogate
+      alt = (typeof alt === 'string') ? {text: alt} : alt || {};
+      alt.text = alt.text || null;
+      alt.id = (alt.text) ? alt.id || 'qrcode-description' : null;
+
+      // Compose title property surrogate
+      title = (typeof title === 'string') ? {text: title} : title || {};
+      title.text = title.text || null;
+      title.id = (title.text) ? title.id || 'qrcode-title' : null;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var c, mc, r, mr, qrSvg='', rect;
+
+      rect = 'l' + cellSize + ',0 0,' + cellSize +
+        ' -' + cellSize + ',0 0,-' + cellSize + 'z ';
+
+      qrSvg += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg"';
+      qrSvg += !opts.scalable ? ' width="' + size + 'px" height="' + size + 'px"' : '';
+      qrSvg += ' viewBox="0 0 ' + size + ' ' + size + '" ';
+      qrSvg += ' preserveAspectRatio="xMinYMin meet"';
+      qrSvg += (title.text || alt.text) ? ' role="img" aria-labelledby="' +
+          escapeXml([title.id, alt.id].join(' ').trim() ) + '"' : '';
+      qrSvg += '>';
+      qrSvg += (title.text) ? '<title id="' + escapeXml(title.id) + '">' +
+          escapeXml(title.text) + '</title>' : '';
+      qrSvg += (alt.text) ? '<description id="' + escapeXml(alt.id) + '">' +
+          escapeXml(alt.text) + '</description>' : '';
+      qrSvg += '<rect width="100%" height="100%" fill="white" cx="0" cy="0"/>';
+      qrSvg += '<path d="';
+
+      for (r = 0; r < _this.getModuleCount(); r += 1) {
+        mr = r * cellSize + margin;
+        for (c = 0; c < _this.getModuleCount(); c += 1) {
+          if (_this.isDark(r, c) ) {
+            mc = c*cellSize+margin;
+            qrSvg += 'M' + mc + ',' + mr + rect;
+          }
+        }
+      }
+
+      qrSvg += '" stroke="transparent" fill="black"/>';
+      qrSvg += '</svg>';
+
+      return qrSvg;
+    };
+
+    _this.createDataURL = function(cellSize, margin) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      return createDataURL(size, size, function(x, y) {
+        if (min <= x && x < max && min <= y && y < max) {
+          var c = Math.floor( (x - min) / cellSize);
+          var r = Math.floor( (y - min) / cellSize);
+          return _this.isDark(r, c)? 0 : 1;
+        } else {
+          return 1;
+        }
+      } );
+    };
+
+    _this.createImgTag = function(cellSize, margin, alt) {
+
+      cellSize = cellSize || 2;
+      margin = (typeof margin == 'undefined')? cellSize * 4 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+
+      var img = '';
+      img += '<img';
+      img += '\u0020src="';
+      img += _this.createDataURL(cellSize, margin);
+      img += '"';
+      img += '\u0020width="';
+      img += size;
+      img += '"';
+      img += '\u0020height="';
+      img += size;
+      img += '"';
+      if (alt) {
+        img += '\u0020alt="';
+        img += escapeXml(alt);
+        img += '"';
+      }
+      img += '/>';
+
+      return img;
+    };
+
+    var escapeXml = function(s) {
+      var escaped = '';
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charAt(i);
+        switch(c) {
+        case '<': escaped += '&lt;'; break;
+        case '>': escaped += '&gt;'; break;
+        case '&': escaped += '&amp;'; break;
+        case '"': escaped += '&quot;'; break;
+        default : escaped += c; break;
+        }
+      }
+      return escaped;
+    };
+
+    var _createHalfASCII = function(margin) {
+      var cellSize = 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r1, r2, p;
+
+      var blocks = {
+        '██': '█',
+        '█ ': '▀',
+        ' █': '▄',
+        '  ': ' '
+      };
+
+      var blocksLastLineNoMargin = {
+        '██': '▀',
+        '█ ': '▀',
+        ' █': ' ',
+        '  ': ' '
+      };
+
+      var ascii = '';
+      for (y = 0; y < size; y += 2) {
+        r1 = Math.floor((y - min) / cellSize);
+        r2 = Math.floor((y + 1 - min) / cellSize);
+        for (x = 0; x < size; x += 1) {
+          p = '█';
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r1, Math.floor((x - min) / cellSize))) {
+            p = ' ';
+          }
+
+          if (min <= x && x < max && min <= y+1 && y+1 < max && _this.isDark(r2, Math.floor((x - min) / cellSize))) {
+            p += ' ';
+          }
+          else {
+            p += '█';
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          ascii += (margin < 1 && y+1 >= max) ? blocksLastLineNoMargin[p] : blocks[p];
+        }
+
+        ascii += '\n';
+      }
+
+      if (size % 2 && margin > 0) {
+        return ascii.substring(0, ascii.length - size - 1) + Array(size+1).join('▀');
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.createASCII = function(cellSize, margin) {
+      cellSize = cellSize || 1;
+
+      if (cellSize < 2) {
+        return _createHalfASCII(margin);
+      }
+
+      cellSize -= 1;
+      margin = (typeof margin == 'undefined')? cellSize * 2 : margin;
+
+      var size = _this.getModuleCount() * cellSize + margin * 2;
+      var min = margin;
+      var max = size - margin;
+
+      var y, x, r, p;
+
+      var white = Array(cellSize+1).join('██');
+      var black = Array(cellSize+1).join('  ');
+
+      var ascii = '';
+      var line = '';
+      for (y = 0; y < size; y += 1) {
+        r = Math.floor( (y - min) / cellSize);
+        line = '';
+        for (x = 0; x < size; x += 1) {
+          p = 1;
+
+          if (min <= x && x < max && min <= y && y < max && _this.isDark(r, Math.floor((x - min) / cellSize))) {
+            p = 0;
+          }
+
+          // Output 2 characters per pixel, to create full square. 1 character per pixels gives only half width of square.
+          line += p ? white : black;
+        }
+
+        for (r = 0; r < cellSize; r += 1) {
+          ascii += line + '\n';
+        }
+      }
+
+      return ascii.substring(0, ascii.length-1);
+    };
+
+    _this.renderTo2dContext = function(context, cellSize) {
+      cellSize = cellSize || 2;
+      var length = _this.getModuleCount();
+      for (var row = 0; row < length; row++) {
+        for (var col = 0; col < length; col++) {
+          context.fillStyle = _this.isDark(row, col) ? 'black' : 'white';
+          context.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrcode.stringToBytes
+  //---------------------------------------------------------------------
+
+  qrcode.stringToBytesFuncs = {
+    'default' : function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        bytes.push(c & 0xff);
+      }
+      return bytes;
+    }
+  };
+
+  qrcode.stringToBytes = qrcode.stringToBytesFuncs['default'];
+
+  //---------------------------------------------------------------------
+  // qrcode.createStringToBytes
+  //---------------------------------------------------------------------
+
+  /**
+   * @param unicodeData base64 string of byte array.
+   * [16bit Unicode],[16bit Bytes], ...
+   * @param numChars
+   */
+  qrcode.createStringToBytes = function(unicodeData, numChars) {
+
+    // create conversion map.
+
+    var unicodeMap = function() {
+
+      var bin = base64DecodeInputStream(unicodeData);
+      var read = function() {
+        var b = bin.read();
+        if (b == -1) throw 'eof';
+        return b;
+      };
+
+      var count = 0;
+      var unicodeMap = {};
+      while (true) {
+        var b0 = bin.read();
+        if (b0 == -1) break;
+        var b1 = read();
+        var b2 = read();
+        var b3 = read();
+        var k = String.fromCharCode( (b0 << 8) | b1);
+        var v = (b2 << 8) | b3;
+        unicodeMap[k] = v;
+        count += 1;
+      }
+      if (count != numChars) {
+        throw count + ' != ' + numChars;
+      }
+
+      return unicodeMap;
+    }();
+
+    var unknownChar = '?'.charCodeAt(0);
+
+    return function(s) {
+      var bytes = [];
+      for (var i = 0; i < s.length; i += 1) {
+        var c = s.charCodeAt(i);
+        if (c < 128) {
+          bytes.push(c);
+        } else {
+          var b = unicodeMap[s.charAt(i)];
+          if (typeof b == 'number') {
+            if ( (b & 0xff) == b) {
+              // 1byte
+              bytes.push(b);
+            } else {
+              // 2bytes
+              bytes.push(b >>> 8);
+              bytes.push(b & 0xff);
+            }
+          } else {
+            bytes.push(unknownChar);
+          }
+        }
+      }
+      return bytes;
+    };
+  };
+
+  //---------------------------------------------------------------------
+  // QRMode
+  //---------------------------------------------------------------------
+
+  var QRMode = {
+    MODE_NUMBER :    1 << 0,
+    MODE_ALPHA_NUM : 1 << 1,
+    MODE_8BIT_BYTE : 1 << 2,
+    MODE_KANJI :     1 << 3
+  };
+
+  //---------------------------------------------------------------------
+  // QRErrorCorrectionLevel
+  //---------------------------------------------------------------------
+
+  var QRErrorCorrectionLevel = {
+    L : 1,
+    M : 0,
+    Q : 3,
+    H : 2
+  };
+
+  //---------------------------------------------------------------------
+  // QRMaskPattern
+  //---------------------------------------------------------------------
+
+  var QRMaskPattern = {
+    PATTERN000 : 0,
+    PATTERN001 : 1,
+    PATTERN010 : 2,
+    PATTERN011 : 3,
+    PATTERN100 : 4,
+    PATTERN101 : 5,
+    PATTERN110 : 6,
+    PATTERN111 : 7
+  };
+
+  //---------------------------------------------------------------------
+  // QRUtil
+  //---------------------------------------------------------------------
+
+  var QRUtil = function() {
+
+    var PATTERN_POSITION_TABLE = [
+      [],
+      [6, 18],
+      [6, 22],
+      [6, 26],
+      [6, 30],
+      [6, 34],
+      [6, 22, 38],
+      [6, 24, 42],
+      [6, 26, 46],
+      [6, 28, 50],
+      [6, 30, 54],
+      [6, 32, 58],
+      [6, 34, 62],
+      [6, 26, 46, 66],
+      [6, 26, 48, 70],
+      [6, 26, 50, 74],
+      [6, 30, 54, 78],
+      [6, 30, 56, 82],
+      [6, 30, 58, 86],
+      [6, 34, 62, 90],
+      [6, 28, 50, 72, 94],
+      [6, 26, 50, 74, 98],
+      [6, 30, 54, 78, 102],
+      [6, 28, 54, 80, 106],
+      [6, 32, 58, 84, 110],
+      [6, 30, 58, 86, 114],
+      [6, 34, 62, 90, 118],
+      [6, 26, 50, 74, 98, 122],
+      [6, 30, 54, 78, 102, 126],
+      [6, 26, 52, 78, 104, 130],
+      [6, 30, 56, 82, 108, 134],
+      [6, 34, 60, 86, 112, 138],
+      [6, 30, 58, 86, 114, 142],
+      [6, 34, 62, 90, 118, 146],
+      [6, 30, 54, 78, 102, 126, 150],
+      [6, 24, 50, 76, 102, 128, 154],
+      [6, 28, 54, 80, 106, 132, 158],
+      [6, 32, 58, 84, 110, 136, 162],
+      [6, 26, 54, 82, 110, 138, 166],
+      [6, 30, 58, 86, 114, 142, 170]
+    ];
+    var G15 = (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+    var G18 = (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+    var G15_MASK = (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+    var _this = {};
+
+    var getBCHDigit = function(data) {
+      var digit = 0;
+      while (data != 0) {
+        digit += 1;
+        data >>>= 1;
+      }
+      return digit;
+    };
+
+    _this.getBCHTypeInfo = function(data) {
+      var d = data << 10;
+      while (getBCHDigit(d) - getBCHDigit(G15) >= 0) {
+        d ^= (G15 << (getBCHDigit(d) - getBCHDigit(G15) ) );
+      }
+      return ( (data << 10) | d) ^ G15_MASK;
+    };
+
+    _this.getBCHTypeNumber = function(data) {
+      var d = data << 12;
+      while (getBCHDigit(d) - getBCHDigit(G18) >= 0) {
+        d ^= (G18 << (getBCHDigit(d) - getBCHDigit(G18) ) );
+      }
+      return (data << 12) | d;
+    };
+
+    _this.getPatternPosition = function(typeNumber) {
+      return PATTERN_POSITION_TABLE[typeNumber - 1];
+    };
+
+    _this.getMaskFunction = function(maskPattern) {
+
+      switch (maskPattern) {
+
+      case QRMaskPattern.PATTERN000 :
+        return function(i, j) { return (i + j) % 2 == 0; };
+      case QRMaskPattern.PATTERN001 :
+        return function(i, j) { return i % 2 == 0; };
+      case QRMaskPattern.PATTERN010 :
+        return function(i, j) { return j % 3 == 0; };
+      case QRMaskPattern.PATTERN011 :
+        return function(i, j) { return (i + j) % 3 == 0; };
+      case QRMaskPattern.PATTERN100 :
+        return function(i, j) { return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 == 0; };
+      case QRMaskPattern.PATTERN101 :
+        return function(i, j) { return (i * j) % 2 + (i * j) % 3 == 0; };
+      case QRMaskPattern.PATTERN110 :
+        return function(i, j) { return ( (i * j) % 2 + (i * j) % 3) % 2 == 0; };
+      case QRMaskPattern.PATTERN111 :
+        return function(i, j) { return ( (i * j) % 3 + (i + j) % 2) % 2 == 0; };
+
+      default :
+        throw 'bad maskPattern:' + maskPattern;
+      }
+    };
+
+    _this.getErrorCorrectPolynomial = function(errorCorrectLength) {
+      var a = qrPolynomial([1], 0);
+      for (var i = 0; i < errorCorrectLength; i += 1) {
+        a = a.multiply(qrPolynomial([1, QRMath.gexp(i)], 0) );
+      }
+      return a;
+    };
+
+    _this.getLengthInBits = function(mode, type) {
+
+      if (1 <= type && type < 10) {
+
+        // 1 - 9
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 10;
+        case QRMode.MODE_ALPHA_NUM : return 9;
+        case QRMode.MODE_8BIT_BYTE : return 8;
+        case QRMode.MODE_KANJI     : return 8;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 27) {
+
+        // 10 - 26
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 12;
+        case QRMode.MODE_ALPHA_NUM : return 11;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 10;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else if (type < 41) {
+
+        // 27 - 40
+
+        switch(mode) {
+        case QRMode.MODE_NUMBER    : return 14;
+        case QRMode.MODE_ALPHA_NUM : return 13;
+        case QRMode.MODE_8BIT_BYTE : return 16;
+        case QRMode.MODE_KANJI     : return 12;
+        default :
+          throw 'mode:' + mode;
+        }
+
+      } else {
+        throw 'type:' + type;
+      }
+    };
+
+    _this.getLostPoint = function(qrcode) {
+
+      var moduleCount = qrcode.getModuleCount();
+
+      var lostPoint = 0;
+
+      // LEVEL1
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount; col += 1) {
+
+          var sameCount = 0;
+          var dark = qrcode.isDark(row, col);
+
+          for (var r = -1; r <= 1; r += 1) {
+
+            if (row + r < 0 || moduleCount <= row + r) {
+              continue;
+            }
+
+            for (var c = -1; c <= 1; c += 1) {
+
+              if (col + c < 0 || moduleCount <= col + c) {
+                continue;
+              }
+
+              if (r == 0 && c == 0) {
+                continue;
+              }
+
+              if (dark == qrcode.isDark(row + r, col + c) ) {
+                sameCount += 1;
+              }
+            }
+          }
+
+          if (sameCount > 5) {
+            lostPoint += (3 + sameCount - 5);
+          }
+        }
+      };
+
+      // LEVEL2
+
+      for (var row = 0; row < moduleCount - 1; row += 1) {
+        for (var col = 0; col < moduleCount - 1; col += 1) {
+          var count = 0;
+          if (qrcode.isDark(row, col) ) count += 1;
+          if (qrcode.isDark(row + 1, col) ) count += 1;
+          if (qrcode.isDark(row, col + 1) ) count += 1;
+          if (qrcode.isDark(row + 1, col + 1) ) count += 1;
+          if (count == 0 || count == 4) {
+            lostPoint += 3;
+          }
+        }
+      }
+
+      // LEVEL3
+
+      for (var row = 0; row < moduleCount; row += 1) {
+        for (var col = 0; col < moduleCount - 6; col += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row, col + 1)
+              &&  qrcode.isDark(row, col + 2)
+              &&  qrcode.isDark(row, col + 3)
+              &&  qrcode.isDark(row, col + 4)
+              && !qrcode.isDark(row, col + 5)
+              &&  qrcode.isDark(row, col + 6) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount - 6; row += 1) {
+          if (qrcode.isDark(row, col)
+              && !qrcode.isDark(row + 1, col)
+              &&  qrcode.isDark(row + 2, col)
+              &&  qrcode.isDark(row + 3, col)
+              &&  qrcode.isDark(row + 4, col)
+              && !qrcode.isDark(row + 5, col)
+              &&  qrcode.isDark(row + 6, col) ) {
+            lostPoint += 40;
+          }
+        }
+      }
+
+      // LEVEL4
+
+      var darkCount = 0;
+
+      for (var col = 0; col < moduleCount; col += 1) {
+        for (var row = 0; row < moduleCount; row += 1) {
+          if (qrcode.isDark(row, col) ) {
+            darkCount += 1;
+          }
+        }
+      }
+
+      var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+      lostPoint += ratio * 10;
+
+      return lostPoint;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // QRMath
+  //---------------------------------------------------------------------
+
+  var QRMath = function() {
+
+    var EXP_TABLE = new Array(256);
+    var LOG_TABLE = new Array(256);
+
+    // initialize tables
+    for (var i = 0; i < 8; i += 1) {
+      EXP_TABLE[i] = 1 << i;
+    }
+    for (var i = 8; i < 256; i += 1) {
+      EXP_TABLE[i] = EXP_TABLE[i - 4]
+        ^ EXP_TABLE[i - 5]
+        ^ EXP_TABLE[i - 6]
+        ^ EXP_TABLE[i - 8];
+    }
+    for (var i = 0; i < 255; i += 1) {
+      LOG_TABLE[EXP_TABLE[i] ] = i;
+    }
+
+    var _this = {};
+
+    _this.glog = function(n) {
+
+      if (n < 1) {
+        throw 'glog(' + n + ')';
+      }
+
+      return LOG_TABLE[n];
+    };
+
+    _this.gexp = function(n) {
+
+      while (n < 0) {
+        n += 255;
+      }
+
+      while (n >= 256) {
+        n -= 255;
+      }
+
+      return EXP_TABLE[n];
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrPolynomial
+  //---------------------------------------------------------------------
+
+  function qrPolynomial(num, shift) {
+
+    if (typeof num.length == 'undefined') {
+      throw num.length + '/' + shift;
+    }
+
+    var _num = function() {
+      var offset = 0;
+      while (offset < num.length && num[offset] == 0) {
+        offset += 1;
+      }
+      var _num = new Array(num.length - offset + shift);
+      for (var i = 0; i < num.length - offset; i += 1) {
+        _num[i] = num[i + offset];
+      }
+      return _num;
+    }();
+
+    var _this = {};
+
+    _this.getAt = function(index) {
+      return _num[index];
+    };
+
+    _this.getLength = function() {
+      return _num.length;
+    };
+
+    _this.multiply = function(e) {
+
+      var num = new Array(_this.getLength() + e.getLength() - 1);
+
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        for (var j = 0; j < e.getLength(); j += 1) {
+          num[i + j] ^= QRMath.gexp(QRMath.glog(_this.getAt(i) ) + QRMath.glog(e.getAt(j) ) );
+        }
+      }
+
+      return qrPolynomial(num, 0);
+    };
+
+    _this.mod = function(e) {
+
+      if (_this.getLength() - e.getLength() < 0) {
+        return _this;
+      }
+
+      var ratio = QRMath.glog(_this.getAt(0) ) - QRMath.glog(e.getAt(0) );
+
+      var num = new Array(_this.getLength() );
+      for (var i = 0; i < _this.getLength(); i += 1) {
+        num[i] = _this.getAt(i);
+      }
+
+      for (var i = 0; i < e.getLength(); i += 1) {
+        num[i] ^= QRMath.gexp(QRMath.glog(e.getAt(i) ) + ratio);
+      }
+
+      // recursive call
+      return qrPolynomial(num, 0).mod(e);
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // QRRSBlock
+  //---------------------------------------------------------------------
+
+  var QRRSBlock = function() {
+
+    var RS_BLOCK_TABLE = [
+
+      // L
+      // M
+      // Q
+      // H
+
+      // 1
+      [1, 26, 19],
+      [1, 26, 16],
+      [1, 26, 13],
+      [1, 26, 9],
+
+      // 2
+      [1, 44, 34],
+      [1, 44, 28],
+      [1, 44, 22],
+      [1, 44, 16],
+
+      // 3
+      [1, 70, 55],
+      [1, 70, 44],
+      [2, 35, 17],
+      [2, 35, 13],
+
+      // 4
+      [1, 100, 80],
+      [2, 50, 32],
+      [2, 50, 24],
+      [4, 25, 9],
+
+      // 5
+      [1, 134, 108],
+      [2, 67, 43],
+      [2, 33, 15, 2, 34, 16],
+      [2, 33, 11, 2, 34, 12],
+
+      // 6
+      [2, 86, 68],
+      [4, 43, 27],
+      [4, 43, 19],
+      [4, 43, 15],
+
+      // 7
+      [2, 98, 78],
+      [4, 49, 31],
+      [2, 32, 14, 4, 33, 15],
+      [4, 39, 13, 1, 40, 14],
+
+      // 8
+      [2, 121, 97],
+      [2, 60, 38, 2, 61, 39],
+      [4, 40, 18, 2, 41, 19],
+      [4, 40, 14, 2, 41, 15],
+
+      // 9
+      [2, 146, 116],
+      [3, 58, 36, 2, 59, 37],
+      [4, 36, 16, 4, 37, 17],
+      [4, 36, 12, 4, 37, 13],
+
+      // 10
+      [2, 86, 68, 2, 87, 69],
+      [4, 69, 43, 1, 70, 44],
+      [6, 43, 19, 2, 44, 20],
+      [6, 43, 15, 2, 44, 16],
+
+      // 11
+      [4, 101, 81],
+      [1, 80, 50, 4, 81, 51],
+      [4, 50, 22, 4, 51, 23],
+      [3, 36, 12, 8, 37, 13],
+
+      // 12
+      [2, 116, 92, 2, 117, 93],
+      [6, 58, 36, 2, 59, 37],
+      [4, 46, 20, 6, 47, 21],
+      [7, 42, 14, 4, 43, 15],
+
+      // 13
+      [4, 133, 107],
+      [8, 59, 37, 1, 60, 38],
+      [8, 44, 20, 4, 45, 21],
+      [12, 33, 11, 4, 34, 12],
+
+      // 14
+      [3, 145, 115, 1, 146, 116],
+      [4, 64, 40, 5, 65, 41],
+      [11, 36, 16, 5, 37, 17],
+      [11, 36, 12, 5, 37, 13],
+
+      // 15
+      [5, 109, 87, 1, 110, 88],
+      [5, 65, 41, 5, 66, 42],
+      [5, 54, 24, 7, 55, 25],
+      [11, 36, 12, 7, 37, 13],
+
+      // 16
+      [5, 122, 98, 1, 123, 99],
+      [7, 73, 45, 3, 74, 46],
+      [15, 43, 19, 2, 44, 20],
+      [3, 45, 15, 13, 46, 16],
+
+      // 17
+      [1, 135, 107, 5, 136, 108],
+      [10, 74, 46, 1, 75, 47],
+      [1, 50, 22, 15, 51, 23],
+      [2, 42, 14, 17, 43, 15],
+
+      // 18
+      [5, 150, 120, 1, 151, 121],
+      [9, 69, 43, 4, 70, 44],
+      [17, 50, 22, 1, 51, 23],
+      [2, 42, 14, 19, 43, 15],
+
+      // 19
+      [3, 141, 113, 4, 142, 114],
+      [3, 70, 44, 11, 71, 45],
+      [17, 47, 21, 4, 48, 22],
+      [9, 39, 13, 16, 40, 14],
+
+      // 20
+      [3, 135, 107, 5, 136, 108],
+      [3, 67, 41, 13, 68, 42],
+      [15, 54, 24, 5, 55, 25],
+      [15, 43, 15, 10, 44, 16],
+
+      // 21
+      [4, 144, 116, 4, 145, 117],
+      [17, 68, 42],
+      [17, 50, 22, 6, 51, 23],
+      [19, 46, 16, 6, 47, 17],
+
+      // 22
+      [2, 139, 111, 7, 140, 112],
+      [17, 74, 46],
+      [7, 54, 24, 16, 55, 25],
+      [34, 37, 13],
+
+      // 23
+      [4, 151, 121, 5, 152, 122],
+      [4, 75, 47, 14, 76, 48],
+      [11, 54, 24, 14, 55, 25],
+      [16, 45, 15, 14, 46, 16],
+
+      // 24
+      [6, 147, 117, 4, 148, 118],
+      [6, 73, 45, 14, 74, 46],
+      [11, 54, 24, 16, 55, 25],
+      [30, 46, 16, 2, 47, 17],
+
+      // 25
+      [8, 132, 106, 4, 133, 107],
+      [8, 75, 47, 13, 76, 48],
+      [7, 54, 24, 22, 55, 25],
+      [22, 45, 15, 13, 46, 16],
+
+      // 26
+      [10, 142, 114, 2, 143, 115],
+      [19, 74, 46, 4, 75, 47],
+      [28, 50, 22, 6, 51, 23],
+      [33, 46, 16, 4, 47, 17],
+
+      // 27
+      [8, 152, 122, 4, 153, 123],
+      [22, 73, 45, 3, 74, 46],
+      [8, 53, 23, 26, 54, 24],
+      [12, 45, 15, 28, 46, 16],
+
+      // 28
+      [3, 147, 117, 10, 148, 118],
+      [3, 73, 45, 23, 74, 46],
+      [4, 54, 24, 31, 55, 25],
+      [11, 45, 15, 31, 46, 16],
+
+      // 29
+      [7, 146, 116, 7, 147, 117],
+      [21, 73, 45, 7, 74, 46],
+      [1, 53, 23, 37, 54, 24],
+      [19, 45, 15, 26, 46, 16],
+
+      // 30
+      [5, 145, 115, 10, 146, 116],
+      [19, 75, 47, 10, 76, 48],
+      [15, 54, 24, 25, 55, 25],
+      [23, 45, 15, 25, 46, 16],
+
+      // 31
+      [13, 145, 115, 3, 146, 116],
+      [2, 74, 46, 29, 75, 47],
+      [42, 54, 24, 1, 55, 25],
+      [23, 45, 15, 28, 46, 16],
+
+      // 32
+      [17, 145, 115],
+      [10, 74, 46, 23, 75, 47],
+      [10, 54, 24, 35, 55, 25],
+      [19, 45, 15, 35, 46, 16],
+
+      // 33
+      [17, 145, 115, 1, 146, 116],
+      [14, 74, 46, 21, 75, 47],
+      [29, 54, 24, 19, 55, 25],
+      [11, 45, 15, 46, 46, 16],
+
+      // 34
+      [13, 145, 115, 6, 146, 116],
+      [14, 74, 46, 23, 75, 47],
+      [44, 54, 24, 7, 55, 25],
+      [59, 46, 16, 1, 47, 17],
+
+      // 35
+      [12, 151, 121, 7, 152, 122],
+      [12, 75, 47, 26, 76, 48],
+      [39, 54, 24, 14, 55, 25],
+      [22, 45, 15, 41, 46, 16],
+
+      // 36
+      [6, 151, 121, 14, 152, 122],
+      [6, 75, 47, 34, 76, 48],
+      [46, 54, 24, 10, 55, 25],
+      [2, 45, 15, 64, 46, 16],
+
+      // 37
+      [17, 152, 122, 4, 153, 123],
+      [29, 74, 46, 14, 75, 47],
+      [49, 54, 24, 10, 55, 25],
+      [24, 45, 15, 46, 46, 16],
+
+      // 38
+      [4, 152, 122, 18, 153, 123],
+      [13, 74, 46, 32, 75, 47],
+      [48, 54, 24, 14, 55, 25],
+      [42, 45, 15, 32, 46, 16],
+
+      // 39
+      [20, 147, 117, 4, 148, 118],
+      [40, 75, 47, 7, 76, 48],
+      [43, 54, 24, 22, 55, 25],
+      [10, 45, 15, 67, 46, 16],
+
+      // 40
+      [19, 148, 118, 6, 149, 119],
+      [18, 75, 47, 31, 76, 48],
+      [34, 54, 24, 34, 55, 25],
+      [20, 45, 15, 61, 46, 16]
+    ];
+
+    var qrRSBlock = function(totalCount, dataCount) {
+      var _this = {};
+      _this.totalCount = totalCount;
+      _this.dataCount = dataCount;
+      return _this;
+    };
+
+    var _this = {};
+
+    var getRsBlockTable = function(typeNumber, errorCorrectionLevel) {
+
+      switch(errorCorrectionLevel) {
+      case QRErrorCorrectionLevel.L :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+      case QRErrorCorrectionLevel.M :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+      case QRErrorCorrectionLevel.Q :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+      case QRErrorCorrectionLevel.H :
+        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+      default :
+        return undefined;
+      }
+    };
+
+    _this.getRSBlocks = function(typeNumber, errorCorrectionLevel) {
+
+      var rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
+
+      if (typeof rsBlock == 'undefined') {
+        throw 'bad rs block @ typeNumber:' + typeNumber +
+            '/errorCorrectionLevel:' + errorCorrectionLevel;
+      }
+
+      var length = rsBlock.length / 3;
+
+      var list = [];
+
+      for (var i = 0; i < length; i += 1) {
+
+        var count = rsBlock[i * 3 + 0];
+        var totalCount = rsBlock[i * 3 + 1];
+        var dataCount = rsBlock[i * 3 + 2];
+
+        for (var j = 0; j < count; j += 1) {
+          list.push(qrRSBlock(totalCount, dataCount) );
+        }
+      }
+
+      return list;
+    };
+
+    return _this;
+  }();
+
+  //---------------------------------------------------------------------
+  // qrBitBuffer
+  //---------------------------------------------------------------------
+
+  var qrBitBuffer = function() {
+
+    var _buffer = [];
+    var _length = 0;
+
+    var _this = {};
+
+    _this.getBuffer = function() {
+      return _buffer;
+    };
+
+    _this.getAt = function(index) {
+      var bufIndex = Math.floor(index / 8);
+      return ( (_buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+    };
+
+    _this.put = function(num, length) {
+      for (var i = 0; i < length; i += 1) {
+        _this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+      }
+    };
+
+    _this.getLengthInBits = function() {
+      return _length;
+    };
+
+    _this.putBit = function(bit) {
+
+      var bufIndex = Math.floor(_length / 8);
+      if (_buffer.length <= bufIndex) {
+        _buffer.push(0);
+      }
+
+      if (bit) {
+        _buffer[bufIndex] |= (0x80 >>> (_length % 8) );
+      }
+
+      _length += 1;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrNumber
+  //---------------------------------------------------------------------
+
+  var qrNumber = function(data) {
+
+    var _mode = QRMode.MODE_NUMBER;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _data;
+
+      var i = 0;
+
+      while (i + 2 < data.length) {
+        buffer.put(strToNum(data.substring(i, i + 3) ), 10);
+        i += 3;
+      }
+
+      if (i < data.length) {
+        if (data.length - i == 1) {
+          buffer.put(strToNum(data.substring(i, i + 1) ), 4);
+        } else if (data.length - i == 2) {
+          buffer.put(strToNum(data.substring(i, i + 2) ), 7);
+        }
+      }
+    };
+
+    var strToNum = function(s) {
+      var num = 0;
+      for (var i = 0; i < s.length; i += 1) {
+        num = num * 10 + chatToNum(s.charAt(i) );
+      }
+      return num;
+    };
+
+    var chatToNum = function(c) {
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      }
+      throw 'illegal char :' + c;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrAlphaNum
+  //---------------------------------------------------------------------
+
+  var qrAlphaNum = function(data) {
+
+    var _mode = QRMode.MODE_ALPHA_NUM;
+    var _data = data;
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _data.length;
+    };
+
+    _this.write = function(buffer) {
+
+      var s = _data;
+
+      var i = 0;
+
+      while (i + 1 < s.length) {
+        buffer.put(
+          getCode(s.charAt(i) ) * 45 +
+          getCode(s.charAt(i + 1) ), 11);
+        i += 2;
+      }
+
+      if (i < s.length) {
+        buffer.put(getCode(s.charAt(i) ), 6);
+      }
+    };
+
+    var getCode = function(c) {
+
+      if ('0' <= c && c <= '9') {
+        return c.charCodeAt(0) - '0'.charCodeAt(0);
+      } else if ('A' <= c && c <= 'Z') {
+        return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+      } else {
+        switch (c) {
+        case ' ' : return 36;
+        case '$' : return 37;
+        case '%' : return 38;
+        case '*' : return 39;
+        case '+' : return 40;
+        case '-' : return 41;
+        case '.' : return 42;
+        case '/' : return 43;
+        case ':' : return 44;
+        default :
+          throw 'illegal char :' + c;
+        }
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qr8BitByte
+  //---------------------------------------------------------------------
+
+  var qr8BitByte = function(data) {
+
+    var _mode = QRMode.MODE_8BIT_BYTE;
+    var _data = data;
+    var _bytes = qrcode.stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return _bytes.length;
+    };
+
+    _this.write = function(buffer) {
+      for (var i = 0; i < _bytes.length; i += 1) {
+        buffer.put(_bytes[i], 8);
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // qrKanji
+  //---------------------------------------------------------------------
+
+  var qrKanji = function(data) {
+
+    var _mode = QRMode.MODE_KANJI;
+    var _data = data;
+
+    var stringToBytes = qrcode.stringToBytesFuncs['SJIS'];
+    if (!stringToBytes) {
+      throw 'sjis not supported.';
+    }
+    !function(c, code) {
+      // self test for sjis support.
+      var test = stringToBytes(c);
+      if (test.length != 2 || ( (test[0] << 8) | test[1]) != code) {
+        throw 'sjis not supported.';
+      }
+    }('\u53cb', 0x9746);
+
+    var _bytes = stringToBytes(data);
+
+    var _this = {};
+
+    _this.getMode = function() {
+      return _mode;
+    };
+
+    _this.getLength = function(buffer) {
+      return ~~(_bytes.length / 2);
+    };
+
+    _this.write = function(buffer) {
+
+      var data = _bytes;
+
+      var i = 0;
+
+      while (i + 1 < data.length) {
+
+        var c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
+
+        if (0x8140 <= c && c <= 0x9FFC) {
+          c -= 0x8140;
+        } else if (0xE040 <= c && c <= 0xEBBF) {
+          c -= 0xC140;
+        } else {
+          throw 'illegal char at ' + (i + 1) + '/' + c;
+        }
+
+        c = ( (c >>> 8) & 0xff) * 0xC0 + (c & 0xff);
+
+        buffer.put(c, 13);
+
+        i += 2;
+      }
+
+      if (i < data.length) {
+        throw 'illegal char at ' + (i + 1);
+      }
+    };
+
+    return _this;
+  };
+
+  //=====================================================================
+  // GIF Support etc.
+  //
+
+  //---------------------------------------------------------------------
+  // byteArrayOutputStream
+  //---------------------------------------------------------------------
+
+  var byteArrayOutputStream = function() {
+
+    var _bytes = [];
+
+    var _this = {};
+
+    _this.writeByte = function(b) {
+      _bytes.push(b & 0xff);
+    };
+
+    _this.writeShort = function(i) {
+      _this.writeByte(i);
+      _this.writeByte(i >>> 8);
+    };
+
+    _this.writeBytes = function(b, off, len) {
+      off = off || 0;
+      len = len || b.length;
+      for (var i = 0; i < len; i += 1) {
+        _this.writeByte(b[i + off]);
+      }
+    };
+
+    _this.writeString = function(s) {
+      for (var i = 0; i < s.length; i += 1) {
+        _this.writeByte(s.charCodeAt(i) );
+      }
+    };
+
+    _this.toByteArray = function() {
+      return _bytes;
+    };
+
+    _this.toString = function() {
+      var s = '';
+      s += '[';
+      for (var i = 0; i < _bytes.length; i += 1) {
+        if (i > 0) {
+          s += ',';
+        }
+        s += _bytes[i];
+      }
+      s += ']';
+      return s;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64EncodeOutputStream
+  //---------------------------------------------------------------------
+
+  var base64EncodeOutputStream = function() {
+
+    var _buffer = 0;
+    var _buflen = 0;
+    var _length = 0;
+    var _base64 = '';
+
+    var _this = {};
+
+    var writeEncoded = function(b) {
+      _base64 += String.fromCharCode(encode(b & 0x3f) );
+    };
+
+    var encode = function(n) {
+      if (n < 0) {
+        // error.
+      } else if (n < 26) {
+        return 0x41 + n;
+      } else if (n < 52) {
+        return 0x61 + (n - 26);
+      } else if (n < 62) {
+        return 0x30 + (n - 52);
+      } else if (n == 62) {
+        return 0x2b;
+      } else if (n == 63) {
+        return 0x2f;
+      }
+      throw 'n:' + n;
+    };
+
+    _this.writeByte = function(n) {
+
+      _buffer = (_buffer << 8) | (n & 0xff);
+      _buflen += 8;
+      _length += 1;
+
+      while (_buflen >= 6) {
+        writeEncoded(_buffer >>> (_buflen - 6) );
+        _buflen -= 6;
+      }
+    };
+
+    _this.flush = function() {
+
+      if (_buflen > 0) {
+        writeEncoded(_buffer << (6 - _buflen) );
+        _buffer = 0;
+        _buflen = 0;
+      }
+
+      if (_length % 3 != 0) {
+        // padding
+        var padlen = 3 - _length % 3;
+        for (var i = 0; i < padlen; i += 1) {
+          _base64 += '=';
+        }
+      }
+    };
+
+    _this.toString = function() {
+      return _base64;
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // base64DecodeInputStream
+  //---------------------------------------------------------------------
+
+  var base64DecodeInputStream = function(str) {
+
+    var _str = str;
+    var _pos = 0;
+    var _buffer = 0;
+    var _buflen = 0;
+
+    var _this = {};
+
+    _this.read = function() {
+
+      while (_buflen < 8) {
+
+        if (_pos >= _str.length) {
+          if (_buflen == 0) {
+            return -1;
+          }
+          throw 'unexpected end of file./' + _buflen;
+        }
+
+        var c = _str.charAt(_pos);
+        _pos += 1;
+
+        if (c == '=') {
+          _buflen = 0;
+          return -1;
+        } else if (c.match(/^\s$/) ) {
+          // ignore if whitespace.
+          continue;
+        }
+
+        _buffer = (_buffer << 6) | decode(c.charCodeAt(0) );
+        _buflen += 6;
+      }
+
+      var n = (_buffer >>> (_buflen - 8) ) & 0xff;
+      _buflen -= 8;
+      return n;
+    };
+
+    var decode = function(c) {
+      if (0x41 <= c && c <= 0x5a) {
+        return c - 0x41;
+      } else if (0x61 <= c && c <= 0x7a) {
+        return c - 0x61 + 26;
+      } else if (0x30 <= c && c <= 0x39) {
+        return c - 0x30 + 52;
+      } else if (c == 0x2b) {
+        return 62;
+      } else if (c == 0x2f) {
+        return 63;
+      } else {
+        throw 'c:' + c;
+      }
+    };
+
+    return _this;
+  };
+
+  //---------------------------------------------------------------------
+  // gifImage (B/W)
+  //---------------------------------------------------------------------
+
+  var gifImage = function(width, height) {
+
+    var _width = width;
+    var _height = height;
+    var _data = new Array(width * height);
+
+    var _this = {};
+
+    _this.setPixel = function(x, y, pixel) {
+      _data[y * _width + x] = pixel;
+    };
+
+    _this.write = function(out) {
+
+      //---------------------------------
+      // GIF Signature
+
+      out.writeString('GIF87a');
+
+      //---------------------------------
+      // Screen Descriptor
+
+      out.writeShort(_width);
+      out.writeShort(_height);
+
+      out.writeByte(0x80); // 2bit
+      out.writeByte(0);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Global Color Map
+
+      // black
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+      out.writeByte(0x00);
+
+      // white
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+      out.writeByte(0xff);
+
+      //---------------------------------
+      // Image Descriptor
+
+      out.writeString(',');
+      out.writeShort(0);
+      out.writeShort(0);
+      out.writeShort(_width);
+      out.writeShort(_height);
+      out.writeByte(0);
+
+      //---------------------------------
+      // Local Color Map
+
+      //---------------------------------
+      // Raster Data
+
+      var lzwMinCodeSize = 2;
+      var raster = getLZWRaster(lzwMinCodeSize);
+
+      out.writeByte(lzwMinCodeSize);
+
+      var offset = 0;
+
+      while (raster.length - offset > 255) {
+        out.writeByte(255);
+        out.writeBytes(raster, offset, 255);
+        offset += 255;
+      }
+
+      out.writeByte(raster.length - offset);
+      out.writeBytes(raster, offset, raster.length - offset);
+      out.writeByte(0x00);
+
+      //---------------------------------
+      // GIF Terminator
+      out.writeString(';');
+    };
+
+    var bitOutputStream = function(out) {
+
+      var _out = out;
+      var _bitLength = 0;
+      var _bitBuffer = 0;
+
+      var _this = {};
+
+      _this.write = function(data, length) {
+
+        if ( (data >>> length) != 0) {
+          throw 'length over';
+        }
+
+        while (_bitLength + length >= 8) {
+          _out.writeByte(0xff & ( (data << _bitLength) | _bitBuffer) );
+          length -= (8 - _bitLength);
+          data >>>= (8 - _bitLength);
+          _bitBuffer = 0;
+          _bitLength = 0;
+        }
+
+        _bitBuffer = (data << _bitLength) | _bitBuffer;
+        _bitLength = _bitLength + length;
+      };
+
+      _this.flush = function() {
+        if (_bitLength > 0) {
+          _out.writeByte(_bitBuffer);
+        }
+      };
+
+      return _this;
+    };
+
+    var getLZWRaster = function(lzwMinCodeSize) {
+
+      var clearCode = 1 << lzwMinCodeSize;
+      var endCode = (1 << lzwMinCodeSize) + 1;
+      var bitLength = lzwMinCodeSize + 1;
+
+      // Setup LZWTable
+      var table = lzwTable();
+
+      for (var i = 0; i < clearCode; i += 1) {
+        table.add(String.fromCharCode(i) );
+      }
+      table.add(String.fromCharCode(clearCode) );
+      table.add(String.fromCharCode(endCode) );
+
+      var byteOut = byteArrayOutputStream();
+      var bitOut = bitOutputStream(byteOut);
+
+      // clear code
+      bitOut.write(clearCode, bitLength);
+
+      var dataIndex = 0;
+
+      var s = String.fromCharCode(_data[dataIndex]);
+      dataIndex += 1;
+
+      while (dataIndex < _data.length) {
+
+        var c = String.fromCharCode(_data[dataIndex]);
+        dataIndex += 1;
+
+        if (table.contains(s + c) ) {
+
+          s = s + c;
+
+        } else {
+
+          bitOut.write(table.indexOf(s), bitLength);
+
+          if (table.size() < 0xfff) {
+
+            if (table.size() == (1 << bitLength) ) {
+              bitLength += 1;
+            }
+
+            table.add(s + c);
+          }
+
+          s = c;
+        }
+      }
+
+      bitOut.write(table.indexOf(s), bitLength);
+
+      // end code
+      bitOut.write(endCode, bitLength);
+
+      bitOut.flush();
+
+      return byteOut.toByteArray();
+    };
+
+    var lzwTable = function() {
+
+      var _map = {};
+      var _size = 0;
+
+      var _this = {};
+
+      _this.add = function(key) {
+        if (_this.contains(key) ) {
+          throw 'dup key:' + key;
+        }
+        _map[key] = _size;
+        _size += 1;
+      };
+
+      _this.size = function() {
+        return _size;
+      };
+
+      _this.indexOf = function(key) {
+        return _map[key];
+      };
+
+      _this.contains = function(key) {
+        return typeof _map[key] != 'undefined';
+      };
+
+      return _this;
+    };
+
+    return _this;
+  };
+
+  var createDataURL = function(width, height, getPixel) {
+    var gif = gifImage(width, height);
+    for (var y = 0; y < height; y += 1) {
+      for (var x = 0; x < width; x += 1) {
+        gif.setPixel(x, y, getPixel(x, y) );
+      }
+    }
+
+    var b = byteArrayOutputStream();
+    gif.write(b);
+
+    var base64 = base64EncodeOutputStream();
+    var bytes = b.toByteArray();
+    for (var i = 0; i < bytes.length; i += 1) {
+      base64.writeByte(bytes[i]);
+    }
+    base64.flush();
+
+    return 'data:image/gif;base64,' + base64;
+  };
+
+  //---------------------------------------------------------------------
+  // returns qrcode function.
+
+  return qrcode;
+}();
+
+// multibyte support
+!function() {
+
+  qrcode.stringToBytesFuncs['UTF-8'] = function(s) {
+    // http://stackoverflow.com/questions/18729405/how-to-convert-utf8-string-to-byte-array
+    function toUTF8Array(str) {
+      var utf8 = [];
+      for (var i=0; i < str.length; i++) {
+        var charcode = str.charCodeAt(i);
+        if (charcode < 0x80) utf8.push(charcode);
+        else if (charcode < 0x800) {
+          utf8.push(0xc0 | (charcode >> 6),
+              0x80 | (charcode & 0x3f));
+        }
+        else if (charcode < 0xd800 || charcode >= 0xe000) {
+          utf8.push(0xe0 | (charcode >> 12),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+        // surrogate pair
+        else {
+          i++;
+          // UTF-16 encodes 0x10000-0x10FFFF by
+          // subtracting 0x10000 and splitting the
+          // 20 bits of 0x0-0xFFFFF into two halves
+          charcode = 0x10000 + (((charcode & 0x3ff)<<10)
+            | (str.charCodeAt(i) & 0x3ff));
+          utf8.push(0xf0 | (charcode >>18),
+              0x80 | ((charcode>>12) & 0x3f),
+              0x80 | ((charcode>>6) & 0x3f),
+              0x80 | (charcode & 0x3f));
+        }
+      }
+      return utf8;
+    }
+    return toUTF8Array(s);
+  };
+
+}();
+
+(function (factory) {
+  if (typeof define === 'function' && define.amd) {
+      define([], factory);
+  } else if (typeof exports === 'object') {
+      module.exports = factory();
+  }
+}(function () {
+    return qrcode;
+}));
+
+</script>
+<script>
+/* ---- intent-uri.js ---- */
+/*
+ * Android intent:// URI builder.
+ *
+ * Semantics of the generated strings are modelled on AOSP
+ * frameworks/base/core/java/android/content/Intent.java
+ * (Intent.parseUri / Intent.toUri), which is what an Android browser uses to
+ * turn one of these links into a real Intent. The parts that matter:
+ *
+ *   - The substring before the last "#Intent;" is the data URI. parseUri does
+ *     `data = data.substring(7); if (scheme != null) data = scheme + ':' + data;`
+ *     so "intent://h/p" + scheme=weixin becomes "weixin://h/p", while
+ *     "intent:10086" + scheme=smsto becomes the opaque "smsto:10086".
+ *     Keeping the "//" (or not) is therefore significant.
+ *   - Every name=value pair is split on the FIRST '=' and terminated by ';',
+ *     and the value is Uri.decode()d. So ';' must be escaped, '=' need not be.
+ *   - Extra prefixes are S.=String, B.=boolean, b.=byte, c.=char, d.=double,
+ *     f.=float, i.=int, l.=long, s.=short. Note B/b: byte is lowercase, boolean
+ *     is uppercase.
+ *   - The parameter list ends at the literal token "end".
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.IntentURI = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  var ACTION_VIEW = 'android.intent.action.VIEW';
+  var CATEGORY_BROWSABLE = 'android.intent.category.BROWSABLE';
+  var CATEGORY_DEFAULT = 'android.intent.category.DEFAULT';
+
+  /* prefix -> Bundle type put by Intent.parseUri */
+  var EXTRA_TYPES = [
+    { prefix: 'S', label: 'String', kind: 'string' },
+    { prefix: 'i', label: 'int', kind: 'int' },
+    { prefix: 'l', label: 'long', kind: 'int' },
+    { prefix: 's', label: 'short', kind: 'int' },
+    { prefix: 'b', label: 'byte', kind: 'int' },
+    { prefix: 'B', label: 'boolean', kind: 'bool' },
+    { prefix: 'f', label: 'float', kind: 'number' },
+    { prefix: 'd', label: 'double', kind: 'number' },
+    { prefix: 'c', label: 'char', kind: 'char' }
+  ];
+
+  function extraType(prefix) {
+    for (var i = 0; i < EXTRA_TYPES.length; i++) {
+      if (EXTRA_TYPES[i].prefix === prefix) return EXTRA_TYPES[i];
+    }
+    return null;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Encoding
+   * ------------------------------------------------------------------ */
+
+  function enc(s) {
+    return encodeURIComponent(String(s));
+  }
+
+  /* Uri.encode(type, "/") keeps the slash so "text/plain" stays readable. */
+  function encType(s) {
+    return enc(s).replace(/%2F/gi, '/');
+  }
+
+  /* Authority: keep ':' (host:port), '@' (userinfo) and brackets (IPv6). */
+  function encAuthority(s) {
+    return String(s).replace(/[^A-Za-z0-9\-._~:@[\]!$&'()*+,;=]/g, function (c) {
+      return enc(c);
+    });
+  }
+
+  /* Path: encode each segment, keep the '/' separators. */
+  function encPath(s) {
+    if (!s) return '';
+    return String(s).split('/').map(enc).join('/');
+  }
+
+  /* Query: keep the structure, encode keys and values. */
+  function encQuery(s) {
+    if (!s) return '';
+    return String(s).split('&').map(function (pair) {
+      if (pair === '') return '';
+      var eq = pair.indexOf('=');
+      if (eq < 0) return enc(pair);
+      return enc(pair.slice(0, eq)) + '=' + enc(pair.slice(eq + 1));
+    }).join('&');
+  }
+
+  /*
+   * The data part is passed through as the user wrote it, with the minimum
+   * escaping needed to survive Intent.parseUri's grammar. A '%' that is not
+   * already the start of an escape gets escaped so we never corrupt existing
+   * percent-encoding.
+   */
+  function escapeDataPart(s) {
+    return String(s).replace(/%(?![0-9A-Fa-f]{2})|[;\s<>"\\^`{|}]/g, function (c) {
+      return enc(c);
+    });
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Target URI (the URI the app will actually receive as its data)
+   * ------------------------------------------------------------------ */
+
+  /*
+   * Accepts "weixin://dl/nav?k=v", "smsto:10086", "weixin:", "https://x/y#z".
+   * Returns { scheme, authority, path, query, fragment, opaque, hierarchical }.
+   */
+  function parseTargetUri(input) {
+    var raw = String(input == null ? '' : input).trim();
+    if (raw === '') return null;
+
+    var scheme = null;
+    var rest = raw;
+    var m = /^([A-Za-z][A-Za-z0-9+.\-]*):/.exec(raw);
+    if (m) {
+      scheme = m[1];
+      rest = raw.slice(m[0].length);
+    }
+
+    var hierarchical = rest.indexOf('//') === 0;
+    var authority = '';
+    var pathAndQuery = rest;
+    if (hierarchical) {
+      var afterSlashes = rest.slice(2);
+      var cut = afterSlashes.search(/[/?#]/);
+      if (cut < 0) {
+        authority = afterSlashes;
+        pathAndQuery = '';
+      } else {
+        authority = afterSlashes.slice(0, cut);
+        pathAndQuery = afterSlashes.slice(cut);
+      }
+    }
+
+    var fragment = null;
+    var hash = pathAndQuery.indexOf('#');
+    if (hash >= 0) {
+      fragment = pathAndQuery.slice(hash + 1);
+      pathAndQuery = pathAndQuery.slice(0, hash);
+    }
+
+    var query = null;
+    var q = pathAndQuery.indexOf('?');
+    if (q >= 0) {
+      query = pathAndQuery.slice(q + 1);
+      pathAndQuery = pathAndQuery.slice(0, q);
+    }
+
+    return {
+      scheme: scheme,
+      authority: authority,
+      path: pathAndQuery,
+      query: query,
+      fragment: fragment,
+      hierarchical: hierarchical,
+      opaque: !hierarchical && rest !== '',
+      /* true when the URI carries nothing but a scheme, e.g. "weixin:" */
+      schemeOnly: !hierarchical && rest === ''
+    };
+  }
+
+  /*
+   * Build a target URI from structured fields. Returns the URI plus any
+   * problems that make it unusable.
+   */
+  function buildTargetUri(parts) {
+    var p = parts || {};
+    var errors = [];
+    var warnings = [];
+    var scheme = String(p.scheme == null ? '' : p.scheme).trim().replace(/:$/, '');
+
+    if (scheme === '') {
+      errors.push('目标 scheme 不能为空');
+    } else if (!/^[A-Za-z][A-Za-z0-9+.\-]*$/.test(scheme)) {
+      errors.push('scheme 只能包含字母、数字、+ . -，且必须以字母开头：' + scheme);
+    }
+
+    var authority = String(p.authority == null ? '' : p.authority).trim();
+    var path = String(p.path == null ? '' : p.path).trim();
+    var query = String(p.query == null ? '' : p.query).trim();
+    var fragment = String(p.fragment == null ? '' : p.fragment).trim();
+    var mode = p.mode || 'hierarchical'; /* 'hierarchical' | 'opaque' */
+
+    var uri = scheme + ':';
+
+    if (mode === 'opaque') {
+      if (p.path == null || String(p.path).trim() === '') {
+        errors.push('opaque 模式需要填写 scheme 之后的部分，例如 smsto:10086 里的 10086');
+      }
+      uri += escapeDataPart(String(p.path == null ? '' : p.path).trim());
+    } else if (authority === '' && path === '' && query === '') {
+      /* scheme-only: "weixin://" is the conventional form apps expect. */
+      uri += '//';
+    } else {
+      uri += '//' + encAuthority(authority) + encPath(path);
+      if (query !== '') uri += '?' + encQuery(query);
+    }
+
+    if (fragment !== '') {
+      uri += '#' + encPath(fragment);
+      warnings.push(
+        '数据部分里的 # 会原样保留（AOSP 用 lastIndexOf("#") 定位 #Intent;），' +
+        '但部分第三方 App 的解析实现不认，按需改用 %23。'
+      );
+    }
+
+    if (authority !== '' && path !== '' && path.charAt(0) !== '/' && path.indexOf('?') !== 0) {
+      /* "weixin://hostpath" — almost always a typo for weixin://host/path */
+      warnings.push('有 authority 时路径建议以 / 开头，否则会和 host 连在一起');
+    }
+
+    return { uri: uri, errors: errors, warnings: warnings };
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Extra values
+   * ------------------------------------------------------------------ */
+
+  function encodeExtraValue(prefix, raw) {
+    var type = extraType(prefix);
+    if (!type) return { error: '未知的 extra 类型：' + prefix + '.' };
+    var v = raw == null ? '' : String(raw);
+
+    if (type.kind === 'bool') {
+      var low = v.trim().toLowerCase();
+      if (low !== 'true' && low !== 'false') {
+        return { error: prefix + '.' + ' 只接受 true / false，收到：' + v };
+      }
+      /* Boolean.parseBoolean only treats "true" as true. */
+      return { value: low };
+    }
+    if (type.kind === 'int') {
+      if (!/^[+-]?\d+$/.test(v.trim())) {
+        return { error: prefix + '. 需要整数，收到：' + v };
+      }
+      var n = Number(v.trim());
+      if (prefix === 'i' && (n < -2147483648 || n > 2147483647)) {
+        return { error: 'i. 超出 int 范围：' + v };
+      }
+      if (prefix === 's' && (n < -32768 || n > 32767)) {
+        return { error: 's. 超出 short 范围：' + v };
+      }
+      if (prefix === 'b' && (n < -128 || n > 127)) {
+        return { error: 'b. 超出 byte 范围：' + v };
+      }
+      return { value: String(n) };
+    }
+    if (type.kind === 'number') {
+      if (!/^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/.test(v.trim())) {
+        return { error: prefix + '. 需要数字，收到：' + v };
+      }
+      return { value: v.trim() };
+    }
+    if (type.kind === 'char') {
+      /* parseUri does value.charAt(0), so anything longer is silently cut. */
+      var chars = Array.from(v);
+      if (chars.length !== 1) {
+        return { error: 'c. 需要单个字符，收到 ' + chars.length + ' 个' };
+      }
+      return { value: enc(chars[0]) };
+    }
+    return { value: enc(v) };
+  }
+
+  /* ------------------------------------------------------------------ *
+   * intent:// URI
+   * ------------------------------------------------------------------ */
+
+  /*
+   * cfg: {
+   *   target: { scheme, authority, path, query, fragment, mode }  (structured)
+   *        | { raw: "weixin://dl/nav" }
+   *   action, categories: [], type, package, component, launchFlags,
+   *   extras: [{ prefix, key, value }]
+   * }
+   */
+  function buildIntentUri(cfg) {
+    var c = cfg || {};
+    var errors = [];
+    var warnings = [];
+
+    var targetStr = '';
+    var tgt = null;
+    var hasRawTarget = c.target && c.target.raw != null && String(c.target.raw).trim() !== '';
+    var hasStructuredTarget =
+      c.target && String(c.target.scheme == null ? '' : c.target.scheme).trim() !== '';
+
+    if (hasRawTarget) {
+      targetStr = String(c.target.raw).trim();
+      tgt = parseTargetUri(targetStr);
+    } else if (hasStructuredTarget) {
+      var built = buildTargetUri(c.target);
+      errors = errors.concat(built.errors);
+      warnings = warnings.concat(built.warnings);
+      targetStr = built.uri;
+      tgt = parseTargetUri(targetStr);
+    }
+    /* Neither: a data-less Intent, e.g. action=android.settings.SETTINGS.
+     * Rendering that as "intent:#Intent;…" is what makes parseUri leave the
+     * data unset rather than inventing a "//" data URI. */
+
+    var scheme = (tgt && tgt.scheme) || '';
+    var action = c.action == null ? ACTION_VIEW : String(c.action).trim();
+    var categories = (c.categories || []).filter(function (x) {
+      return String(x).trim() !== '';
+    });
+
+    if (scheme === '' && action === '') {
+      errors.push('至少需要 scheme 或 action 之一，否则系统无法匹配到任何应用');
+    }
+
+    /* data part: "intent:" + everything after "scheme:" */
+    var afterScheme = targetStr.replace(/^[A-Za-z][A-Za-z0-9+.\-]*:/, '');
+    var dataPart = 'intent:' + escapeDataPart(afterScheme);
+
+    var params = [];
+    if (scheme !== '') params.push('scheme=' + enc(scheme));
+    if (action !== '') params.push('action=' + enc(action));
+    for (var i = 0; i < categories.length; i++) {
+      params.push('category=' + enc(String(categories[i]).trim()));
+    }
+    if (c.type) params.push('type=' + encType(c.type));
+    if (c.package) params.push('package=' + enc(String(c.package).trim()));
+    if (c.component) params.push('component=' + enc(String(c.component).trim()));
+    if (c.launchFlags != null && String(c.launchFlags).trim() !== '') {
+      var flags = String(c.launchFlags).trim();
+      if (!/^(0[xX][0-9A-Fa-f]+|[+-]?\d+)$/.test(flags)) {
+        errors.push('launchFlags 需要十进制或 0x 十六进制整数，收到：' + c.launchFlags);
+      } else {
+        params.push('launchFlags=' + flags);
+      }
+    }
+
+    var extras = c.extras || [];
+    for (var j = 0; j < extras.length; j++) {
+      var e = extras[j];
+      if (!e || String(e.key == null ? '' : e.key).trim() === '') {
+        errors.push('第 ' + (j + 1) + ' 个 extra 缺少 key');
+        continue;
+      }
+      var got = encodeExtraValue(e.prefix, e.value);
+      if (got.error) {
+        errors.push(got.error);
+        continue;
+      }
+      params.push(e.prefix + '.' + enc(String(e.key).trim()) + '=' + got.value);
+    }
+
+    if (params.length === 0) {
+      errors.push('至少需要一个 Intent 参数（scheme / action / category …）');
+    }
+
+    /* Warnings that mirror how browsers actually behave. */
+    var lowerScheme = scheme.toLowerCase();
+    if (c.component) {
+      warnings.push(
+        'component= 指定了显式组件。Chrome 在解析时会调用 setComponent(null) 把它清掉，' +
+          '所以从网页唤起基本不会生效；只有 adb / WebView 等场景可用。'
+      );
+    }
+    if (c.package) {
+      warnings.push(
+        'package= 会把 Intent 定向到该包。留空时由系统自己挑应用（系统自动识别）；' +
+          '填错包名会直接唤起失败。'
+      );
+    }
+    if (lowerScheme === 'http' || lowerScheme === 'https') {
+      if (!c.package) {
+        warnings.push(
+          'http/https 目标只有在 App 声明了已验证的 App Link（assetlinks.json）时才会' +
+            '直接进 App，否则 Chrome 会自己打开网页。'
+        );
+      }
+    } else if (lowerScheme === 'javascript' || lowerScheme === 'data' || lowerScheme === 'blob') {
+      errors.push(lowerScheme + ': 不能作为 Intent 的 data（浏览器会直接拦截）');
+    } else if (lowerScheme === 'file' || lowerScheme === 'content') {
+      warnings.push(
+        lowerScheme + ': 作为 data 在 Android 上合法，但浏览器侧的拦截策略各版本不一，' +
+          '可能唤不起来；能用标准 action + 授权 URI 时优先用后者。'
+      );
+    }
+    if (
+      categories.indexOf(CATEGORY_BROWSABLE) < 0 &&
+      (lowerScheme === 'http' || lowerScheme === 'https')
+    ) {
+      warnings.push('建议保留 category=android.intent.category.BROWSABLE（Chrome 会自己补上，其他环境不会）');
+    }
+    if (targetStr === '' && !c.type && action === ACTION_VIEW) {
+      warnings.push(
+        '既没有 data 也没有 type，只带 VIEW 的 Intent 会匹配到很宽的一类应用，' +
+          '通常不是想要的结果。补上目标 URI，或换成一个具体的 action'
+      );
+    }
+
+    return {
+      uri: dataPart + '#Intent;' + params.join(';') + ';end',
+      dataUri: scheme === '' ? afterScheme : scheme + ':' + afterScheme,
+      errors: errors,
+      warnings: warnings
+    };
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Classify an arbitrary link, for the quick-launch box
+   * ------------------------------------------------------------------ */
+
+  var BROWSER_HANDLED = { http: 1, https: 1, file: 1, content: 1, data: 1, javascript: 1, blob: 1, about: 1, chrome: 1 };
+
+  function classifyInput(input) {
+    var raw = String(input == null ? '' : input).trim();
+    if (raw === '') return { kind: 'empty', label: '空', hint: '粘贴一个链接' };
+
+    var m = /^([A-Za-z][A-Za-z0-9+.\-]*):/.exec(raw);
+    if (!m) {
+      return {
+        kind: 'relative',
+        label: '不是完整 URI',
+        hint: '缺少 scheme，例如 weixin://… 或 https://…'
+      };
+    }
+    var scheme = m[1].toLowerCase();
+
+    if (scheme === 'intent') {
+      if (/#Intent;/i.test(raw)) {
+        return {
+          kind: 'intent',
+          scheme: scheme,
+          label: 'intent:// 链接',
+          hint: '浏览器会解析成 Intent 后交给系统匹配（系统自动识别）'
+        };
+      }
+      return {
+        kind: 'intent-bare',
+        scheme: scheme,
+        label: 'intent: 但缺少 #Intent; 参数段',
+        hint:
+          '没有 #Intent;…;end 的 intent: 链接会被当成纯数据 URI，scheme 变成 intent 本身，唤不起 App。' +
+          '点“改成 intent:// 链接”补上参数。',
+        warn: true
+      };
+    }
+    if (scheme === 'android-app') {
+      return {
+        kind: 'android-app',
+        scheme: scheme,
+        label: 'android-app:// 链接',
+        hint: '按包名唤起（android-app://com.example.app），系统自动找到该 App'
+      };
+    }
+    if (BROWSER_HANDLED[scheme]) {
+      return {
+        kind: 'web',
+        scheme: scheme,
+        label: scheme + ':// 链接',
+        hint:
+          scheme === 'http' || scheme === 'https'
+            ? '若 App 声明了已验证的 App Link，系统会直接打开 App；否则由浏览器自己处理'
+            : '浏览器会自己处理这个 scheme，不会交给外部 App',
+        warn: scheme !== 'http' && scheme !== 'https'
+      };
+    }
+    return {
+      kind: 'scheme',
+      scheme: scheme,
+      label: '自定义 scheme：' + scheme + '://',
+      hint:
+        '浏览器无法处理 ' + scheme + '，会转交系统；系统按 scheme 自动匹配已安装的 App。' +
+        '未安装则没有任何反应。'
+    };
+  }
+
+  /* Wrap a plain URI so it goes through Android's Intent resolver. */
+  function toIntentUri(input, opts) {
+    var raw = String(input == null ? '' : input).trim();
+    var tgt = parseTargetUri(raw);
+    if (!tgt || !tgt.scheme) return { uri: '', errors: ['无法解析出 scheme'], warnings: [] };
+    var o = opts || {};
+    var categories = o.categories || [CATEGORY_BROWSABLE, CATEGORY_DEFAULT];
+    return buildIntentUri({
+      target: { raw: raw },
+      action: o.action || ACTION_VIEW,
+      categories: categories,
+      package: o.package || ''
+    });
+  }
+
+  return {
+    ACTION_VIEW: ACTION_VIEW,
+    CATEGORY_BROWSABLE: CATEGORY_BROWSABLE,
+    CATEGORY_DEFAULT: CATEGORY_DEFAULT,
+    EXTRA_TYPES: EXTRA_TYPES,
+    extraType: extraType,
+    parseTargetUri: parseTargetUri,
+    buildTargetUri: buildTargetUri,
+    buildIntentUri: buildIntentUri,
+    classifyInput: classifyInput,
+    toIntentUri: toIntentUri,
+    encodeExtraValue: encodeExtraValue,
+    escapeDataPart: escapeDataPart,
+    encQuery: encQuery,
+    encPath: encPath
+  };
+});
+
+</script>
+<script>
+/* ---- presets.js ---- */
+/*
+ * Presets for the launcher.
+ *
+ * Every preset deliberately leaves `package` unset, so the built link makes
+ * Android's own resolver pick the app (system auto-detection) instead of us
+ * hard-coding a package name.
+ *
+ * Two tiers, and the distinction is the honest one:
+ *   system  — standard actions from the platform. These are stable and any
+ *             device answers them; they are the good demo of "系统自动识别".
+ *   app     — third-party custom schemes. These are community-maintained
+ *             conventions: a given app may rename, restrict or drop its scheme
+ *             in any release, so treat them as a starting point for testing.
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.IntentPresets = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  var A = 'android.intent.action.';
+  var S = 'android.settings.';
+  var CAT = 'android.intent.category.';
+
+  var BROWSER_CATS = [CAT + 'BROWSABLE', CAT + 'DEFAULT'];
+
+  var ALL = [
+    /* ---------------- system ---------------- */
+    {
+      id: 'settings',
+      group: 'system',
+      name: '系统设置',
+      note: '无 data 的纯 action Intent',
+      cfg: { action: S + 'SETTINGS' }
+    },
+    {
+      id: 'settings-wifi',
+      group: 'system',
+      name: 'WLAN 设置',
+      note: '直接跳到无线网络页',
+      cfg: { action: S + 'WIFI_SETTINGS' }
+    },
+    {
+      id: 'settings-bt',
+      group: 'system',
+      name: '蓝牙设置',
+      note: '可直接配对的场景常用',
+      cfg: { action: S + 'BLUETOOTH_SETTINGS' }
+    },
+    {
+      id: 'app-details',
+      group: 'system',
+      name: '应用详情页',
+      note: 'data 用 package:，把占位符换成目标包名',
+      cfg: {
+        action: S + 'APPLICATION_DETAILS_SETTINGS',
+        target: { raw: 'package:com.tencent.mm' }
+      }
+    },
+    {
+      id: 'dial',
+      group: 'system',
+      name: '拨号盘（预填号码）',
+      note: '只打开拨号盘，不直接拨出',
+      cfg: { action: A + 'DIAL', target: { raw: 'tel:10086' } }
+    },
+    {
+      id: 'call',
+      group: 'system',
+      name: '直接拨号',
+      note: 'opaque data：tel:+8613800138000（注意是 tel: 而不是 tel://）',
+      cfg: { action: A + 'CALL', target: { raw: 'tel:+8613800138000' } }
+    },
+    {
+      id: 'sms',
+      group: 'system',
+      name: '发短信（预填号码）',
+      note: 'opaque data smsto:10086，走系统短信应用',
+      cfg: { action: A + 'SENDTO', target: { raw: 'smsto:10086' } }
+    },
+    {
+      id: 'geo',
+      group: 'system',
+      name: '地图搜索坐标',
+      note: 'geo: 由系统弹出地图选择器，实现“系统自动识别地图应用”',
+      cfg: { action: A + 'VIEW', target: { raw: 'geo:39.9087,116.3975?q=天安门' } }
+    },
+    {
+      id: 'share-text',
+      group: 'system',
+      name: '分享一段文本',
+      note: 'SEND + type=text/plain + EXTRA_TEXT，系统给出可分享的应用列表',
+      cfg: {
+        action: A + 'SEND',
+        type: 'text/plain',
+        extras: [
+          { prefix: 'S', key: 'android.intent.extra.TEXT', value: '来自 intent:// 的分享' }
+        ]
+      }
+    },
+    {
+      id: 'web',
+      group: 'system',
+      name: '打开网页',
+      note: '声明了 App Link 的站点会直接进 App，否则留在浏览器',
+      cfg: { target: { raw: 'https://developer.android.com' }, categories: BROWSER_CATS }
+    },
+    {
+      id: 'market',
+      group: 'system',
+      name: '应用商店详情页',
+      note: 'market://details?id=包名',
+      cfg: { action: A + 'VIEW', target: { raw: 'market://details?id=com.tencent.mm' } }
+    },
+    {
+      id: 'camera',
+      group: 'system',
+      name: '打开相机拍照',
+      note: 'android.media.action.IMAGE_CAPTURE，无 data',
+      cfg: { action: 'android.media.action.IMAGE_CAPTURE' }
+    },
+    {
+      id: 'contacts',
+      group: 'system',
+      name: '打开通讯录',
+      note: 'content: 作为 data（部分浏览器会拦截，见警告）',
+      cfg: { action: A + 'VIEW', target: { raw: 'content://contacts/people/' } }
+    },
+
+    /* ---------------- third-party app schemes ---------------- */
+    { id: 'weixin', group: 'app', name: '微信', scheme: 'weixin' },
+    { id: 'alipay', group: 'app', name: '支付宝', scheme: 'alipays' },
+    { id: 'taobao', group: 'app', name: '淘宝', scheme: 'taobao' },
+    { id: 'jd', group: 'app', name: '京东', scheme: 'openapp.jdmobile' },
+    { id: 'pdd', group: 'app', name: '拼多多', scheme: 'pinduoduo' },
+    { id: 'qq', group: 'app', name: 'QQ', scheme: 'mqq' },
+    { id: 'weibo', group: 'app', name: '微博', scheme: 'sinaweibo' },
+    { id: 'zhihu', group: 'app', name: '知乎', scheme: 'zhihu' },
+    { id: 'bilibili', group: 'app', name: '哔哩哔哩', scheme: 'bilibili' },
+    { id: 'douyin', group: 'app', name: '抖音', scheme: 'snssdk1128' },
+    { id: 'kuaishou', group: 'app', name: '快手', scheme: 'kwai' },
+    { id: 'xhs', group: 'app', name: '小红书', scheme: 'xhsdiscover' },
+    { id: 'amap', group: 'app', name: '高德地图', scheme: 'amapuri' },
+    { id: 'baidumap', group: 'app', name: '百度地图', scheme: 'baidumap' },
+    { id: 'meituan', group: 'app', name: '美团', scheme: 'imeituan' },
+    { id: 'didi', group: 'app', name: '滴滴出行', scheme: 'diditaxi' },
+    { id: 'dingtalk', group: 'app', name: '钉钉', scheme: 'dingtalk' },
+    { id: 'lark', group: 'app', name: '飞书', scheme: 'lark' },
+    { id: 'neteasemusic', group: 'app', name: '网易云音乐', scheme: 'orpheus' },
+    { id: 'qqmusic', group: 'app', name: 'QQ 音乐', scheme: 'qqmusic' },
+    { id: 'tencentvideo', group: 'app', name: '腾讯视频', scheme: 'tenvideo' },
+    { id: 'iqiyi', group: 'app', name: '爱奇艺', scheme: 'iqiyi' },
+    { id: 'youku', group: 'app', name: '优酷', scheme: 'youku' },
+    { id: 'douban', group: 'app', name: '豆瓣', scheme: 'douban' }
+  ];
+
+  /* Normalise the shorthand entries into full builder configs. */
+  function normalise(p) {
+    if (p.cfg) return p;
+    return {
+      id: p.id,
+      group: p.group,
+      name: p.name,
+      note: '自定义 scheme，仅打开 App（未安装则无反应）',
+      cfg: {
+        target: { raw: p.scheme + '://' },
+        categories: BROWSER_CATS
+      }
+    };
+  }
+
+  var presets = ALL.map(normalise);
+
+  function byGroup(group) {
+    return presets.filter(function (p) {
+      return p.group === group;
+    });
+  }
+
+  return { all: presets, byGroup: byGroup };
+});
+
+</script>
+<script>
+(function () {
+  'use strict';
+
+  var IU = window.IntentURI;
+  var P = window.IntentPresets;
+
+  /* The vendored generator defaults to a byte-truncating encoder, which would
+   * corrupt any non-ASCII character in a link. Point it at the UTF-8 one. */
+  if (window.qrcode && qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) {
+    qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+  }
+
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $$(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Environment
+   * ------------------------------------------------------------------ */
+
+  var UA = navigator.userAgent || '';
+  var IS_ANDROID = /Android/i.test(UA);
+  var IN_APP = /MicroMessenger|QQ\/|QQBrowser|Weibo|UCBrowser|Quark|DingTalk|Alipay/i.test(UA);
+
+  (function badge() {
+    var b = $('#ua-badge');
+    var warn = $('#ua-warn');
+    if (IS_ANDROID) {
+      b.textContent = IN_APP ? 'Android · App 内置浏览器' : 'Android · 可以唤起';
+      b.className = 'badge ' + (IN_APP ? 'warn' : 'ok');
+      if (IN_APP) {
+        warn.hidden = false;
+        warn.innerHTML =
+          '<strong>当前是 App 内置浏览器</strong>：微信 / QQ / 微博等内置 WebView 普遍会屏蔽外部 App 唤起，' +
+          '点了很可能没反应。请用右上角菜单选择「在浏览器打开」，或直接用 Chrome 打开本页。';
+      }
+    } else {
+      b.textContent = '非 Android 设备';
+      b.className = 'badge warn';
+      warn.hidden = false;
+      warn.innerHTML =
+        '<strong>当前设备不是 Android</strong>：<code>intent://</code> 只有 Android 系统能解析，' +
+        '在本机点击不会有反应。你仍然可以在这里构造链接、复制或生成二维码，然后在手机上唤起。';
+    }
+  })();
+
+  /* ------------------------------------------------------------------ *
+   * Tabs
+   * ------------------------------------------------------------------ */
+
+  var tabs = $$('nav.tabs button');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (o) { o.setAttribute('aria-selected', String(o === t)); });
+      $$('main section[role=tabpanel], .wrap > section[role=tabpanel]').forEach(function (p) {
+        p.hidden = p.id !== 'panel-' + t.dataset.panel;
+      });
+    });
+  });
+  function showTab(name) {
+    var t = tabs.filter(function (x) { return x.dataset.panel === name; })[0];
+    if (t) t.click();
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Copy (clipboard API needs a secure context; the fallback covers plain
+   * http:// on a LAN address, which is exactly how this page gets tested)
+   * ------------------------------------------------------------------ */
+
+  function copyText(text, btn) {
+    if (!text) return;
+    var done = function () {
+      if (!btn) return;
+      var old = btn.textContent;
+      btn.textContent = '已复制';
+      setTimeout(function () { btn.textContent = old; }, 1400);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(done, function () { fallback(); });
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var ta = el('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { /* nothing else to try */ }
+      document.body.removeChild(ta);
+    }
+  }
+
+  /* ------------------------------------------------------------------ *
+   * QR
+   * ------------------------------------------------------------------ */
+
+  var qrState = { primary: '', alt: '', showingAlt: false };
+
+  function drawQR(text) {
+    var canvas = $('#qr-canvas');
+    var ctx = canvas.getContext('2d');
+    try {
+      var qr = qrcode(0, 'M');
+      qr.addData(text);
+      qr.make();
+      var n = qr.getModuleCount();
+      var margin = 4;
+      var total = n + margin * 2;
+      var cell = Math.max(2, Math.floor(560 / total));
+      var size = total * cell;
+      canvas.width = size;
+      canvas.height = size;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+      ctx.fillStyle = '#000000';
+      for (var r = 0; r < n; r++) {
+        for (var c = 0; c < n; c++) {
+          if (qr.isDark(r, c)) ctx.fillRect((c + margin) * cell, (r + margin) * cell, cell, cell);
+        }
+      }
+      return n;
+    } catch (e) {
+      canvas.width = 224; canvas.height = 224;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 224, 224);
+      ctx.fillStyle = '#b91c1c';
+      ctx.font = '13px sans-serif';
+      ctx.fillText('链接太长，无法生成二维码', 14, 112);
+      return 0;
+    }
+  }
+
+  function openQR(primary, alt, desc) {
+    qrState = { primary: primary, alt: alt || '', showingAlt: false, desc: desc || '' };
+    renderQR();
+    $('#qr-modal').hidden = false;
+  }
+  function renderQR() {
+    var text = qrState.showingAlt && qrState.alt ? qrState.alt : qrState.primary;
+    drawQR(text);
+    $('#qr-text').textContent = text;
+    $('#qr-desc').textContent = qrState.showingAlt
+      ? '扫码后由手机自行打开这个链接'
+      : (qrState.desc || '扫码后在手机上打开本页，再点「唤起应用」');
+    var t = $('#qr-toggle');
+    t.hidden = !qrState.alt;
+    t.textContent = qrState.showingAlt ? '换成页面链接' : '换成原始链接';
+  }
+  $('#qr-close').addEventListener('click', function () { $('#qr-modal').hidden = true; });
+  $('#qr-toggle').addEventListener('click', function () {
+    qrState.showingAlt = !qrState.showingAlt;
+    renderQR();
+  });
+  $('#qr-modal').addEventListener('click', function (e) {
+    if (e.target === $('#qr-modal')) $('#qr-modal').hidden = true;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') $('#qr-modal').hidden = true;
+  });
+  $('#qr-download').addEventListener('click', function () {
+    var a = el('a');
+    a.download = 'intent-qr.png';
+    a.href = $('#qr-canvas').toDataURL('image/png');
+    a.click();
+  });
+
+  /* A QR that carries the page itself, with the link in the hash, so the phone
+   * lands on a page where one tap is a real user gesture (Chrome requires one). */
+  function pageLinkFor(uri) {
+    var base = location.href.split('#')[0];
+    return base + '#u=' + encodeURIComponent(uri);
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Quick launch
+   * ------------------------------------------------------------------ */
+
+  var quickInput = $('#quick-input');
+  var quickWrap = $('#quick-wrap');
+  var quickOut = $('#quick-out');
+  var quickGo = $('#quick-go');
+
+  /* Turn "intent://foo/bar" (no #Intent; params) into a working link, reading
+   * it the way a developer would: intent://<scheme>/<host><path>. */
+  function upgradeBareIntent(raw) {
+    var rest = raw.replace(/^intent:/i, '');
+    if (rest.indexOf('//') === 0) {
+      var body = rest.slice(2);
+      var cut = body.indexOf('/');
+      var scheme = cut < 0 ? body : body.slice(0, cut);
+      var tail = cut < 0 ? '' : body.slice(cut);
+      if (!scheme) return null;
+      return IU.toIntentUri(scheme + '://' + tail.replace(/^\//, ''));
+    }
+    return IU.toIntentUri(rest);
+  }
+
+  function currentLaunch() {
+    var raw = quickInput.value.trim();
+    var info = IU.classifyInput(raw);
+    var result = { raw: raw, info: info, uri: '', msgs: [] };
+
+    if (info.kind === 'empty') return result;
+    if (info.kind === 'relative') {
+      result.msgs.push({ level: 'err', text: '缺少 scheme，无法唤起。请写全，例如 weixin:// 或 https://…' });
+      return result;
+    }
+
+    if (info.kind === 'intent') {
+      result.uri = raw;
+      var parsed = IU.parseTargetUri(raw.slice(0, raw.lastIndexOf('#')));
+      result.msgs.push({
+        level: 'warn',
+        text: '已经是 intent:// 链接，按原样唤起。'
+      });
+      return result;
+    }
+
+    if (info.kind === 'android-app' || info.kind === 'web') {
+      result.uri = raw;
+      if (info.warn) {
+        result.msgs.push({ level: 'warn', text: info.hint });
+      }
+      return result;
+    }
+
+    /* custom scheme, or a bare intent: link */
+    var upgrade = info.kind === 'intent-bare' ? upgradeBareIntent(raw) : IU.toIntentUri(raw);
+    if (quickWrap.checked) {
+      if (!upgrade) {
+        result.msgs.push({ level: 'err', text: '无法从这个链接推导出 scheme，请手动改成 intent:// 形式。' });
+        return result;
+      }
+      if (upgrade.errors.length) upgrade.errors.forEach(function (e) {
+        result.msgs.push({ level: 'err', text: e });
+      });
+      upgrade.warnings.forEach(function (w) { result.msgs.push({ level: 'warn', text: w }); });
+      if (upgrade.errors.length) return result;
+      result.uri = upgrade.uri;
+      result.upgrade = upgrade;
+      if (info.kind === 'intent-bare') {
+        result.msgs.push({
+          level: 'warn',
+          text: '原链接没有 #Intent; 参数段，Android 只会把它当普通数据 URI，' +
+            '所以这里按 intent://<scheme>/<host><path> 补全后再唤起。'
+        });
+      }
+    } else {
+      result.uri = raw;
+      result.msgs.push({
+        level: 'warn',
+        text: '按「不包 intent://」处理，直接把原始链接交给系统。' +
+          '某些环境（多应用都能处理时）不如 intent:// 形式稳定。'
+      });
+    }
+    return result;
+  }
+
+  function renderQuick() {
+    var res = currentLaunch();
+    var info = res.info;
+
+    var tag = $('#quick-tag');
+    tag.textContent = info.label;
+    tag.className = 'tag ' + (info.warn ? 'bad' : info.kind === 'empty' ? '' : 'good');
+    $('#quick-hint').textContent = info.hint;
+
+    quickOut.textContent = res.uri || '—';
+    quickOut.className = 'uri-box' + (res.uri ? '' : ' empty');
+
+    var hasUri = !!res.uri;
+    if (hasUri) {
+      quickGo.setAttribute('href', res.uri);
+      quickGo.setAttribute('aria-disabled', 'false');
+    } else {
+      quickGo.setAttribute('href', '#');
+      quickGo.setAttribute('aria-disabled', 'true');
+    }
+
+    var box = $('#quick-msgs');
+    box.innerHTML = '';
+    res.msgs.forEach(function (m) {
+      box.appendChild(el('li', m.level, m.text));
+    });
+
+    $('#quick-qr').disabled = !hasUri;
+    $('#quick-copy').disabled = !hasUri;
+    $('#quick-to-build').disabled = !res.raw;
+  }
+
+  /* Chrome silently does nothing when an Intent cannot be resolved, so after a
+   * tap we watch whether the page actually went away. This never re-fires the
+   * navigation — a second attempt inside one user gesture is blocked, and would
+   * also look like fingerprinting. */
+  var launchHintTimer = null;
+  function armLaunchHint(uri) {
+    clearTimeout(launchHintTimer);
+    var box = $('#quick-launch-hint');
+    box.hidden = true;
+    launchHintTimer = setTimeout(function () {
+      if (document.visibilityState !== 'visible') return;
+      box.hidden = false;
+      box.innerHTML = '';
+      var n = el('div', 'notice', '');
+      n.style.margin = '0';
+      n.innerHTML =
+        '<strong>看起来没有跳转过去。</strong>Intent 无法解析时浏览器不会有任何提示 —— 常见原因：' +
+        '设备上没有注册这个 scheme 的应用、所在浏览器是 App 内置 WebView、' +
+        '或链接是从非用户手势触发的。可以用下面的链接对照测试系统 Intent，' +
+        '或在电脑上用 <code>adb shell am start -a android.intent.action.VIEW -d "&lt;链接&gt;"</code> 看系统怎么解析。';
+      box.appendChild(n);
+      var acts = el('div', 'row');
+      acts.style.marginTop = '10px';
+      var sysTab = el('button', 'btn sm');
+      sysTab.textContent = '去试标准系统 Intent';
+      sysTab.addEventListener('click', function () { showTab('presets'); });
+      acts.appendChild(sysTab);
+      box.appendChild(acts);
+    }, 2600);
+  }
+
+  quickGo.addEventListener('click', function (e) {
+    if (quickGo.getAttribute('aria-disabled') === 'true') {
+      e.preventDefault();
+      return;
+    }
+    var uri = quickGo.getAttribute('href');
+    pushHistory(uri);
+    armLaunchHint(uri);
+  });
+
+  quickInput.addEventListener('input', renderQuick);
+  quickWrap.addEventListener('change', renderQuick);
+  $('#quick-clear').addEventListener('click', function () {
+    quickInput.value = '';
+    renderQuick();
+    quickInput.focus();
+  });
+  $('#quick-copy').addEventListener('click', function () {
+    copyText(currentLaunch().uri, this);
+  });
+  $('#quick-qr').addEventListener('click', function () {
+    var uri = currentLaunch().uri;
+    if (!uri) return;
+    openQR(pageLinkFor(uri), uri);
+  });
+  $('#quick-to-build').addEventListener('click', function () {
+    var res = currentLaunch();
+    var raw = res.raw;
+    var info = res.info;
+
+    /* Seed the builder from whatever we understood about the link. */
+    if (info.kind === 'intent' || info.kind === 'intent-bare') {
+      var body = raw.replace(/^intent:/i, '');
+      if (body.indexOf('//') === 0) {
+        var rest = body.slice(2);
+        var cut = rest.indexOf('/');
+        $('#t-raw').value = '';
+        $$('input[name=tmode]')[0].checked = true;
+        $('#t-scheme').value = cut < 0 ? rest : rest.slice(0, cut);
+        $('#t-authority').value = '';
+        $('#t-path').value = cut < 0 ? '' : rest.slice(cut);
+      } else {
+        $('#t-raw').value = raw;
+      }
+    } else {
+      $('#t-raw').value = raw;
+    }
+    $('#split').open = !$('#t-raw').value;
+    renderBuild();
+    showTab('build');
+  });
+
+  /* ------------------------------------------------------------------ *
+   * History
+   * ------------------------------------------------------------------ */
+
+  var HIST_KEY = 'intent-launcher.history.v1';
+
+  function readHistory() {
+    try {
+      var v = JSON.parse(localStorage.getItem(HIST_KEY) || '[]');
+      return Array.isArray(v) ? v : [];
+    } catch (e) { return []; }
+  }
+  function pushHistory(uri) {
+    if (!uri) return;
+    var list = readHistory().filter(function (x) { return x !== uri; });
+    list.unshift(uri);
+    list = list.slice(0, 12);
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(list)); } catch (e) { /* private mode */ }
+    renderHistory();
+  }
+  function renderHistory() {
+    var list = readHistory();
+    var card = $('#hist-card');
+    var host = $('#hist-list');
+    card.hidden = list.length === 0;
+    host.innerHTML = '';
+    list.forEach(function (u) {
+      var li = el('li');
+      var code = el('code', null, u);
+      code.title = u;
+      li.appendChild(code);
+      var use = el('button', 'btn sm ghost', '载入');
+      use.addEventListener('click', function () {
+        quickInput.value = u;
+        renderQuick();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      var a = el('a', 'btn sm', '唤起');
+      a.setAttribute('href', u);
+      a.addEventListener('click', function () { pushHistory(u); armLaunchHint(u); });
+      li.appendChild(a);
+      li.appendChild(use);
+      host.appendChild(li);
+    });
+  }
+  $('#hist-clear').addEventListener('click', function () {
+    try { localStorage.removeItem(HIST_KEY); } catch (e) { /* ignore */ }
+    renderHistory();
+  });
+
+  /* ------------------------------------------------------------------ *
+   * Builder
+   * ------------------------------------------------------------------ */
+
+  var extraHost = $('#extras');
+
+  function addExtraRow(prefix, key, value) {
+    var row = el('div', 'extra-row');
+    row.style.marginBottom = '6px';
+    row.style.display = 'grid';
+
+    var sel = el('select');
+    IU.EXTRA_TYPES.forEach(function (t) {
+      var o = el('option', null, t.prefix + '.  ' + t.label);
+      o.value = t.prefix;
+      sel.appendChild(o);
+    });
+    sel.value = prefix || 'S';
+    sel.className = 'k';
+
+    var k = el('input');
+    k.type = 'text';
+    k.placeholder = 'key';
+    k.spellcheck = false;
+    k.value = key || '';
+
+    var v = el('input');
+    v.type = 'text';
+    v.placeholder = 'value';
+    v.spellcheck = false;
+    v.value = value || '';
+
+    var del = el('button', 'icon', '×');
+    del.type = 'button';
+    del.title = '删除';
+    del.addEventListener('click', function () {
+      row.remove();
+      renderBuild();
+    });
+
+    [sel, k, v].forEach(function (n) { n.addEventListener('input', renderBuild); });
+    sel.addEventListener('change', function () {
+      var t = IU.extraType(sel.value);
+      v.placeholder = t.kind === 'bool' ? 'true / false' : t.kind === 'char' ? '单个字符' : 'value';
+      renderBuild();
+    });
+
+    row.appendChild(sel);
+    row.appendChild(k);
+    row.appendChild(v);
+    row.appendChild(del);
+    extraHost.appendChild(row);
+  }
+
+  $('#add-extra').addEventListener('click', function () {
+    addExtraRow('S', '', '');
+    renderBuild();
+  });
+
+  function collectExtras() {
+    var out = [];
+    $$('.extra-row', extraHost).forEach(function (row) {
+      var nodes = row.children;
+      var key = nodes[1].value.trim();
+      var val = nodes[2].value;
+      if (!key && val === '') return;
+      out.push({ prefix: nodes[0].value, key: key, value: val });
+    });
+    var fb = $('#b-fallback').value.trim();
+    if (fb) out.push({ prefix: 'S', key: 'browser_fallback_url', value: fb });
+    return out;
+  }
+
+  function collectCfg() {
+    var raw = $('#t-raw').value.trim();
+    var target = raw
+      ? { raw: raw }
+      : {
+          scheme: $('#t-scheme').value.trim(),
+          authority: $('#t-authority').value.trim(),
+          path: $('#t-path').value.trim(),
+          query: $('#t-query').value.trim(),
+          mode: ($$('input[name=tmode]').filter(function (r) { return r.checked; })[0] || {}).value
+        };
+
+    var actionSel = $('#b-action').value;
+    var action =
+      actionSel === '__none' ? '' :
+      actionSel === '__custom' ? $('#b-action-custom').value.trim() :
+      actionSel;
+
+    var cats = $$('#b-cats input:checked').map(function (c) { return c.value; });
+    $('#b-cat-custom').value.split(',').forEach(function (c) {
+      if (c.trim()) cats.push(c.trim());
+    });
+
+    return {
+      target: target,
+      action: action,
+      categories: cats,
+      type: $('#b-type').value.trim(),
+      package: $('#b-package').value.trim(),
+      component: $('#b-component').value.trim(),
+      launchFlags: $('#b-flags').value.trim(),
+      extras: collectExtras()
+    };
+  }
+
+  var lastBuilt = '';
+
+  function renderBuild() {
+    var res = IU.buildIntentUri(collectCfg());
+    lastBuilt = res.errors.length ? '' : res.uri;
+
+    var box = $('#out-uri');
+    box.textContent = res.uri || '—';
+    box.className = 'uri-box' + (res.uri ? '' : ' empty');
+
+    $('#out-data').textContent = res.dataUri || '（未设置 data）';
+
+    var msgs = $('#out-msgs');
+    msgs.innerHTML = '';
+    res.errors.forEach(function (e) { msgs.appendChild(el('li', 'err', e)); });
+    res.warnings.forEach(function (w) { msgs.appendChild(el('li', 'warn', w)); });
+
+    var go = $('#out-go');
+    if (lastBuilt) {
+      go.setAttribute('href', lastBuilt);
+      go.setAttribute('aria-disabled', 'false');
+    } else {
+      go.setAttribute('href', '#');
+      go.setAttribute('aria-disabled', 'true');
+    }
+    $('#out-copy').disabled = !lastBuilt;
+    $('#out-qr').disabled = !lastBuilt;
+  }
+
+  $('#out-go').addEventListener('click', function (e) {
+    if (!lastBuilt) { e.preventDefault(); return; }
+    pushHistory(lastBuilt);
+    armLaunchHint(lastBuilt);
+  });
+  $('#out-copy').addEventListener('click', function () { copyText(lastBuilt, this); });
+  $('#out-qr').addEventListener('click', function () {
+    if (!lastBuilt) return;
+    openQR(pageLinkFor(lastBuilt), lastBuilt);
+  });
+  $('#out-reset').addEventListener('click', function () {
+    ['#t-raw', '#t-scheme', '#t-authority', '#t-path', '#t-query',
+     '#b-action-custom', '#b-cat-custom', '#b-package', '#b-component',
+     '#b-type', '#b-flags', '#b-fallback'].forEach(function (s) { $(s).value = ''; });
+    $('#b-action').value = 'android.intent.action.VIEW';
+    $('#b-action-custom').hidden = true;
+    $$('#b-cats input').forEach(function (c) {
+      c.checked = c.value === 'android.intent.category.BROWSABLE' ||
+                  c.value === 'android.intent.category.DEFAULT';
+    });
+    $$('input[name=tmode]')[0].checked = true;
+    extraHost.innerHTML = '';
+    renderBuild();
+  });
+
+  $('#b-action').addEventListener('change', function () {
+    $('#b-action-custom').hidden = this.value !== '__custom';
+    if (this.value === '__custom') $('#b-action-custom').focus();
+    renderBuild();
+  });
+
+  ['#t-raw', '#t-scheme', '#t-authority', '#t-path', '#t-query',
+   '#b-action-custom', '#b-cat-custom', '#b-package', '#b-component',
+   '#b-type', '#b-flags', '#b-fallback'].forEach(function (s) {
+    $(s).addEventListener('input', renderBuild);
+  });
+  $$('#b-cats input').forEach(function (c) { c.addEventListener('change', renderBuild); });
+  $$('input[name=tmode]').forEach(function (r) { r.addEventListener('change', renderBuild); });
+
+  /* ------------------------------------------------------------------ *
+   * Presets
+   * ------------------------------------------------------------------ */
+
+  (function renderPresets() {
+    var host = $('#preset-host');
+    var groups = [
+      {
+        key: 'system',
+        title: '系统 Intent · 标准 action',
+        desc: '平台自带，任何设备都有应用应答。哪个应用来处理完全由系统决定，最适合先验证页面本身通不通。'
+      },
+      {
+        key: 'app',
+        title: '第三方 App · 自定义 scheme',
+        desc: '各 App 自己注册的 scheme，属于约定俗成的值，换版本可能失效。只打开了 App 首页，深链接需要再补 host/path。'
+      }
+    ];
+
+    groups.forEach(function (g) {
+      var wrap = el('div', 'preset-group');
+      wrap.appendChild(el('h3', null, g.title));
+      wrap.appendChild(el('p', null, g.desc));
+      var cards = el('div', 'cards');
+
+      P.byGroup(g.key).forEach(function (p) {
+        var res = IU.buildIntentUri(p.cfg);
+        var card = el('div', 'pcard');
+        card.appendChild(el('h4', null, p.name));
+        card.appendChild(el('p', null, p.note));
+        card.appendChild(el('code', null, res.uri || '（构建失败）'));
+        var row = el('div', 'row');
+        var go = el('a', 'btn sm primary', '唤起');
+        go.setAttribute('href', res.errors.length ? '#' : res.uri);
+        if (res.errors.length) go.setAttribute('aria-disabled', 'true');
+        go.addEventListener('click', function () {
+          if (res.errors.length) return;
+          pushHistory(res.uri);
+          armLaunchHint(res.uri);
+        });
+        var load = el('button', 'btn sm', '载入构建器');
+        load.addEventListener('click', function () {
+          loadCfgIntoBuilder(p.cfg);
+          showTab('build');
+        });
+        var copy = el('button', 'btn sm ghost', '复制');
+        copy.addEventListener('click', function () { copyText(res.uri, this); });
+        row.appendChild(go);
+        row.appendChild(load);
+        row.appendChild(copy);
+        card.appendChild(row);
+        cards.appendChild(card);
+      });
+
+      wrap.appendChild(cards);
+      host.appendChild(wrap);
+    });
+  })();
+
+  function loadCfgIntoBuilder(cfg) {
+    $('#out-reset').click();
+    if (cfg.target && cfg.target.raw) {
+      $('#t-raw').value = cfg.target.raw;
+    }
+    $('#b-action').value = cfg.action || 'android.intent.action.VIEW';
+    if ($('#b-action').value !== (cfg.action || 'android.intent.action.VIEW')) {
+      $('#b-action').value = '__custom';
+      $('#b-action-custom').value = cfg.action;
+      $('#b-action-custom').hidden = false;
+    }
+    if (cfg.type) $('#b-type').value = cfg.type;
+    if (cfg.package) $('#b-package').value = cfg.package;
+    $$('#b-cats input').forEach(function (c) {
+      c.checked = (cfg.categories || []).indexOf(c.value) >= 0;
+    });
+    (cfg.extras || []).forEach(function (e) { addExtraRow(e.prefix, e.key, e.value); });
+    renderBuild();
+  }
+
+  /* ------------------------------------------------------------------ *
+   * Boot
+   * ------------------------------------------------------------------ */
+
+  function restoreFromHash() {
+    var m = /[#&]u=([^&]+)/.exec(location.hash || '');
+    if (!m) return false;
+    try {
+      var uri = decodeURIComponent(m[1]);
+      if (!uri) return false;
+      quickInput.value = uri;
+      quickWrap.checked = /^intent:/i.test(uri) ? quickWrap.checked : false;
+      renderQuick();
+      return true;
+    } catch (e) { return false; }
+  }
+
+  if (!restoreFromHash()) {
+    /* A sensible first example that shows the feature off without needing an
+     * app to be installed: the system settings intent. */
+    quickInput.value = IU.buildIntentUri({ action: 'android.settings.SETTINGS' }).uri;
+    renderQuick();
+  }
+
+  addExtraRow('S', 'android.intent.extra.TEXT', '');
+  $$('.extra-row', extraHost).forEach(function (r) { r.remove(); });
+  renderBuild();
+  renderHistory();
+})();
+</script>
+</body>
+</html>
