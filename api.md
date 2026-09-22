@@ -101,6 +101,23 @@
 | ---- | -- |
 | `GET /api/debug/status`、`/api/debug/token`、`POST /api/debug/login` | 调试模式（`DebugMode: true` 时生效） |
 
+### 初始化设置向导
+
+| 接口 | 说明 |
+| ---- | -- |
+| `GET /setup` | 设置向导页面（首次部署时自动跳转） |
+| `POST /api/setup` | 提交初始化配置，完成服务器首次设置 |
+
+> 💡 首次部署时访问服务器任意页面会自动重定向到 `/setup`。初始化完成后不再跳转。
+
+### 服务器离线激活
+
+| 接口 | 说明 |
+| ---- | -- |
+| `GET /api/server/fingerprint` | 获取服务器硬件指纹（用于离线激活绑定） |
+| `POST /api/server/activate` | 提交激活码，完成服务器授权激活 |
+| `GET /api/server/license` | 查询当前服务器授权状态与授权信息 |
+
 ---
 
 ## 认证机制

@@ -8,6 +8,19 @@ import DownloadSection from './.vitepress/theme/components/DownloadSection.vue'
 
 <DownloadSection />
 
+## LicenseTool 离线激活工具
+
+AgoraIn v3.2.5 提供 **LicenseTool** 离线激活工具，用于在无法联网的服务器环境中完成授权验证。
+
+**使用流程：**
+
+1. 在目标服务器上获取硬件指纹（通过 `GET /api/server/fingerprint` 或 LicenseTool）
+2. 将指纹提交给授权方，获取激活码
+3. 使用 LicenseTool 或 API（`POST /api/server/activate`）完成激活
+4. 通过 `GET /api/server/license` 验证授权状态
+
+> 💡 LicenseTool 随服务器安装包一同发布，也可在 GitHub Release 页面单独下载。详见[服务器端文档 - 离线激活](/server#服务器离线激活)。
+
 ## 开源许可
 
 本项目基于 **GNU 通用公共许可证 v3（GNU GPLv3）** 开源发布。

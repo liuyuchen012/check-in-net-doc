@@ -34,6 +34,7 @@ export default defineConfig({
           { text: '使用手册', link: '/manual' },
           { text: 'API 文档', link: '/api' },
           { text: '部署指南', link: '/deploy' },
+          { text: '服务器端', link: '/server' },
           { text: '常见问题', link: '/faq' },
         ]
       },
@@ -103,6 +104,17 @@ export default defineConfig({
           ]
         }
       ],
+      '/server': [
+        {
+          text: '服务器端',
+          items: [
+            { text: '初始化设置向导', link: '/server#初始化设置向导' },
+            { text: '服务器离线激活', link: '/server#服务器离线激活' },
+            { text: '购买授权', link: '/server#购买授权' },
+            { text: '相关文档', link: '/server#相关文档' }
+          ]
+        }
+      ],
       '/plugin': [
         {
           text: '连接插件端',
@@ -136,6 +148,8 @@ export default defineConfig({
           items: [
             { text: '基础信息', link: '/api#基础信息' },
             { text: '端点一览', link: '/api#端点一览' },
+            { text: '初始化设置向导', link: '/api#初始化设置向导' },
+            { text: '服务器离线激活', link: '/api#服务器离线激活' },
             { text: '认证机制', link: '/api#认证机制' },
             { text: '配置说明', link: '/api#配置说明' }
           ]
