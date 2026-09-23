@@ -21,6 +21,14 @@ AgoraIn v3.2.5 提供 **LicenseTool** 离线激活工具，用于在无法联网
 
 > 💡 LicenseTool 随服务器安装包一同发布，也可在 GitHub Release 页面单独下载。详见[服务器端文档 - 离线激活](/server#服务器离线激活)。
 
+## 购买授权
+
+如需购买 AgoraIn 集控服务器商业授权，欢迎通过企业微信客服咨询：
+
+**[💬 联系企业微信客服购买授权](https://work.weixin.qq.com/kfid/kfc4bf6fef5cfae527d)**
+
+我们将为您提供专业的授权方案与技术支持。
+
 ## 开源许可
 
 本项目基于 **GNU 通用公共许可证 v3（GNU GPLv3）** 开源发布。
