@@ -1,186 +1,122 @@
-# 📡 API 参考（v3.2）
-
-> 本文档对应 **AgoraIn v3.2** 集控服务器。旧版 v2.7 文档已归档：[v2.7 API 文档](/v2.7/api)。
-
-所有接口返回 JSON。非登录接口需携带服务器密码（`ServerPassword`）校验，管理类接口需 JWT 令牌。
-
 ---
+title: API 文档
+description: AgoraIn v4 服务端 /api/v4 接口概览、鉴权与实时通道
+---
+
+# API 文档
+
+服务端为 ASP.NET Core 10 应用，全部接口挂在 **`/api/v4`** 前缀下，共 **19 个控制器、171 个端点**。
+线上环境开启 Swagger（`/swagger`）可直接查阅与调试。
 
 ## 基础信息
 
 | 项目 | 值 |
-| ---- | -- |
-| 服务器 | ASP.NET Core + EF Core + SQLite |
-| 默认端口 | 5250（`config.json` 可改） |
-| 数据格式 | JSON |
-| 认证 | 服务器密码 / JWT 令牌 |
+| --- | --- |
+| 基础地址 | `https://agorain.615mc.cn/api/v4` |
+| 默认端口 | `5250` |
+| 数据格式 | JSON（UTF-8）；上传使用 `multipart/form-data` |
+| 鉴权 | `Authorization: Bearer <JWT>`；下载类接口额外支持 `?token=` |
+| 实时通道 | SignalR `/hub/live`（按班级分组） |
+| 错误约定 | `400` 参数错误 · `401` 未认证 · `403` 无权限或区域未激活 · `402` AI 额度不足 · `404` 不存在 |
 
----
+## 端点分组
 
-## 端点一览
+| 控制器 | 路由前缀 | 职责 |
+| --- | --- | --- |
+| Auth | `/auth` | 登录、初始化、当前用户、令牌续期 |
+| Account | `/account` | 机构注册（region）、家长加入（join）、忘记密码 |
+| Users | `/users` | 子账户 CRUD、重置密码、角色与权限点 |
+| Regions | `/regions` | 区域列表与创建、激活码签发 / 激活、区域协议、AI 额度与兑换 |
+| Classes / Students | `/classes` `/students` | 班级与学生名单、学号条码、批量导入 |
+| Checkin | `/checkin` | 签到码生成、扫码签到（匿名）、签到任务与结果 |
+| Api | `/classhours` `/devices` | 课时划消流水、设备注册与心跳 |
+| Classroom | `/points` `/duty` `/notices` `/resources` `/messages` | 积分规则与流水、值日轮换、通知（含已读）、资源、留言 |
+| Timetable | `/timetable` | 课表 CRUD、ClassIsland 档案导入导出与推送 |
+| Exams | `/exams` | 试卷与题目、文件导题、AI 生成答案、扫卡上传、批改、成绩与导出 |
+| AnswerSheet | `/sheet` | 答题卡 HTML 渲染（匿名，供打印与 iframe 预览） |
+| Parent | `/parent` | 家长端：绑定 / 概览 / 通知 / 留言 / 成绩 / 值日 / 资源 |
+| Dashboard | `/dashboard` | 仪表盘统计 |
+| License | `/license` | 服务器授权状态与激活 |
+| Smtp | `/smtp` | 邮件服务配置与测试 |
+| AiSettings | `/ai-settings` | AI 地址 / 密钥 / 模型 / 提示词模板 / 调用日志 |
+| Update | `/update` | 版本检查（GitHub Releases 代理） |
+| ClassIslandCompat | `/api/profile_pull` 等 | 一体机插件兼容接口（无 `/v4` 前缀，密码鉴权） |
 
-### 状态与版本
+## 鉴权
 
-| 接口 | 说明 |
-| ---- | -- |
-| `GET /api/status` | 服务器状态与设备/任务统计 |
-| `GET /api/version` | 服务器版本号 |
-| `GET /api/server_update` | 集控平台新版本检查（后台轮询 GitHub） |
+### 登录
 
-### 设备管理
-
-| 接口 | 说明 |
-| ---- | -- |
-| `POST /api/register` | 设备注册 |
-| `GET /api/machines/{uuid}/tasks` | 获取设备关联任务 |
-| `POST /api/delete_machine` | 删除设备 |
-
-### 数据同步
-
-| 接口 | 说明 |
-| ---- | -- |
-| `POST /api/sync_data` | 打卡数据同步 |
-| `POST /api/load_data` | 从服务器加载数据 |
-
-### 配置管理
-
-| 接口 | 说明 |
-| ---- | -- |
-| `POST /api/get_config` | 获取服务器配置 |
-| `POST /api/update_config` | 更新服务器配置（版本号 +1，触发客户端推送） |
-| `POST /api/update_machine_config` | 更新设备配置 |
-| `POST /api/config_applied` | 客户端确认配置已应用 |
-
-### 打卡与考勤
-
-| 接口 | 说明 |
-| ---- | -- |
-| `POST /api/web_punch` | Web 端打卡 |
-| `POST /api/web_cancel_punch` | Web 端取消打卡 |
-| `POST /api/clear_attendance` | 清空考勤记录 |
-
-### 签到任务
-
-| 接口 | 说明 |
-| ---- | -- |
-| `POST /api/create_signin` | 创建签到任务（短码 + 密码 + 教室/科目） |
-| `POST /api/signin_result` | 签到结果回写 |
-
-### 用户与认证
-
-| 接口 | 说明 |
-| ---- | -- |
-| `GET/POST /api/users` | 用户列表 / 创建用户 |
-| `POST /api/users/change-password` | 修改密码 |
-| `POST /api/auth/login` | 管理员登录（JWT） |
-| `POST /api/auth/verify` | 验证令牌 |
-
-### 二维码签到
-
-| 接口 | 说明 |
-| ---- | -- |
-| `POST /api/qrcode/generate` | 生成签到二维码 |
-| `POST /api/qrcode/checkin` | 扫码签到 |
-
-### 移动端 API
-
-| 接口 | 说明 |
-| ---- | -- |
-| `GET /api/mobile/dashboard` | 管理员仪表盘 |
-| `GET /api/mobile/attendance` | 考勤记录 |
-| `GET /api/mobile/tasks`、`POST /api/mobile/tasks/{id}/close` | 任务列表 / 关闭任务 |
-| `GET /api/mobile/tasks/{id}/qrcode` | 任务二维码 |
-| `GET /api/mobile/devices`、`POST /api/mobile/devices/{uuid}/tasks` | 设备列表 / 设备分配任务 |
-| `GET /api/mobile/students/history` | 学生打卡历史 |
-| `GET/POST /api/mobile/assignments` | 排课（设备分配）管理 |
-| `GET /api/mobile/teachers` | 教师列表 |
-
-### 调试接口
-
-| 接口 | 说明 |
-| ---- | -- |
-| `GET /api/debug/status`、`/api/debug/token`、`POST /api/debug/login` | 调试模式（`DebugMode: true` 时生效） |
-
-### 初始化设置向导
-
-| 接口 | 说明 |
-| ---- | -- |
-| `GET /setup` | 设置向导页面（首次部署时自动跳转） |
-| `POST /api/setup` | 提交初始化配置，完成服务器首次设置 |
-
-> 💡 首次部署时访问服务器任意页面会自动重定向到 `/setup`。初始化完成后不再跳转。
-
-### 服务器离线激活
-
-| 接口 | 说明 |
-| ---- | -- |
-| `GET /api/server/fingerprint` | 获取服务器硬件指纹（用于离线激活绑定） |
-| `POST /api/server/activate` | 提交激活码，完成服务器授权激活 |
-| `GET /api/server/license` | 查询当前服务器授权状态与授权信息 |
-
----
-
-## 认证机制
-
-### 服务器密码校验
-
-非登录接口需在请求中携带服务器密码（`config.json` 中的 `ServerPassword`）。
-
-### JWT 令牌
-
-管理类接口（Web 管理面板、移动端管理员）通过登录获取 JWT 令牌：
-
-```json
-POST /api/auth/login
-{
-  "username": "admin",
-  "password": "********"
-}
+```bash
+curl -X POST https://agorain.615mc.cn/api/v4/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"teacher@yucai","password":"******"}'
 ```
 
-响应中返回 `token`，后续请求在 `Authorization: Bearer <token>` 头中携带。
+返回 `token`（JWS）与 `permissions` 权限点数组；用户名支持 **`用户名@区域`** 形式，不带 `@` 时按主区域处理。
 
-### 密码哈希
+### 调用受保护接口
 
-用户密码采用**加盐 SHA256** 哈希存储；管理员密码通过 SHA256 哈希校验。
+```bash
+curl https://agorain.615mc.cn/api/v4/classes \
+  -H "Authorization: Bearer <token>"
+```
 
----
+### 下载类接口的令牌
 
-## 配置说明
+浏览器 `window.open` 打开的新标签**带不上 Authorization 头**，因此文件下载类接口
+（成绩 CSV、资源文件、课表导出）允许把令牌放在查询串里：
 
-### 服务器 `config.json`
+```
+GET /api/v4/exams/papers/{paperId}/export?token=<JWT>
+GET /api/v4/resources/{id}/file?token=<JWT>
+```
 
-| 字段 | 默认值 | 说明 |
-| ---- | ---- | -- |
-| `Port` | `5250` | 监听端口 |
-| `ServerName` | `""` | 服务器名称 |
-| `ServerPassword` | `""` | 服务器连接密码（首次运行自动生成） |
-| `DebugMode` | `false` | 调试模式开关 |
+答题卡渲染接口本就是匿名接口（`/api/v4/sheet/...`），带 `?download=1` 会返回附件下载头。
 
-### 客户端 `config.json`（全局配置）
+## 实时通道（SignalR）
 
-| 字段 | 默认值 | 说明 |
-| ---- | ---- | -- |
-| `School` | `""` | 学校名称 |
-| `Nj` | `""` | 年级（年份） |
-| `ClassId` | `""` | 班级编号 |
-| `Km` | `""` | 课程名称（如"数学"） |
-| `ButtonRows` | `6` | 学生按钮网格行数 |
-| `ButtonCols` | `6` | 学生按钮网格列数 |
-| `OnlineMode` | `true` | 是否启用在线模式 |
-| `ServerIp` | `""` | 远程服务器 IP |
-| `ServerPort` | `5250` | 远程服务器端口 |
-| `ServerPassword` | `""` | 远程服务器连接密码 |
-| `AdminPasswordHash` | `""` | 管理员密码 SHA256 哈希（空表示无密码） |
+```js
+const conn = new signalR.HubConnectionBuilder()
+  .withUrl('https://agorain.615mc.cn/hub/live', { accessTokenFactory: () => token })
+  .withAutomaticReconnect()
+  .build()
+await conn.start()
+conn.on('checkin', (payload) => { /* 班级签到实时上屏 */ })
+```
 
-### 课时数据 `data/classhours.json`（版本 v3）
+- 连接按**班级分组**，只推送本班事件
+- 断线自动重连；桌面端断网时本地打卡，恢复后由同步引擎补传
 
-| 字段 | 说明 |
-| ---- | -- |
-| `Version` | 数据版本号（v3：排课细分时间 + 自动划消设置） |
-| `Students` | 学生列表（姓名、总课时、已划课时、备注、创建时间） |
-| `Records` | 课时记录流水（日期、课时数正负、备注、SlotKey 去重键） |
-| `Schedule` | 排课数据：日期 → 排课条目（学生 + 上课/下课时间，支持跨天） |
-| `OffDays` | 不排课日集合 |
-| `HoursPerHour` | 每小时上课消耗课时（支持小数，默认 1） |
-| `AutoDeduct` | 是否自动划消课时 |
+## 典型流程
+
+### 生成签到码并扫码签到
+
+```bash
+# 1) 教师创建签到（鉴权）
+POST /api/v4/checkin/tasks            # { classId, room, subject, password, ttlMinutes }
+# 2) 学生扫码（匿名，凭短码）
+POST /api/v4/checkin/scan             # { code, name | studentId }
+# 3) 查看任务与结果
+GET  /api/v4/checkin/tasks
+```
+
+### 扫卡识别与批改
+
+```bash
+# 上传答卷（支持多页，服务端按页码归并）
+POST /api/v4/exams/papers/{paperId}/submissions        # multipart: files[]
+# 逐题结果与 AI 建议分
+GET  /api/v4/exams/submissions/{submissionId}/results
+# 教师复判
+POST /api/v4/exams/submissions/{submissionId}/review   # { questionId, score, comment }
+# 确认出分（只有已确认才计入成绩）
+POST /api/v4/exams/submissions/{submissionId}/confirm
+# 成绩统计 / 导出
+GET  /api/v4/exams/papers/{paperId}/statistics
+GET  /api/v4/exams/papers/{paperId}/export?token=<JWT>
+```
+
+## 相关阅读
+
+- [部署指南](/deploy) · [服务端与授权](/server) · [常见问题](/faq)
+- 历史版本 API：[v3.2 API 文档](/v3.2/api)

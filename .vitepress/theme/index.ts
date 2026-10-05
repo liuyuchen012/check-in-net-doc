@@ -1,14 +1,14 @@
 import DefaultTheme from 'vitepress/theme'
 import Layout from './Layout.vue'
-import VideoShowcase from './components/video/VideoShowcase.vue'
-import JikongShowcase from './components/video/JikongShowcase.vue'
+import HomePage from './components/HomePage.vue'
+import VideoPlayer from './components/VideoPlayer.vue'
 import './style.css'
 
 export default {
   extends: DefaultTheme,
   Layout,
   enhanceApp({ app }) {
-    app.component('VideoShowcase', VideoShowcase)
-    app.component('JikongShowcase', JikongShowcase)
+    app.component('HomePage', HomePage)
+    app.component('VideoPlayer', VideoPlayer)
   },
 }

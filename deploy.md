@@ -1,167 +1,137 @@
-# 📦 部署指南（v3.2）
-
-> 本文档对应 **AgoraIn v3.2**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 部署指南](/v2.7/deploy)。
-
-本指南介绍 AgoraIn v3.2 的构建、部署与配置。
-
+---
+title: 部署指南
+description: AgoraIn v4 服务端 / Web 面板 / 桌面端 / 移动端构建与部署
 ---
 
-## 架构概览
+# 部署指南
+
+AgoraIn v4 的部署分四块：**服务端（含 Web 面板）→ 桌面端 → 移动端 App → 家长端小程序**。
+服务端是唯一的在线节点，其余各端都是客户端，服务器地址在客户端内固定为 `https://agorain.615mc.cn`。
+
+## 一、架构概览
 
 ```
-┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
-│  大屏客户端 #1   │     │  大屏客户端 #2   │     │  移动端 App     │
-│  (AgoraIn.exe)  │─▶  │  (教室白板)     │─▶  │  (MAUI)         │
-└────────┬────────┘     └────────┬────────┘     └────────┬────────┘
-         │                       │                       │
-         └───────────────────────┼───────────────────────┘
-                                 │
-                                 ▼
-                    ┌────────────────────────┐
-                    │    集控服务器 (Server)  │
-                    │   ASP.NET + SQLite      │
-                    │   端口: 5250            │
-                    └────────────────────────┘
+客户端                          服务端（Linux, 5250）
+├── 桌面端 Avalonia  ─┐         ├── ASP.NET Core 10 REST /api/v4
+├── Web 管理面板     ─┼─ HTTPS ─┤── SignalR /hub/live（签到实时上屏）
+├── 移动端 App       ─┤         ├── SQLite 单文件库（data/server.db）
+└── 家长端小程序     ─┘         ├── 本地识别（OMR / 手写 OCR）
+                                └── wwwroot/ ← Web 管理面板产物
 ```
 
----
+- 服务端数据目录默认 `<程序目录>/data`，可通过 `Data:Directory` 或环境变量 `Data__Directory` 改址
+- 首次启动自动建库建表；升级时由 `DbSchemaPatch` 补列补表（生产库安全）
+- 首次初始化：`POST /api/v4/auth/setup` 创建管理员，或在 Web 面板首次打开时按向导完成
 
-## 构建
+## 二、服务端部署（Linux）
 
-### 桌面客户端（输出 AgoraIn.exe）
+### 方式 A：一键脚本
 
-```powershell
-dotnet build AgoraInPro\CheckIn.Client.csproj
+```bash
+bash v4/deploy-server.sh <host> <user> <password>
 ```
 
-### 集控服务器
+脚本会：本地 `dotnet publish -r linux-x64 --self-contained` → 构建 Web 面板并拷入 `wwwroot/`
+→ `scp` 上传 → 安装 systemd 服务 → 重启并验证 `/api/v4/setup/status`。
 
-```powershell
-dotnet build Server\CheckIn.Server.csproj
-```
+### 方式 B：手动部署（宝塔等环境）
 
-### 移动端
+1. 发布服务端（自包含，无需目标机安装 .NET）：
 
-```powershell
-# 需先安装 MAUI 工作负载
-dotnet workload install maui
+   ```bash
+   dotnet publish v4/src/AgoraIn.Server -c Release -r linux-x64 --self-contained true
+   ```
 
-dotnet build Client.Mobile\AgoraIn.Client.Mobile.csproj
-```
+2. 构建 Web 面板并拷入静态目录：
 
-> 提示：构建前如输出文件被占用，请先结束旧进程：
-> `Stop-Process -Name AgoraIn -Force`
+   ```bash
+   cd v4/src/AgoraIn.WebAdmin && npm install && npm run build
+   cp -r dist/* ../AgoraIn.Server/wwwroot/
+   ```
 
----
+3. 上传解压到目标目录（例如 `/www/wwwroot/agorain/`），确认存在 `data/` 可写目录：
 
-## 运行
+   ```bash
+   mkdir -p data && chown -R www:www data
+   ```
 
-### 桌面客户端
+4. 启动（建议 systemd 或宝塔守护）：
 
-```powershell
-.\AgoraInPro\bin\Debug\net10.0-windows\AgoraIn.exe
-```
+   ```bash
+   nohup ./AgoraIn.Server --urls http://0.0.0.0:5250 > server.log 2>&1 &
+   ```
 
-### 集控服务器
+5. 健康检查：`curl http://127.0.0.1:5250/api/v4/setup/status` → `{"needsSetup":false}`
 
-```powershell
-dotnet run --project Server\CheckIn.Server.csproj
-```
+### nginx / 宝塔反向代理
 
-首次运行自动创建 SQLite 数据库与表结构，默认端口 **5250**。
+Web 面板是 history 路由的 SPA，静态文件之外的所有路径都要回退到 `index.html`：
 
-### 自测模式
-
-```powershell
-& .\AgoraInPro\bin\Debug\net10.0-windows\AgoraIn.exe --selftest
-```
-
-退出码 0 表示全部通过。
-
----
-
-## 服务器部署
-
-1. 将 `Server` 发布产物复制到目标机器
-2. 编辑 `config.json` 设置 `Port`、`ServerName`、`ServerPassword`
-3. 运行服务器程序，首次启动自动创建 SQLite 数据库与表结构
-4. 局域网内客户端「远程 → 远程服务器设置」填入 IP、端口与密码即可连接
-
-### 服务器 `config.json`
-
-```json
-{
-  "Port": 5250,
-  "ServerName": "集控服务器",
-  "ServerPassword": "自动生成或手动填写",
-  "DebugMode": false
+```nginx
+location / {
+  root /www/wwwroot/agorain/wwwroot;
+  try_files $uri $uri/ /index.html;
+}
+location ~ ^/(api|hub|assets|login|dashboard|classes|students|devices|classhours|notices|resources|exams|users|license|settings|index\.html) {
+  proxy_pass http://127.0.0.1:5250;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;      # SignalR WebSocket
+  proxy_set_header Connection "upgrade";
+  proxy_read_timeout 86400s;
 }
 ```
 
-| 字段 | 默认值 | 说明 |
-| ---- | ---- | -- |
-| `Port` | `5250` | 监听端口 |
-| `ServerName` | `""` | 服务器名称 |
-| `ServerPassword` | `""` | 服务器连接密码（未配置时首次运行自动生成随机密码并回写） |
-| `DebugMode` | `false` | 调试模式开关 |
+::: danger 注意
+部分安全规则会拦截 `LICENSE`、`README.md` 等关键词，**大小写不敏感**，可能误伤 SPA 路由 `/license`。
+把上面的 SPA 路由块放在安全规则**之前**即可（nginx 正则 location 优先于前缀匹配）。
+:::
 
----
+## 三、桌面端构建
 
-## 局域网部署（推荐方案）
-
-```
-┌──────────────────────────────────────────────────────┐
-│                    学校局域网                          │
-│                                                       │
-│  ┌──────────┐    ┌──────────┐    ┌──────────┐        │
-│  │ 教室白板  │    │ 教师电脑  │    │ 学生手机  │        │
-│  │ 192.168.1.10│  │192.168.1.11│  │192.168.1.x│       │
-│  └─────┬─────┘    └─────┬─────┘    └─────┬─────┘    │
-│        │               │               │             │
-│        └───────────────┼───────────────┘             │
-│                        │                             │
-│                 ┌──────┴──────┐                      │
-│                 │  集控服务器  │                      │
-│                 │ 192.168.1.5 │                      │
-│                 │   :5250     │                      │
-│                 └─────────────┘                      │
-└──────────────────────────────────────────────────────┘
+```bash
+dotnet build v4/src/AgoraIn.App/AgoraIn.App.csproj -c Release
+# 单文件/自包含发布
+dotnet publish v4/src/AgoraIn.App -c Release -r win-x64 --self-contained true \
+  -p:DebugType=none -p:DebugSymbols=false
 ```
 
-### 配置步骤
+Windows 10 兼容：`v4/Directory.Build.props` 已统一设置 `CETCompat=false`，无需额外处理。
 
-1. **服务器电脑**：运行集控服务器（端口 5250）
-2. **客户端电脑**：菜单「远程 → 远程服务器设置」，填入服务器 IP、端口（5250）与密码
-3. **开放防火墙端口**（如需跨设备访问）：
+## 四、移动端构建（.NET MAUI）
+
+多目标项目需要**按目标框架单独还原**，否则会报 `NETSDK1047 / NETSDK1005`：
+
+```bash
+# Android
+dotnet restore v4/src/AgoraIn.Mobile -p:TargetFrameworks=net10.0-android -p:RuntimeIdentifier=android-arm64
+dotnet publish v4/src/AgoraIn.Mobile -f net10.0-android -r android-arm64 --no-restore
+
+# Windows
+dotnet restore v4/src/AgoraIn.Mobile -p:TargetFramework=net10.0-windows10.0.19041.0 -p:RuntimeIdentifier=win-x64
+dotnet build v4/src/AgoraIn.Mobile -f net10.0-windows10.0.19041.0 -r win-x64 --no-restore
+```
+
+Release APK 需配置签名（keystore + `AndroidSigningStorePass` / `AndroidSigningKeyPass`）。
+中文路径下构建 Android 会触发 APT2265，把项目复制到纯 ASCII 路径即可绕过。
+
+## 五、质量门禁与 CI
 
 ```powershell
-# Windows 防火墙
-netsh advfirewall firewall add rule name="AgoraIn" dir=in action=allow protocol=TCP localport=5250
+powershell -ExecutionPolicy Bypass -File v4/scripts/gate.ps1
 ```
 
----
+等价于：`dotnet build` → `dotnet test` → `AgoraIn.exe --selftest`（无头冒烟）。
+CI（GitHub Actions）在 push / PR 时跑门禁与 Web 面板构建校验，打 tag 或手动触发时构建各端产物并附加到 Release。
 
-## 数据存储
+## 六、升级与数据
 
-| 数据 | 位置 | 说明 |
-| ---- | -- | -- |
-| 工作区状态 | `workspace.json`（客户端目录） | 打开的标签页列表、活动标签页（自动恢复） |
-| 打卡数据 / 学生名单 | 任务数据目录 | 打卡记录与学生名单 |
-| 课时数据 | `data/classhours.json`（客户端目录） | 学生课时、流水、排课、不排课日、自动划消设置 |
-| 服务器数据 | SQLite 数据库（服务器目录） | 设备、任务、考勤、用户、签到任务、设备分配 |
+| 主题 | 说明 |
+| --- | --- |
+| 数据库 | SQLite 单文件（`data/server.db`）；升级后由 `DbSchemaPatch` 自动补列补表，升级前建议备份 `data/` |
+| 上传文件 | 答题卡原图与资源默认存本地；开启远程存储后加密上传 WebDAV，本机只保留 LRU 缓存 |
+| 远程存储缓存 | 只淘汰**已确认上传成功**的本机副本，远程不可用时排队补传 |
+| 前端缓存 | Web 面板已开启过期自愈：加载新版本后自动提示并刷新 |
 
-### 课时数据 `data/classhours.json`（版本 v3）
+## 相关阅读
 
-| 字段 | 说明 |
-| ---- | -- |
-| `Version` | 数据版本号（v3：排课细分时间 + 自动划消设置） |
-| `Students` | 学生列表（姓名、总课时、已划课时、备注、创建时间） |
-| `Records` | 课时记录流水（日期、课时数正负、备注、SlotKey 去重键） |
-| `Schedule` | 排课数据：日期 → 排课条目（学生 + 上课/下课时间，支持跨天） |
-| `OffDays` | 不排课日集合 |
-| `HoursPerHour` | 每小时上课消耗课时（支持小数，默认 1） |
-| `AutoDeduct` | 是否自动划消课时 |
-
-### 备份
-
-直接复制对应数据文件即可完成备份；恢复时覆盖原文件（恢复前建议停止程序）。
+- [快速开始](/guide) · [API 文档](/api) · [服务端与授权](/server) · [常见问题](/faq)

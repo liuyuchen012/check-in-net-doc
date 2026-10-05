@@ -1,60 +1,36 @@
 ---
-layout: home
-
-hero:
-  name: 移动多端应用
-  text: 微信小程序 + Android 客户端
-  tagline: AgoraIn 课堂签到的移动端入口<br>内置课堂打卡与课时划消本地工具
-  image:
-    src: /favicon.svg
-    alt: AgoraIn Mobile
-  actions:
-    - theme: brand
-      text: 下载 Android 版
-      link: /download
-    - theme: alt
-      text: 快速开始
-      link: /miniprogram/quickstart
-    - theme: alt
-      text: 功能特性
-      link: /miniprogram/features
-
-features:
-  - icon: 📱
-    title: AgoraIn 课堂签到
-    details: 扫码 / 输码签到、考勤统计、任务管理，完整对接桌面端服务器
-  - icon: 📲
-    title: 双端覆盖
-    details: 微信小程序无需安装即用，Android 独立 App 功能一致
-  - icon: 🗓
-    title: 课堂打卡
-    details: 班级课程配置与每日打卡记录，数据保存在本机，无需服务器
-  - icon: ⏱
-    title: 课时划消
-    details: 课时管理、排课与自动销课时，支持 Excel / CSV 批量导入导出
-  - icon: 🧩
-    title: TDesign 组件库
-    details: 基于 TDesign 微信小程序组件库，深色模式适配，开箱即用
-  - icon: 🔍
-    title: mDNS 服务器发现
-    details: 局域网自动发现 AgoraIn 服务器地址，也可手动填写
+title: 家长端小程序
+description: AgoraIn 家长端微信小程序 —— 通知、成绩、值日与留言
 ---
 
-## 项目简介
+# 家长端小程序
 
-**移动多端应用** 是基于原生微信小程序 + [TDesign 微信小程序组件库](https://tdesign.tencent.com/miniprogram/overview) 构建的教学场景工具，是 [AgoraIn 课堂签到打卡系统](https://github.com/liuyuchen012/AgoraIn) 的移动端扩展，提供**微信小程序**与 **Android 客户端**两个平台。在完整对接 AgoraIn 服务端的基础上，额外内置了课堂打卡与课时划消等本地工具。项目使用文档见官网：https://doc.615mc.cn
+家长端小程序与移动端 App **功能对等**，是家长了解孩子在校情况、与老师沟通的统一入口。
 
-## 适用场景
+## 能做什么
 
-- 📱 教师移动端远程发起签到与考勤管理
-- 🏫 学生扫码签到与历史记录查询
-- 📋 培训机构课时划消与排课管理
-- 🗓 每日课堂打卡记录
+| 模块 | 说明 |
+| --- | --- |
+| 通知与已读回执 | 学校 / 班级通知实时送达；已读状态回传给教师，谁没看到一目了然 |
+| 成绩概览 | 受学校隐私开关控制（**默认关闭**），开启后可见成绩与排名区间 |
+| 考勤与积分 | 查看孩子签到、请假与积分变动 |
+| 值日安排 | 今日值日、本周轮换 |
+| 班级资源 | 教师下发的资料在线查看与下载 |
+| 留言沟通 | 直接给老师留言，沟通留痕，不再依赖家长群刷屏 |
+| 多孩切换 | 一个账号可绑定多个孩子，随时切换 |
 
-## 客户端平台
+## 与 App 的关系
 
-| 平台 | 说明 |
-| ---- | ---- |
-| 微信小程序 | 微信内即用，无需安装 |
-| Android | 独立 App，[点击下载](/download) |
-| iOS | 暂未提供（无开发者证书，无法签名构建） |
+| 端 | 形态 | 覆盖能力 |
+| --- | --- | --- |
+| 微信小程序 | 免安装，微信内直接使用 | 家长全部功能 |
+| 移动端 App | Android | 家长中心 + 学生扫码签到 + 教师拍照扫卡与逐题改分 |
+
+> 家长端采用**邀请码绑定**：教师在后台按班级批量生成 6 位邀请码（可导出 CSV 打印发放），
+> 家长输入即完成绑定，无需邮箱验证码。
+
+## 下一步
+
+- [功能特性](/miniprogram/features)
+- [快速开始（家长绑定）](/miniprogram/quickstart)
+- [目录结构](/miniprogram/structure)：开发者视角的工程说明

@@ -1,49 +1,49 @@
-# 🗺 站点地图
-
-## 最新版本（v3.2）
-
-- [主页](/) — v3.2 项目主页
-- [资源下载](/download) — 下载中心（独立于各项目）
-- [快速开始](/guide) — v3.2 使用指南
-- [功能特性](/features) — v3.2 功能特性
-- [API 文档](/api) — v3.2 API 参考
-- [部署指南](/deploy) — v3.2 部署指南
-- [常见问题](/faq) — v3.2 常见问题
-
-## 旧版文档（v2.8）
-
-> [!WARNING]
-> 以下为 **v2.8 历史归档**，仅作历史参考，不再更新。
-
-- [v2.8 主页](/v2.8/) — 历史版项目主页
-- [v2.8 快速开始](/v2.8/guide) — 历史版使用指南
-- [v2.8 功能特性](/v2.8/features) — 历史版功能特性
-- [v2.8 API 文档](/v2.8/api) — 历史版 API 参考
-- [v2.8 部署指南](/v2.8/deploy) — 历史版部署指南
-- [v2.8 常见问题](/v2.8/faq) — 历史版常见问题
-
-## 旧版文档（v2.7）
-
-> [!WARNING]
-> 以下为 **v2.7 旧版归档**，仅作历史参考，不再更新。
-
-- [v2.7 主页](/v2.7/) — 旧版项目主页
-- [v2.7 快速开始](/v2.7/guide) — 旧版使用指南
-- [v2.7 功能特性](/v2.7/features) — 旧版功能特性
-- [v2.7 API 文档](/v2.7/api) — 旧版 API 参考
-- [v2.7 部署指南](/v2.7/deploy) — 旧版部署指南
-- [v2.7 常见问题](/v2.7/faq) — 旧版常见问题
-
-## 移动多端应用
-
-- [项目简介](/miniprogram/) — 项目概览、功能亮点、双端平台介绍
-- [功能特性](/miniprogram/features) — 课堂签到、课堂打卡、课时划消三大模块详解
-- [快速开始](/miniprogram/quickstart) — 微信小程序运行与 Android 安装指南
-- [目录结构](/miniprogram/structure) — 项目目录说明
-
 ---
+title: 站点地图
+description: AgoraIn 文档站全部页面索引
+---
+
+# 站点地图
+
+## 最新版本（v4）
+
+| 页面 | 链接 | 内容 |
+| --- | --- | --- |
+| 首页 | [/](/index) | 产品总览、宣传片、功能板块、多端形态 |
+| 功能特性 | [/features](/features) | 课堂日常、考试与阅卷、家校沟通、平台运营、多端形态 |
+| 宣传片 | [/video](/video) | 62 秒宣传片（横屏 16:9 / 竖屏 9:16）、分镜与口径 |
+| 下载中心 | [/download](/download) | 桌面端 / 服务端 / Android / 小程序，平台要求与授权 |
+| 快速开始 | [/guide](/guide) | 开通机构 → 登录 → 建班 → 签到 → 家长绑定 → 第一次考试 |
+| 使用手册 | [/manual](/manual) | 教师 / 班主任 / 教务 / 家长 / 运营方操作速查 |
+| 部署指南 | [/deploy](/deploy) | 服务端、nginx、桌面端、移动端构建与升级 |
+| API 文档 | [/api](/api) | `/api/v4` 端点分组、鉴权、SignalR、典型流程 |
+| 一体机联动 | [/plugin](/plugin) | ClassIsland 插件接口与课表推送 |
+| 服务端与授权 | [/server](/server) | 初始化、三级编码、多区域、AI 额度、加密存储 |
+| 常见问题 | [/faq](/faq) | 登录、面板、扫卡、阅卷、存储的排查 |
+
+## 家长端小程序
+
+| 页面 | 链接 |
+| --- | --- |
+| 项目简介 | [/miniprogram/](/miniprogram/) |
+| 功能特性 | [/miniprogram/features](/miniprogram/features) |
+| 快速开始 | [/miniprogram/quickstart](/miniprogram/quickstart) |
+| 目录结构 | [/miniprogram/structure](/miniprogram/structure) |
+
+## 历史版本文档
+
+| 版本 | 入口 | 说明 |
+| --- | --- | --- |
+| v3.2 | [/v3.2/](/v3.2/) | 大屏模式 + 控制模式 + ClassIsland 联动（GPLv3 开源版本） |
+| v2.8 | [/v2.8/](/v2.8/) | 历史归档 |
+| v2.7 | [/v2.7/](/v2.7/) | 历史归档 |
 
 ## 外部链接
 
-- [GitHub 仓库](https://github.com/liuyuchen012/AgoraIn) — v3.2 项目源码
-- [v2.7 源码（旧版）](https://github.com/liuyuchen012/check-in) — v2.7 项目源码
+| 名称 | 地址 |
+| --- | --- |
+| 平台入口 | <https://agorain.615mc.cn> |
+| 文档站 | <https://doc.615mc.cn> |
+| GitHub 仓库 | <https://github.com/liuyuchen012/AgoraIn> |
+| 版本发布 | <https://github.com/liuyuchen012/AgoraIn/releases> |
+| 购买授权 | [企业微信客服](https://work.weixin.qq.com/kfid/kfc4bf6fef5cfae527d) |
