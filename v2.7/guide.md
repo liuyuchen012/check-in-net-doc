@@ -18,7 +18,7 @@
 
 ## 第一步：下载
 
-前往 [GitHub Releases](https://github.com/liuyuchen012/check-in/releases) 下载最新版本：
+> **v2.7 安装包已不再提供下载**（历史归档）。当前版本请到 [下载中心](/download) 获取。
 
 - `CheckIn.Client.zip` — Windows 桌面客户端
 - `CheckIn.Server.zip` — 跨平台服务器
