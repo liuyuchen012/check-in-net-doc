@@ -303,7 +303,7 @@ body.v .cta-wrap { gap: 16px; }
 .dl-cell { position: relative; }
 .dl-cell .shot { position: relative; }
 .dl-label {
-  position: absolute; left: 18px; bottom: -18px;
+  position: absolute; left: 18px; bottom: 14px;
   background: #fff; color: #174ea6; font-weight: 800; font-size: 26px;
   padding: 10px 22px; border-radius: 999px; border: 1px solid #e3e9f5;
   box-shadow: 0 12px 26px rgba(23, 78, 166, 0.16);
@@ -348,24 +348,36 @@ body.v .cta-wrap { gap: 16px; }
 .ex-flash { position: absolute; inset: 0; background: #fff; opacity: 0; border-radius: 36px; }
 
 /* ---------- 竖屏（9:16）适配：真实截图卡片版 ---------- */
+body.v .cap-layer { bottom: 110px; }
 body.v .shot { width: 940px !important; }
-body.v #ckWrap { left: 70px !important; top: 420px !important; }
-body.v .ck-qr { right: 90px; top: 150px; width: 300px; }
-body.v .ck-chip { left: 60px !important; top: 1500px !important; right: auto !important; bottom: auto !important; }
-body.v .dl-cards { left: 70px; top: 330px; width: 940px; grid-template-columns: 1fr; gap: 34px; }
+
+/* 扫码签到：大屏卡居中 + 二维码浮层放右下 + 徽标在下 */
+body.v .ck-chip { left: 60px !important; top: 1560px !important; right: auto !important; bottom: auto !important; }
+body.v #ckWrap { left: 70px !important; top: 330px !important; }
+body.v .ck-qr { right: 70px; top: 1150px; width: 300px; }
+
+/* 课堂日常：四张卡纵向滚动展示（一屏一屏地过） */
+body.v .dl-cards { left: 70px; top: 300px; width: 940px; grid-template-columns: 1fr; gap: 34px; }
 body.v .dl-cell .shot { width: 940px !important; }
-body.v #exPaper, body.v .ex-paper-real { left: 60px !important; top: 200px !important; width: 620px !important; }
-body.v .ex-cam { right: 60px; top: 120px; width: 320px; }
+
+/* 考试：答题卡在左上、取景框右上、批改/成绩卡在下方 */
+body.v #exPaper, body.v .ex-paper-real { left: 60px !important; top: 210px !important; width: 600px !important; }
+body.v .ex-cam { right: 55px; top: 130px; width: 320px; }
 body.v .ex-zero { left: 60px !important; top: 120px !important; }
-body.v #exPanelQ { left: 60px !important; top: 1060px !important; }
-body.v #exPanelS { left: 60px !important; top: 1040px !important; }
+body.v #exPanelQ, body.v #exPanelS { left: 60px !important; top: 1080px !important; }
 body.v #exPanelQ .shot, body.v #exPanelS .shot { width: 960px !important; }
-body.v #prNotices { left: 70px !important; top: 260px !important; }
-body.v #prMsgs { left: 70px !important; top: 960px !important; }
+
+/* 家校：两张卡上下排 */
+body.v #prNotices { left: 70px !important; top: 250px !important; }
+body.v #prMsgs { left: 70px !important; top: 850px !important; }
 body.v #prNotices .shot, body.v #prMsgs .shot { width: 940px !important; }
-body.v .pr-chip { left: 70px !important; top: 1660px !important; }
-body.v #pfReg { left: 70px !important; top: 200px !important; }
-body.v #pfAi { left: 70px !important; top: 800px !important; }
+body.v .pr-chip { left: 70px !important; top: 1460px !important; }
+
+/* 平台：两张页面卡 + 紧凑加密卡（开关行竖屏隐藏，避免压住字幕） */
+body.v #pfReg { left: 70px !important; top: 150px !important; }
+body.v #pfAi { left: 70px !important; top: 750px !important; }
 body.v #pfReg .shot, body.v #pfAi .shot { width: 940px !important; }
-body.v .pf-aes { left: 70px !important; top: 1400px !important; width: 940px !important; }
-body.v .pf-toggle-row { left: 70px !important; top: 1800px !important; }
+body.v .pf-aes { left: 70px !important; top: 1350px !important; width: 940px !important; padding: 24px 28px; }
+body.v .aes-stage { height: 150px; margin-top: 10px; }
+body.v .aes-head { font-size: 26px; }
+body.v .pf-toggle-row { display: none; }

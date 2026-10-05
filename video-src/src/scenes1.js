@@ -243,6 +243,8 @@ P.SCENES.push({
     })
     const cap = root.querySelector('#dlcap')
     const cp = A(t, 3.6, 4.1, E.outBack)
+    // 竖屏：四张卡纵向滚动，一屏一屏看完（每卡高约 570，可视区约 1350 → 滚动约 1030）
+    if (P.V) place(root.querySelector('#dlgrid'), { y: -mix(0, 1030, A(t, 1.3, 7.0, E.inOutCubic)) })
     place(cap, { y: mix(40, 0, cp), s: mix(0.94, 1, cp) })
     show(cap, cp)
     const out = A(t, 7.0, 7.6, E.inCubic)
