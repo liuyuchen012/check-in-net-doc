@@ -31,6 +31,13 @@ const CATALOG: Array<{ slug: string; icon: string; title: string; desc: string; 
     desc: '.NET MAUI · 扫码签到 / 拍照扫卡 / 逐题改分 / 家长中心',
     tag: 'Android 8.0+',
   },
+  {
+    slug: 'classisland-plugin',
+    icon: '🧩',
+    title: '一体机插件（ClassIsland）',
+    desc: '教室一体机接收教师呼叫（置顶弹窗 + 语音朗读）与课表同步',
+    tag: 'Windows 一体机',
+  },
 ]
 
 const live = ref<Record<string, Item>>({})
@@ -109,7 +116,7 @@ onMounted(async () => {
       <template v-if="loading">正在读取平台下载中心…</template>
       <template v-else-if="online">
         已连接 <a :href="ENDPOINT" target="_blank" rel="noopener">平台下载中心</a>，大小与版本为实时数据。
-        <span v-if="!live['desktop-win-x64'] || !live['android-apk']">暂未上传的安装包会显示为灰态，上传后自动出现。</span>
+        <span v-if="!live['desktop-win-x64'] || !live['android-apk'] || !live['classisland-plugin']">暂未上传的安装包会显示为灰态，上传后自动出现。</span>
       </template>
       <template v-else>
         下载由 <a :href="PLATFORM" target="_blank" rel="noopener">agorain.615mc.cn</a> 统一分发；

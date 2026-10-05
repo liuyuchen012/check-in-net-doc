@@ -17,6 +17,11 @@ import DownloadPanel from './.vitepress/theme/components/DownloadPanel.vue'
 
 <DownloadPanel />
 
+## 一体机插件（ClassIsland）
+
+教室一体机安装插件后，可接收教师端呼叫（**置顶弹窗 + 中文语音朗读**）并同步班级课表；
+插件为 `.cipx` 包，在 ClassIsland 里「安装插件 → 选择文件」导入即可。详见[一体机联动](/plugin)。
+
 ## 平台与设备要求
 
 | 端 | 要求 |
