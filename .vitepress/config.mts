@@ -162,8 +162,6 @@ export default defineConfig({
       ],
     },
 
-    socialLinks: [{ icon: 'github', link: 'https://github.com/liuyuchen012/AgoraIn' }],
-
     footer: {
       message:
         'AgoraIn v4 · 课堂签到与教学管理一体化平台 · <a href="https://agorain.615mc.cn" target="_blank" rel="noopener">进入平台</a>',

@@ -45,5 +45,4 @@ description: AgoraIn 文档站全部页面索引
 | 平台入口 | <https://agorain.615mc.cn> |
 | 文档站 | <https://doc.615mc.cn> |
 | GitHub 仓库 | <https://github.com/liuyuchen012/AgoraIn> |
-| 版本发布 | <https://github.com/liuyuchen012/AgoraIn/releases> |
 | 购买授权 | [企业微信客服](https://work.weixin.qq.com/kfid/kfc4bf6fef5cfae527d) |

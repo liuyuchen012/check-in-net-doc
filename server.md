@@ -65,6 +65,33 @@ curl -X POST http://<host>:5250/api/v4/auth/setup \
 用于注册验证码与忘记密码。在「设置」中配置服务器、端口、发件人、密码与 SSL，
 并可直接发送测试邮件。服务端内置发信频率限制（同一邮箱 / IP 的冷却与每日上限）。
 
+## 安装包分发（下载中心）
+
+官网的下载按钮指向平台自己的分发接口，安装包存放在数据目录的 `downloads/` 下：
+
+| 接口 | 鉴权 | 用途 |
+| --- | --- | --- |
+| `GET /api/v4/downloads` | 匿名 | 清单：名称 / 平台 / 版本 / 大小 / SHA256 / 下载地址 |
+| `GET /api/v4/downloads/{slug}` | 匿名 | 下载文件（支持单段 Range 断点续传） |
+| `HEAD /api/v4/downloads/{slug}` | 匿名 | 只取大小与指纹 |
+| `GET /api/v4/downloads/guard` | 匿名 | 反多线程策略与当前占用快照（排障） |
+| `POST /api/v4/downloads/{slug}` | 运营方 | 上传 / 覆盖安装包（multipart，`name`/`platform`/`version`/`note`/`order` 可选） |
+| `DELETE /api/v4/downloads/{slug}` | 运营方 | 删除安装包 |
+
+- 官网按钮用的固定 slug：桌面端 `desktop-win-x64`、移动端 `android-apk`
+- 直接把文件放进 `downloads/` 也能用（slug 取文件名去扩展名）；`downloads/manifest.json` 负责展示名、版本与排序
+
+**反多线程下载**（默认开启，`appsettings.json` 的 `Downloads` 段可调）：
+
+| 策略 | 默认值 | 作用 |
+| --- | --- | --- |
+| 同一 IP 并发连接 | 3 | 超过直接 429，防止开几十条连接抢带宽 |
+| 同一 IP 对同一文件并发 | 2 | 分段下载器叠加不出速度 |
+| 每分钟 Range 请求 | 6 次 | 超预算按 IP+文件临时封禁（默认 5 分钟） |
+| 单连接带宽上限 | 8192 KB/s | 多线程总速度被"每线程上限 × 允许并发"封顶 |
+
+正常浏览器/手机下载只占 1 条连接、至多 1~2 次 Range 请求，不受影响。
+
 ## 更新检查
 
 服务端代理 GitHub Releases 查询版本，客户端「设置 → 更新检查」可查看新版本并跳转下载
