@@ -18,11 +18,39 @@ type Item = {
 
 const CATALOG: Array<{ slug: string; icon: string; title: string; desc: string; tag: string }> = [
   {
-    slug: 'desktop-win-x64',
+    slug: 'desktop-win-x64-setup',
     icon: '🖥️',
-    title: '桌面端（Windows）',
-    desc: 'Avalonia 11 · 大屏 / 控制 / 教师三模式 · 断网可用',
-    tag: 'Windows 10+ x64',
+    title: '桌面端 · Windows 安装版',
+    desc: '推荐：双击安装，自动建快捷方式，可在「应用和功能」里卸载 · 三模式 + 扫卡工作站（扫描仪 / 作文格纸）',
+    tag: 'Windows 10 1809+',
+  },
+  {
+    slug: 'desktop-win-x64',
+    icon: '📦',
+    title: '桌面端 · Windows 绿色版',
+    desc: '解压即用、免安装（适合机房批量拷贝 / U 盘带走）· 功能与安装版一致',
+    tag: 'Windows 10 1809+',
+  },
+  {
+    slug: 'desktop-linux-x64',
+    icon: '🐧',
+    title: '桌面端 · Linux',
+    desc: '解压运行 ./AgoraIn（自包含，已内置中文字体）· 需 X11 桌面；扫描仪与内嵌网页面板为 Windows 专属',
+    tag: 'Linux x64',
+  },
+  {
+    slug: 'desktop-macos-arm64',
+    icon: '🍎',
+    title: '桌面端 · macOS（Apple Silicon）',
+    desc: '把 AgoraIn.app 拖进「应用程序」· 未做 Apple 签名，首次打开需右键 →「打开」',
+    tag: 'macOS · M 系列',
+  },
+  {
+    slug: 'desktop-macos-x64',
+    icon: '🍎',
+    title: '桌面端 · macOS（Intel）',
+    desc: '同上，Intel 芯片版 · 未做 Apple 签名，首次打开需右键 →「打开」',
+    tag: 'macOS · Intel',
   },
   {
     slug: 'android-apk',
@@ -116,7 +144,7 @@ onMounted(async () => {
       <template v-if="loading">正在读取平台下载中心…</template>
       <template v-else-if="online">
         已连接 <a :href="ENDPOINT" target="_blank" rel="noopener">平台下载中心</a>，大小与版本为实时数据。
-        <span v-if="!live['desktop-win-x64'] || !live['android-apk'] || !live['classisland-plugin']">暂未上传的安装包会显示为灰态，上传后自动出现。</span>
+        <span v-if="CATALOG.some((c) => !live[c.slug])">暂未上传的安装包会显示为灰态，上传后自动出现。</span>
       </template>
       <template v-else>
         下载由 <a :href="PLATFORM" target="_blank" rel="noopener">agorain.615mc.cn</a> 统一分发；

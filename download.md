@@ -26,11 +26,24 @@ import DownloadPanel from './.vitepress/theme/components/DownloadPanel.vue'
 
 | 端 | 要求 |
 | --- | --- |
-| 桌面端 | Windows 10 1809+（推荐 Windows 11）；双核以上、4GB 内存；电子白板 / 一体机 / 普通 PC 均可 |
+| 桌面端（Windows） | Windows 10 1809+（推荐 Windows 11）；双核以上、4GB 内存；电子白板 / 一体机 / 普通 PC 均可 |
+| 桌面端（Linux） | x64，X11 桌面（Ubuntu 22.04+ / Fedora 等）；自包含免装 .NET。精简系统若启动即崩，通常是缺 X11 基础库：`sudo apt install -y libice6 libsm6 libx11-6 libxext6 libxi6 libxrandr2 libxcursor1 libxrender1 libfontconfig1 libgl1` |
+| 桌面端（macOS） | macOS 12+，Apple Silicon 与 Intel 各有一版；未做签名公证，首次打开请右键 →「打开」（或 `xattr -dr com.apple.quarantine`） |
 | 移动端 | Android 8.0 及以上 |
 | 家长端 | 微信最新版本（小程序，免安装；绑定方式见 [家长端说明](/miniprogram/quickstart)） |
 | 服务端 | Linux x64（推荐 Ubuntu 22.04+ / 宝塔环境），由平台方或机构自行部署，详见 [部署指南](/deploy) |
 | 浏览器 | 管理面板推荐 Chrome / Edge 最新版 |
+
+## 桌面端各平台功能对照
+
+三平台的核心功能一致（打卡、点名、课时、积分、值日、座位、课表、扫卡工作站、内嵌管理面板会话），差异只在这些系统专属能力：
+
+| 能力 | Windows | Linux | macOS |
+| --- | --- | --- | --- |
+| 扫描仪取图（WIA，调系统扫描界面） | ✅ | ❌ 用「从文件选择」 | ❌ 用「从文件选择」 |
+| 内嵌网页管理面板（WebView2） | ✅ | ❌ 用浏览器打开管理面板 | ❌ 用浏览器打开管理面板 |
+| 大屏打卡 / 控制 / 教师三模式 | ✅ | ✅ | ✅ |
+| 扫卡工作站（普通卡 / 训练卡 / 作文格纸） | ✅ | ✅（从文件选择） | ✅（从文件选择） |
 
 ## 校验下载
 
