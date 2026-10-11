@@ -21,14 +21,14 @@ const CATALOG: Array<{ slug: string; icon: string; title: string; desc: string; 
     slug: 'desktop-win-x64-setup',
     icon: '🖥️',
     title: '桌面端 · Windows 安装版',
-    desc: '推荐：双击安装，自动建快捷方式，可在「应用和功能」里卸载 · 三模式 + 扫卡工作站（扫描仪 / 作文格纸）',
+    desc: '推荐：双击安装，自动建快捷方式，可在「应用和功能」里卸载 · 三模式 + 扫卡工作站（扫描仪 / 进纸器批量 / 作文格纸）',
     tag: 'Windows 10 1809+',
   },
   {
     slug: 'desktop-win-x64',
     icon: '📦',
     title: '桌面端 · Windows 绿色版',
-    desc: '解压即用、免安装（适合机房批量拷贝 / U 盘带走）· 功能与安装版一致',
+    desc: '解压即用、免安装（适合机房批量拷贝 / U 盘带走）· 功能与安装版一致，含进纸器批量扫描',
     tag: 'Windows 10 1809+',
   },
   {
