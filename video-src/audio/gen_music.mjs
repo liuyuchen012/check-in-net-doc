@@ -5,7 +5,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const SR = 44100
-const DUR = 62.6
+const DUR = 86.6
 const N = Math.ceil(SR * DUR)
 const L = new Float32Array(N)
 const R = new Float32Array(N)
@@ -168,7 +168,11 @@ const sections = [
   { t: 39.4, bars: 3, ch: ['G', 'D', 'A'], pad: 1, kick: 0, hat: 0.6, arp: 0.8, bass: 0.5, bright: 0.6 },
   { t: 46.6, bars: 3, ch: ['Bm', 'G', 'A'], pad: 1, kick: 0, hat: 0.7, arp: 0.9, bass: 0.6, bright: 0.7, riserFrom: 49.0 },
   { t: 52.6, bars: 4, ch: ['D', 'A', 'Bm', 'G'], pad: 1, kick: 1, hat: 1, arp: 1, bass: 1, bright: 1.1 },
-  { t: 60.6, bars: 2, ch: ['D', 'D'], pad: 1.2, kick: 0, hat: 0, arp: 0.3, bass: 0.3, bright: 0.9, tail: 1 },
+  { t: 60.6, bars: 1, ch: ['D'], pad: 1, kick: 0, hat: 0, arp: 0.3, bass: 0.3, bright: 0.9 },
+  { t: 62.6, bars: 4, ch: ['D', 'A', 'Bm', 'G'], pad: 1, kick: 1, hat: 1, arp: 1, bass: 1, bright: 1 },
+  { t: 70.6, bars: 4, ch: ['Bm', 'G', 'D', 'A'], pad: 1.1, kick: 0, hat: 0.6, arp: 0.8, bass: 0.5, bright: 0.6 },
+  { t: 79.0, bars: 4, ch: ['D', 'A', 'Bm', 'G'], pad: 1, kick: 1, hat: 1, arp: 1, bass: 1, bright: 1.1 },
+  { t: 84.6, bars: 1, ch: ['D', 'D'], pad: 1.2, kick: 0, hat: 0, arp: 0.3, bass: 0.3, bright: 0.9, tail: 1 },
 ]
 
 const reverbSend = []

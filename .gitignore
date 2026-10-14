@@ -4,3 +4,6 @@ dist/
 .vitepress/cache/
 .DS_Store
 *.log
+
+# 渲染产物（帧/音频/成片中间件）
+video-src/out/

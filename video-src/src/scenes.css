@@ -381,3 +381,63 @@ body.v .pf-aes { left: 70px !important; top: 1350px !important; width: 940px !im
 body.v .aes-stage { height: 150px; margin-top: 10px; }
 body.v .aes-head { font-size: 26px; }
 body.v .pf-toggle-row { display: none; }
+
+/* ═══ 加长版新增：教学模式 / 定制版 ClassIsland / 开源许可 ═══ */
+.ag-chip-row { position: absolute; display: flex; gap: 14px; }
+.ag-chip-row .chip { background: rgba(255,255,255,.92); color: #1f2430; font-weight: 700; }
+
+.cu-window { border-radius: 18px; overflow: hidden; box-shadow: 0 30px 90px rgba(0,0,0,.5); background: #fff; }
+.cu-titlebar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f1f4f9; color: #475069; font-size: 15px; }
+.cu-titlebar .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; margin-right: 2px; }
+.cu-titlebar .dot.r { background: #ff5f57; } .cu-titlebar .dot.y { background: #febc2e; } .cu-titlebar .dot.g { background: #28c840; }
+.cu-titlebar span { margin-left: 8px; }
+.cu-about { display: flex; gap: 26px; padding: 34px 38px 40px; align-items: center; }
+.cu-logo { flex: 0 0 auto; }
+.cu-name { font-size: 34px; font-weight: 800; color: #101623; }
+.cu-sub { font-size: 17px; color: #5b6472; margin-top: 4px; }
+.cu-line { font-size: 15px; color: #7a828f; margin-top: 12px; line-height: 1.6; max-width: 560px; }
+.cu-gpl { display: inline-block; margin-top: 14px; padding: 6px 14px; border-radius: 999px; background: #e7f7ec; color: #15803d; font-size: 14px; font-weight: 700; }
+
+.cu-cmd { display: inline-block; margin: 0 14px 16px 0; padding: 12px 22px; border-radius: 14px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #e8edf7; font-size: 21px; font-weight: 600; }
+.cu-join { position: absolute; text-align: right; }
+.cu-join-label { font-size: 15px; color: #9fb0cc; margin-bottom: 8px; }
+.cu-join-url { font-family: ui-monospace, Consolas, monospace; font-size: 26px; font-weight: 700; color: #7cc4ff; }
+
+.lic-head { position: absolute; left: 0; right: 0; top: 110px; text-align: center; }
+.lic-kicker { font-size: 17px; letter-spacing: 6px; color: #9fc2ff; font-weight: 700; }
+.lic-title { font-size: 74px; font-weight: 900; color: #fff; margin-top: 16px; text-shadow: 0 8px 40px rgba(0,0,0,.35); }
+.lic-grid { position: absolute; left: 0; right: 0; top: 380px; display: flex; justify-content: center; gap: 34px; }
+.lic-card { width: 470px; border-radius: 20px; padding: 34px 36px; background: rgba(8,14,30,.55);
+  border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(8px); }
+.lic-badge { display: inline-block; padding: 5px 16px; border-radius: 999px; font-size: 15px; font-weight: 800; letter-spacing: 1px; }
+.lic-badge.gpl { background: #15803d; color: #fff; }
+.lic-badge.com { background: rgba(255,255,255,.16); color: #dfe7f5; }
+.lic-name { font-size: 27px; font-weight: 800; color: #fff; margin-top: 14px; }
+.lic-desc { font-size: 16px; color: #b9c6dd; margin-top: 10px; line-height: 1.65; }
+.lic-line { position: absolute; left: 0; right: 0; top: 820px; text-align: center; font-size: 33px; color: #eaf1fb; }
+.lic-line b { color: #8fd0ff; }
+.lic-foot { position: absolute; left: 0; right: 0; top: 920px; text-align: center; font-size: 15px; color: #8b9cb8; }
+
+/* ── 竖屏：教学模式 ── */
+body.v #tBoard { left: 70px !important; top: 330px !important; }
+body.v #tPhys { left: 70px !important; top: 1250px !important; }
+body.v #tCtrl { left: 70px !important; top: 1250px !important; }
+body.v #tagchips { left: 70px !important; top: 170px !important; }
+
+/* ── 竖屏：定制版 ClassIsland ── */
+body.v #cuWin { left: 60px !important; top: 360px !important; width: 960px !important; }
+body.v #cuWin .cu-window { width: 100%; }
+body.v .cu-about { flex-direction: column; text-align: center; align-items: center; }
+body.v .cu-line { max-width: 860px; }
+body.v #cuCmds { left: 60px !important; top: 1180px !important; width: 960px !important; right: auto !important; }
+body.v .cu-cmd { font-size: 26px; padding: 14px 26px; }
+body.v #cujoin { left: 60px !important; top: 1520px !important; right: auto !important; text-align: left; }
+
+/* ── 竖屏：开源许可声明 ── */
+body.v .lic-head { top: 230px; }
+body.v .lic-title { font-size: 60px; }
+body.v .lic-grid { top: 640px; flex-direction: column; align-items: center; gap: 28px; }
+body.v .lic-card { width: 900px; }
+body.v .lic-line { top: 1560px; font-size: 28px; padding: 0 50px; }
+body.v .lic-foot { top: 1740px; padding: 0 60px; }

@@ -27,6 +27,9 @@
     { t: 39.2, type: 'wipe', dur: 0.66, color: 'linear-gradient(115deg, rgba(66,133,244,.94), rgba(6,182,212,.94))' },
     { t: 46.4, type: 'wipe', dur: 0.66, color: 'linear-gradient(115deg, rgba(10,23,48,.96), rgba(29,78,216,.92))' },
     { t: 52.6, type: 'wipe', dur: 0.74, color: 'linear-gradient(115deg, rgba(29,78,216,.96), rgba(124,58,237,.96))' },
+    { t: 62.6, type: 'wipe', dur: 0.7, color: 'linear-gradient(115deg, rgba(15,23,43,.96), rgba(66,133,244,.94))' },
+    { t: 70.6, type: 'wipe', dur: 0.7, color: 'linear-gradient(115deg, rgba(10,23,48,.96), rgba(124,58,237,.94))' },
+    { t: 79.0, type: 'wipe', dur: 0.74, color: 'linear-gradient(115deg, rgba(29,78,216,.96), rgba(124,58,237,.96))' },
   ]
   const flashEl = P.mk('div', 'flash')
   fx.appendChild(flashEl)
@@ -56,7 +59,7 @@
       el.style.transform = `translateX(${x}%) skewX(-10deg)`
       el.style.opacity = p > 0 && p < 1 ? '1' : '0'
     }
-    blackEl.style.opacity = String(P.A(t, 61.35, 61.95, P.E.inOutCubic))
+    blackEl.style.opacity = String(P.A(t, 85.35, 85.95, P.E.inOutCubic))
   }
 
   /* ---------- seek ---------- */

@@ -233,7 +233,7 @@ P.SCENES.push({
 
 /* ============ S8 · 片尾 CTA ============ */
 P.SCENES.push({
-  id: 'cta', start: 52.6, end: 62.0,
+  id: 'cta', start: 79.0, end: 86.0,
   build(root) {
     root.innerHTML = `
       <div class="layer bg-brand"></div>
@@ -286,8 +286,8 @@ P.SCENES.push({
       place(s, { x: ((t * 90 + i * 260) % 2600) - 500, rot: -18 })
     })
     place(root.querySelector('.cta-glow'), { x: Math.sin(t * 0.5) * 80, y: Math.cos(t * 0.42) * 50 })
-    place(root.querySelector('.cta-wrap'), { s: mix(1, 1.045, A(t, 3.6, 9.4, E.linear)) })
-    show(root, 1 - A(t, 8.9, 9.4, E.inOutCubic))
+    place(root.querySelector('.cta-wrap'), { s: mix(1, 1.045, A(t, 3.6, 6.9, E.linear)) })
+    show(root, 1 - A(t, 6.4, 6.9, E.inOutCubic))
   },
 })
 })()
