@@ -22,6 +22,21 @@ import DownloadPanel from './.vitepress/theme/components/DownloadPanel.vue'
 教室一体机安装插件后，可接收教师端呼叫（**置顶弹窗 + 中文语音朗读**）并同步班级课表；
 插件为 `.cipx` 包，在 ClassIsland 里「安装插件 → 选择文件」导入即可。详见[一体机联动](/plugin)。
 
+## 定制版 ClassIsland（集控客户端）
+
+下载中心里的 **定制版 ClassIsland** 是一个完整的 ClassIsland 客户端（解压即用、自包含），
+内置 AgoraIn 集控客户端：可接收**通知 / 语音播报 / 锁屏 / 解锁 / 电源控制 / 课表推送 / 呼叫提醒**，
+关于页显示 AgoraIn 品牌与定制版本号。安装与接入步骤见[定制版 ClassIsland](/custom-classisland)。
+
+> 该定制版基于 ClassIsland（GPL-3.0）修改，**以 GPL-3.0 开源并随包提供源码**；
+> 与服务端（闭源商业授权）之间只通过 HTTP 协议对接。详见[开源许可声明](/license)。
+
+## 集控插件包（服务端）
+
+**集控插件包**（`.agp`）是给 AgoraIn 服务端用的插件：安装后即可在「教学模式 → 集控平台」下发
+13 类集控指令。安装方式：登录教学模式 →「插件」页 → 上传插件包 → 启用
+（GPL 系插件安装时需勾选开源合规确认）。该插件同样以 **GPL-3.0 开源**。
+
 ## 平台与设备要求
 
 | 端 | 要求 |

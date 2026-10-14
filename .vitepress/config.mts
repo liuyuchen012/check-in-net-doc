@@ -31,10 +31,13 @@ export default defineConfig({
         items: [
           { text: '快速开始', link: '/guide' },
           { text: '使用手册', link: '/manual' },
+          { text: '教学模式', link: '/teaching' },
+          { text: '定制版 ClassIsland', link: '/custom-classisland' },
           { text: '部署指南', link: '/deploy' },
           { text: 'API 文档', link: '/api' },
           { text: '一体机联动', link: '/plugin' },
           { text: '服务端与授权', link: '/server' },
+          { text: '开源许可声明', link: '/license' },
           { text: '常见问题', link: '/faq' },
         ],
       },
@@ -140,6 +143,8 @@ export default defineConfig({
             { text: '功能特性', link: '/features' },
             { text: '宣传片', link: '/video' },
             { text: '使用手册', link: '/manual' },
+            { text: '教学模式', link: '/teaching' },
+            { text: '定制版 ClassIsland', link: '/custom-classisland' },
           ],
         },
         {
@@ -149,6 +154,7 @@ export default defineConfig({
             { text: 'API 文档', link: '/api' },
             { text: '一体机联动', link: '/plugin' },
             { text: '服务端与授权', link: '/server' },
+            { text: '开源许可声明', link: '/license' },
           ],
         },
         {

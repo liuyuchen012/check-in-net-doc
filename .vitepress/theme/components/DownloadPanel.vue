@@ -66,6 +66,20 @@ const CATALOG: Array<{ slug: string; icon: string; title: string; desc: string; 
     desc: '教室一体机接收教师呼叫（置顶弹窗 + 语音朗读）与课表同步',
     tag: 'Windows 一体机',
   },
+  {
+    slug: 'classisland-custom-win-x64',
+    icon: '🎛️',
+    title: '定制版 ClassIsland（AgoraIn 集控客户端）',
+    desc: '内置 AgoraIn 集控客户端：接收通知 / 语音播报 / 锁屏 / 电源控制 / 课表推送与呼叫提醒 · 解压即用，无需装 .NET · GPL-3.0 开源',
+    tag: 'Windows 教室一体机',
+  },
+  {
+    slug: 'classisland-management-plugin',
+    icon: '🔌',
+    title: '集控插件包（服务端 · GPL-3.0）',
+    desc: 'AgoraIn 服务端插件：把 15 类集控指令（通知 / 播报 / 锁屏 / 电源 / 应用控制 / 档案推送 / 日志上传 / 设置下发）接到平台 · 在「教学模式 → 插件」页上传安装',
+    tag: '服务端插件 · .agp',
+  },
 ]
 
 const live = ref<Record<string, Item>>({})
