@@ -512,3 +512,9 @@
   .ag-cta-box { padding: 36px 24px; }
   .ag-float-chip { display: none; }
 }
+
+/* 分平台下载页 */
+.ag-dl-platform { display: block; text-decoration: none; color: inherit; transition: transform .18s ease, box-shadow .18s ease; }
+.ag-dl-platform:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(30, 70, 150, .12); }
+.ag-dl-platform p { color: var(--ag-muted); line-height: 1.7; min-height: 52px; }
+.ag-dl-platform .ag-btn { margin-top: 12px; }

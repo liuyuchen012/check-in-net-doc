@@ -25,7 +25,15 @@ export default defineConfig({
     nav: [
       { text: '功能特性', link: '/features' },
       { text: '宣传片', link: '/video' },
-      { text: '下载', link: '/download' },
+      {
+        text: '下载',
+        items: [
+          { text: '下载中心', link: '/download' },
+          { text: 'Windows', link: '/download/windows' },
+          { text: 'Linux', link: '/download/linux' },
+          { text: 'macOS', link: '/download/macos' },
+        ],
+      },
       {
         text: '文档',
         items: [
@@ -75,6 +83,9 @@ export default defineConfig({
           text: '相关',
           items: [
             { text: '下载中心', link: '/download' },
+            { text: 'Windows 下载', link: '/download/windows' },
+            { text: 'Linux 下载', link: '/download/linux' },
+            { text: 'macOS 下载', link: '/download/macos' },
             { text: '常见问题', link: '/faq' },
           ],
         },
@@ -132,6 +143,9 @@ export default defineConfig({
           text: '开始使用',
           items: [
             { text: '下载中心', link: '/download' },
+            { text: 'Windows 下载', link: '/download/windows' },
+            { text: 'Linux 下载', link: '/download/linux' },
+            { text: 'macOS 下载', link: '/download/macos' },
             { text: '快速开始', link: '/guide' },
             { text: '家长端小程序', link: '/miniprogram/' },
             { text: '常见问题', link: '/faq' },
@@ -145,6 +159,7 @@ export default defineConfig({
             { text: '使用手册', link: '/manual' },
             { text: '教学模式', link: '/teaching' },
             { text: '定制版 ClassIsland', link: '/custom-classisland' },
+            { text: '班级监视', link: '/monitoring' },
           ],
         },
         {
