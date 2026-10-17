@@ -48,7 +48,11 @@ description: 每台教室设备屏幕/摄像头两路直播，15 分钟录像切
 
 - `GET /api/v4/monitoring/devices`：设备与两路流地址、在线状态；
 - `GET /api/v4/monitoring/segments`：最近 3 天分段；
-- `GET /api/v4/monitoring/segments/{id}/file`：回放（Range，支持拖动）。
+- `GET /api/v4/monitoring/segments/{id}/file`：回放（Range，支持拖动）；
+- `GET /api/v4/monitoring/live-session`：登录且 `devices.view` 用户获取 15 分钟直播 Cookie；
+- `GET /api/v4/monitoring/live-auth`：nginx auth_request 校验。
+
+> 直播观看必须登录且具备 `devices.view`；HLS/FLV 每个分片请求都会校验 HttpOnly Cookie，不能把播放地址直接分享给未登录用户。
 
 ## 注意
 
