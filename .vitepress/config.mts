@@ -41,6 +41,7 @@ export default defineConfig({
           { text: '使用手册', link: '/manual' },
           { text: '教学模式', link: '/teaching' },
           { text: '定制版 ClassIsland', link: '/custom-classisland' },
+          { text: 'AgoraIn Nexus 集控', link: '/classisland-management' },
           { text: '部署指南', link: '/deploy' },
           { text: 'API 文档', link: '/api' },
           { text: '一体机联动', link: '/plugin' },
@@ -159,7 +160,9 @@ export default defineConfig({
             { text: '使用手册', link: '/manual' },
             { text: '教学模式', link: '/teaching' },
             { text: '定制版 ClassIsland', link: '/custom-classisland' },
+          { text: 'AgoraIn Nexus 集控', link: '/classisland-management' },
             { text: '班级监视', link: '/monitoring' },
+            { text: 'AgoraIn Nexus 集控', link: '/classisland-management' },
           ],
         },
         {
