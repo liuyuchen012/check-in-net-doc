@@ -14,6 +14,7 @@ import DownloadPlatform from '../.vitepress/theme/components/DownloadPlatform.vu
 ```bash
 # .deb（推荐）
 sudo apt install ./AgoraIn-4.1.0-linux-x64-bundle.deb
+# 已装旧版时直接覆盖升级，不需要卸载；包版本为 4.1.0-2
 
 # 或 tar.gz 免安装
 tar xzf AgoraIn-*-linux-x64.tar.gz
