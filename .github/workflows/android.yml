@@ -1,0 +1,47 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile-src/**'
+      - '.github/workflows/android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install MAUI Android workload
+        run: dotnet workload install maui-android
+      - name: Restore
+        run: dotnet restore mobile-src/AgoraIn.Mobile.csproj -p:TargetFrameworks=net10.0-android -p:RuntimeIdentifier=android-arm64
+      - name: Publish APK
+        run: |
+          dotnet publish mobile-src/AgoraIn.Mobile.csproj -f net10.0-android -c Release -r android-arm64 --no-restore \
+            -p:AndroidPackageFormat=apk -p:ApplicationDisplayVersion=4.1.0 \
+            -p:DebugType=none -p:DebugSymbols=false -o publish/android
+      - name: Collect
+        run: |
+          mkdir -p publish/out
+          find publish/android -name '*.apk' -exec cp {} publish/out/AgoraIn-Android-4.1.0.apk \;
+          ls -lh publish/out
+      - name: Release APK
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: mobile-v4.1.0
+          name: AgoraIn Android v4.1.0
+          prerelease: false
+          files: publish/out/AgoraIn-Android-4.1.0.apk
+          fail_on_unmatched_files: true

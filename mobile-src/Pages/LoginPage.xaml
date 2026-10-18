@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="AgoraIn.Mobile.Pages.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="登录"
+    BackgroundColor="#F8F9FA">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="28" Spacing="16" VerticalOptions="Center">
+
+            <Label Text="AgoraIn" FontSize="32" FontAttributes="Bold"
+                   TextColor="#4285f4" HorizontalOptions="Center" />
+            <Label Text="课堂签到打卡 · 学生端" FontSize="14"
+                   TextColor="#888888" HorizontalOptions="Center" Margin="0,0,0,20" />
+
+            <!-- 服务器地址固定为官方域名，不可修改 -->
+            <Border BackgroundColor="#F5F7FA" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 10" Padding="14,12">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="服务器" FontSize="12" TextColor="#999999" />
+                    <Label x:Name="ServerLabel" Text="https://agorain.615mc.cn"
+                           FontSize="14" FontAttributes="Bold" TextColor="#4285f4" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Entry x:Name="UsernameEntry" Placeholder="用户名" />
+            <Entry x:Name="PasswordEntry" Placeholder="密码" IsPassword="True" />
+
+            <Label x:Name="ErrorLabel" TextColor="#ea4335" FontSize="13" IsVisible="False" />
+
+            <Button x:Name="LoginButton" Text="登 录" BackgroundColor="#4285f4"
+                    TextColor="White" CornerRadius="8" HeightRequest="48"
+                    Clicked="OnLoginClicked" />
+
+            <ActivityIndicator x:Name="Busy" IsRunning="False" IsVisible="False"
+                               Color="#4285f4" HorizontalOptions="Center" />
+
+            <Button Text="注册账户（家长 / 机构）" BackgroundColor="Transparent" TextColor="#4285f4"
+                    Clicked="OnGoRegisterClicked" />
+
+            <!--
+              扫码登录电脑端：**必须始终可见**（这是之前的问题 —— 入口只挂在已登录后的
+              「首页/我的」上，未登录的人根本看不到，等于没有这个功能）。
+              未登录时点它会引导先登录 App：服务端 /auth/qr/scan 要求确认人已登录
+              （靠"谁确认的"来授权电脑端会话），所以这一步不能省，但要说清楚而不是让人自己猜。
+            -->
+            <Border BackgroundColor="White" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12" Padding="16" Margin="0,8,0,0">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="🖥 扫码登录电脑端" FontSize="15" FontAttributes="Bold" TextColor="#1c3057" />
+                    <Label FontSize="12" TextColor="#5b6673"
+                           Text="电脑网页登录时切到「App 扫码登录」，用手机相机扫一下二维码，电脑端免密码进入。" />
+                    <Label FontSize="11" TextColor="#909399"
+                           Text="仅教师与管理员账号可确认（家长账号请继续用密码登录）；子区域账号需与本机同一机构。" />
+                    <Button x:Name="WebLoginScanButton" Text="📷 打开扫码" BackgroundColor="#e8f0fe"
+                            TextColor="#4285f4" CornerRadius="10" HeightRequest="46"
+                            Clicked="OnWebLoginScanClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="登录名格式：用户名@区域代号（主区域为 用户名@manager）" FontSize="11"
+                   TextColor="#999999" HorizontalOptions="Center" />
+
+            <Label Text="首次使用可自助注册，或联系管理员创建账户" FontSize="12"
+                   TextColor="#bbbbbb" HorizontalOptions="Center" Margin="0,20,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

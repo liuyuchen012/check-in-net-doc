@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AgoraIn.Mobile.Pages.ChildScoresPage"
+             Title="成绩查询"
+             BackgroundColor="#f5f7fa">
+    <Grid RowDefinitions="Auto,*" Padding="16,12">
+        <Label Grid.Row="0" x:Name="StatusLabel" Text="加载中…" FontSize="13" TextColor="#8a94a6" Margin="0,0,0,8" />
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout x:Name="ScoreList" Spacing="10" />
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="AgoraIn.Mobile.Pages.WebLoginScanPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI"
+    Title="扫码登录电脑端"
+    BackgroundColor="#F8F9FA">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+
+            <Border BackgroundColor="#4285f4" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14" Padding="18">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="📷 扫码登录电脑端" FontSize="20" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="电脑上打开网页登录页 → 切到「App 扫码登录」→ 用这里扫一下，电脑端即免密码登录。"
+                           FontSize="12" TextColor="#E8F0FE" />
+                    <Label Text="仅教师与管理员账号可确认（家长账号继续用密码登录）。"
+                           FontSize="11" TextColor="#C9DCFF" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 相机预览：IsVisible 切换挂载/卸载，自动开始/停止预览（ZXing.Net.MAUI） -->
+            <Border x:Name="CameraCard" IsVisible="False" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12" HeightRequest="340">
+                <zxing:CameraBarcodeReaderView x:Name="CameraView"
+                                               BarcodesDetected="OnBarcodesDetected" />
+            </Border>
+
+            <Label x:Name="StatusLabel" Text="点下面的按钮开启相机，对准电脑屏幕上的二维码。"
+                   FontSize="13" TextColor="#5b6673" HorizontalTextAlignment="Center" />
+
+            <ActivityIndicator x:Name="Busy" IsRunning="False" IsVisible="False"
+                               Color="#4285f4" HorizontalOptions="Center" />
+
+            <Button x:Name="ScanButton" Text="📷 开启相机扫码" BackgroundColor="#4285f4" TextColor="White"
+                    CornerRadius="10" HeightRequest="52" Clicked="OnScanClicked" />
+            <Button x:Name="RetryButton" Text="🔄 重新扫描" BackgroundColor="#e8f0fe" TextColor="#4285f4"
+                    CornerRadius="10" HeightRequest="46" IsVisible="False" Clicked="OnRetryClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

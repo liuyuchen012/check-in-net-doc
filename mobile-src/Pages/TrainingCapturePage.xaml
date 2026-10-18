@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="AgoraIn.Mobile.Pages.TrainingCapturePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="训练数据采集"
+    BackgroundColor="#F8F9FA">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+
+            <!-- 平台级功能说明：这是给平台自己的识别模型攒手写语料，机构用不到 -->
+            <Border BackgroundColor="#E8F0FE" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="手写训练数据采集（平台级）" FontSize="15" FontAttributes="Bold" TextColor="#1c3057" />
+                    <Label FontSize="11" TextColor="#5b6673"
+                           Text="把学生誊抄的训练卡 / 方格纸拍下来上传，服务端按版面几何切出「图 + 已知文字」的样本，用于微调平台自己的识别模型。仅主区域的系统管理员可用。" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 未登录 / 无权限时的提示（采集必须先登录平台账号） -->
+            <Border x:Name="DenyBox" IsVisible="False" BackgroundColor="#FCE8E6" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="8">
+                    <Label x:Name="DenyLabel" FontSize="13" TextColor="#C5221F" />
+                    <Button x:Name="GoLoginButton" Text="去登录" BackgroundColor="#4285f4" TextColor="White"
+                            CornerRadius="10" HeightRequest="44" Clicked="OnGoLoginClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 卡类型 -->
+            <Border BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="① 选择要采集的纸张" FontSize="15" FontAttributes="Bold" />
+                    <RadioButton x:Name="CardKind" Content="训练卡（卡面印有内容 + 二维码，切出的样本自带标注）"
+                                 IsChecked="True" CheckedChanged="OnKindChanged" />
+                    <RadioButton x:Name="PaperKind" Content="通用方格纸 / 作文纸（无印刷标注，切格后到网页端人工打标）"
+                                 CheckedChanged="OnKindChanged" />
+
+                    <!-- 训练卡：卡号 / 页号可留空（卡面二维码自动识别） -->
+                    <VerticalStackLayout x:Name="CardOptions" Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Entry x:Name="CardNoEntry" Placeholder="卡号（可留空）" Keyboard="Numeric" WidthRequest="130" />
+                            <Entry x:Name="PageEntry" Placeholder="页号（可留空）" Keyboard="Numeric" WidthRequest="130" />
+                        </HorizontalStackLayout>
+                        <Label FontSize="11" TextColor="#8a94a6"
+                               Text="卡号与页号留空即可：服务端会识别卡面二维码自动对回内容；照片拍不清时才需要手填。" />
+                    </VerticalStackLayout>
+
+                    <!-- 方格纸：行列留空 = 服务端按格线自动量 -->
+                    <VerticalStackLayout x:Name="PaperOptions" IsVisible="False" Spacing="8">
+                        <HorizontalStackLayout Spacing="10">
+                            <Entry x:Name="RowsEntry" Placeholder="行数（自动）" Keyboard="Numeric" WidthRequest="110" />
+                            <Entry x:Name="ColsEntry" Placeholder="列数（自动）" Keyboard="Numeric" WidthRequest="110" />
+                            <Entry x:Name="RowOffsetEntry" Placeholder="首行行号" Keyboard="Numeric" WidthRequest="110" />
+                        </HorizontalStackLayout>
+                        <Label FontSize="11" TextColor="#8a94a6"
+                               Text="行列留空 = 服务端按印刷格线自动量；多页作文用「首行行号」接力编号（第 2 页填第 1 页的下一行）。" />
+                        <HorizontalStackLayout Spacing="8">
+                            <CheckBox x:Name="IncludeRows" IsChecked="True" />
+                            <Label Text="同时切整行样本" VerticalOptions="Center" FontSize="12" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 取图 -->
+            <Border BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="② 拍照或从相册选" FontSize="15" FontAttributes="Bold" />
+                    <Button x:Name="CameraButton" Text="📷 拍照采集" BackgroundColor="#4285f4" TextColor="White"
+                            CornerRadius="10" HeightRequest="48" Clicked="OnCameraClicked" />
+                    <Button x:Name="GalleryButton" Text="🖼 从相册选择" BackgroundColor="#E8F0FE" TextColor="#4285f4"
+                            CornerRadius="10" HeightRequest="48" Clicked="OnGalleryClicked" />
+                    <Label FontSize="11" TextColor="#8a94a6"
+                           Text="拍摄建议：正对整页、四角都拍全、避免反光与阴影；训练卡靠四角定位标记归正，方格纸靠绿色/深色格线量行列。一次一张，拍完可立刻再拍。" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 上传中 -->
+            <Border x:Name="BusyBox" IsVisible="False" BackgroundColor="White" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="10">
+                    <ActivityIndicator x:Name="Busy" IsRunning="False" Color="#4285f4" HorizontalOptions="Center" />
+                    <Label x:Name="BusyLabel" Text="正在上传并切图…" FontSize="12" TextColor="#5b6673"
+                           HorizontalOptions="Center" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 上一次结果 -->
+            <Border x:Name="ResultCard" IsVisible="False" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="6">
+                    <Label x:Name="ResultTitle" FontSize="16" FontAttributes="Bold" />
+                    <Label x:Name="ResultDetail" FontSize="12" TextColor="#5b6673" />
+                    <Button x:Name="LabelPageButton" Text="🎯 打开人工匹配页（打标）" BackgroundColor="#34a853"
+                            TextColor="White" CornerRadius="10" HeightRequest="44" IsVisible="False"
+                            Clicked="OnOpenLabelPageClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 采集进度：给"还差多少"一个正反馈，避免盲拍 -->
+            <Border BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="6">
+                    <HorizontalStackLayout Spacing="8">
+                        <Label Text="训练集现状" FontSize="15" FontAttributes="Bold" />
+                        <Button Text="刷新" FontSize="11" Padding="8,2" HeightRequest="30" BackgroundColor="#F1F3F4"
+                                TextColor="#5b6673" Clicked="OnRefreshStatsClicked" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="StatsLabel" Text="（点「刷新」查看）" FontSize="12" TextColor="#5b6673" />
+                    <ProgressBar x:Name="CoverageBar" Progress="0" ProgressColor="#4285f4" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 本次会话已上传 -->
+            <Border BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 12" Padding="16">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="本次采集" FontSize="15" FontAttributes="Bold" />
+                    <Label x:Name="SessionLabel" Text="还没有采集任何页面" FontSize="12" TextColor="#5b6673" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

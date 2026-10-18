@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="AgoraIn.Mobile.Pages.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="首页"
+    BackgroundColor="#F8F9FA">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+
+            <!-- 欢迎栏 -->
+            <Border BackgroundColor="#4285f4" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14" Padding="20">
+                <VerticalStackLayout Spacing="4">
+                    <Label x:Name="WelcomeLabel" Text="你好" FontSize="22"
+                           FontAttributes="Bold" TextColor="White" />
+                    <Label x:Name="RoleLabel" Text="" FontSize="13" TextColor="#D6E4FF" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 教师 / 管理员：扫卡与阅卷是网页端核心能力，App 里给到一级入口 -->
+            <Border x:Name="TeacherBox" BackgroundColor="White" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14" Padding="20" IsVisible="False">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="教学工具" FontSize="16" FontAttributes="Bold" />
+                    <Button Text="📄 答题卡扫卡" BackgroundColor="#4285f4" TextColor="White"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnScanSheetClicked" />
+                    <Button Text="✍️ 阅卷与出分" BackgroundColor="#34a853" TextColor="White"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnGradingClicked" />
+                    <Button Text="🖥 扫码登录电脑端" BackgroundColor="#e8f0fe" TextColor="#4285f4"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnWebLoginScanClicked" />
+                    <!-- 平台级入口：仅主区域系统管理员可见（可见性由 CanUseTrainingCapture 决定） -->
+                    <Button x:Name="TrainingButton" Text="✍️ 训练数据采集" BackgroundColor="#e8f0fe"
+                            TextColor="#4285f4" CornerRadius="10" HeightRequest="46"
+                            IsVisible="False" Clicked="OnTrainingCaptureClicked" />
+                    <Label Text="扫卡：摄像头连续拍摄答题卡并自动识别；阅卷：查看 AI 批改结果、人工改分后确认出分；扫码登录电脑端：扫一下网页登录页的二维码，电脑端免密码进入"
+                           FontSize="11" TextColor="#999999" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 功能入口 -->
+            <Border BackgroundColor="White" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14" Padding="20">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="快捷操作" FontSize="16" FontAttributes="Bold" />
+
+                    <Button Text="📷 扫码签到" BackgroundColor="#4285f4" TextColor="White"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnScanClicked" />
+                    <Button Text="📋 签到任务" BackgroundColor="#e8f0fe" TextColor="#4285f4"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnTasksClicked" />
+                    <Button Text="🖥 管理仪表盘" x:Name="DashboardButton" BackgroundColor="#e8f0fe"
+                            TextColor="#4285f4" CornerRadius="10" HeightRequest="46"
+                            IsVisible="False" Clicked="OnDashboardClicked" />
+                    <Button Text="👨‍👩‍👧 家长中心" BackgroundColor="#e8f0fe" TextColor="#4285f4"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnParentClicked" />
+                    <Label Text="家长中心：绑定孩子后可查成绩、给老师留言、看学习资源与值日"
+                           FontSize="11" TextColor="#999999" />
+                    <Button Text="🧭 更多功能（网页版）" BackgroundColor="#f1f3f4" TextColor="#5b6673"
+                            CornerRadius="10" HeightRequest="46" Clicked="OnMoreClicked" />
+                    <Label Text="班级 / 学生 / 设备 / 课表 / 成绩统计 / 通知资源 / AI 设置等，App 内自动登录打开"
+                           FontSize="11" TextColor="#999999" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- 班级信息 -->
+            <Border BackgroundColor="White" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 14" Padding="20">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="班级列表" FontSize="16" FontAttributes="Bold" />
+                    <Label x:Name="ClassesLabel" Text="加载中..." FontSize="13" TextColor="#666666" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
