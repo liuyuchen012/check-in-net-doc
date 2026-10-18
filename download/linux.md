@@ -13,7 +13,7 @@ import DownloadPlatform from '../.vitepress/theme/components/DownloadPlatform.vu
 
 ```bash
 # .deb（推荐）
-sudo apt install ./AgoraIn-*-linux-x64.deb
+sudo apt install ./AgoraIn-4.1.0-linux-x64-bundle.deb
 
 # 或 tar.gz 免安装
 tar xzf AgoraIn-*-linux-x64.tar.gz
