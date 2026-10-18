@@ -17,3 +17,7 @@ import DownloadPlatform from '../.vitepress/theme/components/DownloadPlatform.vu
 4. 扫卡工作站是**独立程序**，需要扫卡的电脑单独下载安装，客户端与 ClassIsland 不再提供扫卡入口。
 
 > 完整包内含 GPL-3.0 的定制版 ClassIsland，源码随包提供，详见[开源许可声明](/license)。
+
+## Windows 7 说明
+
+定制版 ClassIsland 基于 .NET 8 + Avalonia，官方只支持 **Windows 10 1607+**。Windows 7 上请只安装/运行 AgoraIn 客户端（设置会自动回落到客户端设置页）；完整包安装器在 Windows 7 上会跳过 ClassIsland，不再弹出 `GetSystemTimePreciseAsFileTime` / `KERNEL32.dll` 入口点错误。需要 ClassIsland 请升级到 Windows 10/11。
