@@ -14,7 +14,7 @@ description: 每台教室设备屏幕/摄像头两路直播，15 分钟录像切
   **v4.1 起随服务端发布目录内置**（`tools/linux-x64/livego`），由服务端自动启动/守护；
 - **ffmpeg**：服务端从 livego 拉流并切成 15 分钟 MP4；同样内置（`tools/linux-x64/ffmpeg`），无需目标机安装；
 - **WebDAV**：在「设置 → 存储」启用，录像上传到 `agorain/{区域}/monitoring/...`；
-- 设备端推流：可用 `monitoring/agent/agent.py` 或自定义 ffmpeg 命令（Windows 屏幕/摄像头、Linux X11、macOS AVFoundation）。
+- 设备端推流：**被控端客户端内置**。教室大屏登录并绑定设备后，客户端自动调用随包 `ffmpeg` 推屏幕/摄像头，不需要另装推流客户端；`monitoring/agent/agent.py` 仅作特殊设备备用。
 
 ## 快速配置
 
