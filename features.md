@@ -158,4 +158,4 @@ AgoraIn v4 是**课堂签到与班级教学管理一体机平台**：一套服�
 
 - [快速开始](/guide) · [教学模式](/teaching) · [定制版 ClassIsland](/custom-classisland) · [部署指南](/deploy) · [API 文档](/api) · [常见问题](/faq)
 - [开源许可声明](/license)
-- 历史版本：[v3.2 归档](/v3.2/) · [v2.8 归档](/v2.8/) · [v2.7 归档](/v2.7/)
+- 历史版本：[v3.2 归档](/archive/v3.2/) · [v2.8 归档](/archive/v2.8/) · [v2.7 归档](/archive/v2.7/)

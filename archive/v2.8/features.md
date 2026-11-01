@@ -1,6 +1,6 @@
 # ✨ 功能特性（v2.8）
 
-> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 功能特性](/v2.7/features)。
+> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 功能特性](/archive/v2.7/features)。
 
 AgoraIn v2.8 在一个窗口内提供**大屏模式**与**控制模式**两种工作模式，配套集控服务器与移动端 App。
 

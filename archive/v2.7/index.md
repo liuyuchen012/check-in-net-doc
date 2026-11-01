@@ -11,7 +11,7 @@ hero:
   actions:
     - theme: brand
       text: 快速开始（v2.7）
-      link: /v2.7/guide
+      link: /archive/v2.7/guide
     - theme: alt
       text: 查看 GitHub
       link: https://github.com/liuyuchen012/check-in

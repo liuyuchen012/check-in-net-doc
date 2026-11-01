@@ -91,4 +91,4 @@ description: AgoraIn v4 各角色日常操作速查
 
 - [功能特性](/features) · [教学模式](/teaching) · [定制版 ClassIsland](/custom-classisland) · [快速开始](/guide) · [常见问题](/faq)
 - [开源许可声明](/license)
-- 旧版手册：[v3.2 使用手册](/v3.2/manual)
+- 旧版手册：[v3.2 使用手册](/archive/v3.2/manual)

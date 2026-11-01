@@ -34,9 +34,9 @@ description: AgoraIn 文档站全部页面索引
 
 | 版本 | 入口 | 说明 |
 | --- | --- | --- |
-| v3.2 | [/v3.2/](/v3.2/) | 大屏模式 + 控制模式 + ClassIsland 联动（GPLv3 开源版本） |
-| v2.8 | [/v2.8/](/v2.8/) | 历史归档 |
-| v2.7 | [/v2.7/](/v2.7/) | 历史归档 |
+| v3.2 | [/archive/v3.2/](/archive/v3.2/) | 大屏模式 + 控制模式 + ClassIsland 联动（GPLv3 开源版本） |
+| v2.8 | [/archive/v2.8/](/archive/v2.8/) | 历史归档 |
+| v2.7 | [/archive/v2.7/](/archive/v2.7/) | 历史归档 |
 
 ## 外部链接
 

@@ -2,9 +2,9 @@
 
 > 本文档对应 **AgoraIn v3.2.5** 集控服务器。更多详情请参阅：
 >
-> - [部署指南 →](/v3.2/deploy) — 集控服务器构建、部署与配置（`config.json`）
-> - [API 文档 →](/v3.2/api) — 服务器 REST API 参考
-> - [功能特性 →](/v3.2/features#集控服务器server) — 集控服务器功能说明
+> - [部署指南 →](/archive/v3.2/deploy) — 集控服务器构建、部署与配置（`config.json`）
+> - [API 文档 →](/archive/v3.2/api) — 服务器 REST API 参考
+> - [功能特性 →](/archive/v3.2/features#集控服务器server) — 集控服务器功能说明
 
 ---
 
@@ -73,7 +73,7 @@
 
 ## 相关文档
 
-- [部署指南](/v3.2/deploy) — 服务器构建、部署与 `config.json` 配置
-- [API 文档](/v3.2/api) — 完整 REST API 端点参考
-- [功能特性](/v3.2/features#集控服务器server) — 集控服务器功能总览
-- [常见问题](/v3.2/faq) — 常见问题解答
+- [部署指南](/archive/v3.2/deploy) — 服务器构建、部署与 `config.json` 配置
+- [API 文档](/archive/v3.2/api) — 完整 REST API 端点参考
+- [功能特性](/archive/v3.2/features#集控服务器server) — 集控服务器功能总览
+- [常见问题](/archive/v3.2/faq) — 常见问题解答

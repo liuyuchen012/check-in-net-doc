@@ -26,15 +26,15 @@ AgoraIn v3.2 在一个窗口内提供**大屏模式**（课堂签到打卡）与
 
 ## 归档文档
 
-- [功能特性](/v3.2/features)
-- [快速开始](/v3.2/guide)
-- [使用手册](/v3.2/manual)
-- [API 文档](/v3.2/api)
-- [部署指南](/v3.2/deploy)
-- [服务器端](/v3.2/server)
-- [一体机插件](/v3.2/plugin)
-- [常见问题](/v3.2/faq)
-- [站点地图](/v3.2/sitemap)
+- [功能特性](/archive/v3.2/features)
+- [快速开始](/archive/v3.2/guide)
+- [使用手册](/archive/v3.2/manual)
+- [API 文档](/archive/v3.2/api)
+- [部署指南](/archive/v3.2/deploy)
+- [服务器端](/archive/v3.2/server)
+- [一体机插件](/archive/v3.2/plugin)
+- [常见问题](/archive/v3.2/faq)
+- [站点地图](/archive/v3.2/sitemap)
 
 ## 版本关系
 
@@ -42,4 +42,4 @@ AgoraIn v3.2 在一个窗口内提供**大屏模式**（课堂签到打卡）与
 | --- | --- | --- |
 | v4（当前） | 闭源商业授权 | 持续开发，推荐使用 |
 | v3.2 | GPLv3 | 归档，仅维护文档 |
-| v2.8 / v2.7 | GPLv3 | [v2.8](/v2.8/) · [v2.7](/v2.7/) |
+| v2.8 / v2.7 | GPLv3 | [v2.8](/archive/v2.8/) · [v2.7](/archive/v2.7/) |

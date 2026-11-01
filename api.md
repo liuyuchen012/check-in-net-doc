@@ -119,4 +119,4 @@ GET  /api/v4/exams/papers/{paperId}/export?token=<JWT>
 ## 相关阅读
 
 - [部署指南](/deploy) · [服务端与授权](/server) · [常见问题](/faq)
-- 历史版本 API：[v3.2 API 文档](/v3.2/api)
+- 历史版本 API：[v3.2 API 文档](/archive/v3.2/api)

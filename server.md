@@ -100,4 +100,4 @@ curl -X POST http://<host>:5250/api/v4/auth/setup \
 ## 相关阅读
 
 - [部署指南](/deploy) · [API 文档](/api) · [快速开始](/guide)
-- 历史版本：[v3.2 服务端文档](/v3.2/server)
+- 历史版本：[v3.2 服务端文档](/archive/v3.2/server)

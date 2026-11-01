@@ -11,13 +11,13 @@ hero:
   actions:
     - theme: brand
       text: 快速开始
-      link: /v2.8/guide
+      link: /archive/v2.8/guide
     - theme: alt
       text: 下载中心
       link: /download
     - theme: alt
       text: 历史版 v2.7
-      link: /v2.7/
+      link: /archive/v2.7/
 
 features:
   - icon: 🖥
@@ -44,7 +44,7 @@ features:
 
 **AgoraIn v2.8**（AgoraInPro）是课堂签到打卡系统的全新重构版本，由 **大屏模式**（课堂签到打卡）、**控制模式**（课时划消与排课 + 集控平台）和**移动端**（微信小程序 / Android）组成，覆盖课堂签到、课时管理、设备集控的完整教学场景。
 
-本页为 v2.8 历史版本归档；更早的 v2.7 见 [v2.7 归档](/v2.7/)。最新版本请访问 [AgoraIn 官网首页](/) 与 [资源下载](/download)。
+本页为 v2.8 历史版本归档；更早的 v2.7 见 [v2.7 归档](/archive/v2.7/)。最新版本请访问 [AgoraIn 官网首页](/) 与 [资源下载](/download)。
 
 ## 核心模块
 

@@ -110,6 +110,6 @@ check-in/
 
 ## 下一步
 
-- 了解完整的 [功能特性 →](/v2.7/features)
-- 查看 [部署指南 →](/v2.7/deploy)
-- 阅读 [常见问题 →](/v2.7/faq)
+- 了解完整的 [功能特性 →](/archive/v2.7/features)
+- 查看 [部署指南 →](/archive/v2.7/deploy)
+- 阅读 [常见问题 →](/archive/v2.7/faq)

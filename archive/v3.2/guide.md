@@ -1,6 +1,6 @@
 # 🚀 快速开始（v3.2）
 
-> 本文档对应 **AgoraIn v3.2**（AgoraInPro）。历史版本：v2.8 已归档（[v2.8 快速开始](/v2.8/guide)），v2.7 已归档（[v2.7 快速开始](/v2.7/guide)。
+> 本文档对应 **AgoraIn v3.2**（AgoraInPro）。历史版本：v2.8 已归档（[v2.8 快速开始](/archive/v2.8/guide)），v2.7 已归档（[v2.7 快速开始](/archive/v2.7/guide)。
 
 AgoraIn v3.2 是"打卡 + 课时管理 + 集控平台"解决方案，包含桌面客户端（大屏模式 / 控制模式）、本地集控服务器和移动端 App。
 
@@ -104,7 +104,7 @@ dotnet run --project Server\CheckIn.Server.csproj
 
  > 提示：**待下课时段通知**只在临近下课（距下课 ≤ 提前分钟数）时弹出；测试请使用**上课应急通知**或**下课传唤**，立即弹窗并语音朗读。
  >
- > 完整安装、连接配置与排错步骤见[连接插件端](/v3.2/plugin)。
+ > 完整安装、连接配置与排错步骤见[连接插件端](/archive/v3.2/plugin)。
 
 ### 自测模式
 
@@ -135,7 +135,7 @@ check-in-net/
 
 ## 下一步
 
-- 了解完整的 [功能特性 →](/v3.2/features)
-- 查看 [API 文档 →](/v3.2/api)
-- 阅读 [部署指南 →](/v3.2/deploy)
-- 查看 [常见问题 →](/v3.2/faq)
+- 了解完整的 [功能特性 →](/archive/v3.2/features)
+- 查看 [API 文档 →](/archive/v3.2/api)
+- 阅读 [部署指南 →](/archive/v3.2/deploy)
+- 查看 [常见问题 →](/archive/v3.2/faq)

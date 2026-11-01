@@ -1,6 +1,6 @@
 # 📦 部署指南（v2.8）
 
-> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 部署指南](/v2.7/deploy)。
+> 本文档对应 **AgoraIn v2.8**（AgoraInPro）。旧版 v2.7 文档已归档：[v2.7 部署指南](/archive/v2.7/deploy)。
 
 本指南介绍 AgoraIn v2.8 的构建、部署与配置。
 

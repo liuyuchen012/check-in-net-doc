@@ -22,7 +22,7 @@
 ## 环境要求
 
 - 教室一体机：Windows 10/11，安装 [ClassIsland 2.x](https://classisland.tech)
-- 已部署并运行的 AgoraIn 集控服务器（[部署指南](/v3.2/deploy)）
+- 已部署并运行的 AgoraIn 集控服务器（[部署指南](/archive/v3.2/deploy)）
 - 教师端已连接该服务器（「控制模式 → 集控平台列表」）
 
 ---
@@ -95,6 +95,6 @@ SELECT Id, Title, Status FROM Calls ORDER BY Id DESC LIMIT 5;
 ## 相关链接
 
 - [下载中心](/download) — 获取 `ClassIsland.Plugin.cipx`
-- [功能特性](/v3.2/features) — 完整功能说明
-- [快速开始](/v3.2/guide) — 从零搭建全套环境
-- [部署指南](/v3.2/deploy) — 集控服务器部署
+- [功能特性](/archive/v3.2/features) — 完整功能说明
+- [快速开始](/archive/v3.2/guide) — 从零搭建全套环境
+- [部署指南](/archive/v3.2/deploy) — 集控服务器部署
