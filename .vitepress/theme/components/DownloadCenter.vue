@@ -13,6 +13,7 @@ const ENDPOINT = PLATFORM + '/api/v4/downloads'
 const RELEASE_ID = 'a6f0c4d2-8b1e-4c7a-9d35-2e8f7b6a1c90'
 const ARTIFACT: Record<string, string> = {
   'bundle-win-x64': 'windows_x64_full_folder',
+  'bundle-win-x64-portable': 'windows_x64_portable',
   'desktop-win-x64': 'windows_x64_folder',
   'desktop-win-x64-setup': 'windows_x64_setup',
   'classisland-custom-win-x64': 'windows_x64_classisland',
