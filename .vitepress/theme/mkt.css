@@ -790,6 +790,56 @@ html.mkt-dark .VPNavBarSearch button {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
+.mkt-dl-loading {
+  display: flex;
+  justify-content: center;
+  padding: 26px 24px 88px;
+}
+.mkt-dl-loading-card {
+  width: min(620px, 100%);
+  padding: 38px 30px;
+  text-align: center;
+  border-radius: 18px;
+  border: 1px solid var(--mkt-line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
+  box-shadow: 0 30px 70px -42px rgba(0, 0, 0, 0.9);
+}
+.mkt-dl-loading-card strong {
+  display: block;
+  margin-top: 16px;
+  font-size: 17px;
+  color: #eef4ff;
+}
+.mkt-dl-loading-card p {
+  margin: 8px 0 0;
+  font-size: 13.5px;
+  color: var(--mkt-muted);
+}
+.mkt-dl-loading-card .mkt-btn { margin-top: 20px; }
+.mkt-dl-spinner {
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid rgba(91, 147, 248, 0.22);
+  border-top-color: #6ea2ff;
+  animation: mkt-spin 0.9s linear infinite;
+}
+.mkt-dl-cache-note {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(242, 200, 107, 0.28);
+  background: rgba(242, 200, 107, 0.08);
+  color: #e8c97f;
+  font-size: 13px;
+  text-align: center;
+}
+@keyframes mkt-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .mkt-dl-spinner { animation-duration: 2.4s; }
+}
+
 .mkt-platforms {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -4,6 +4,7 @@ export default defineConfig({
   base: '/',
   srcExclude: ['video-src/**', 'Android_init/**', 'node_modules/**', '.tmp/**'],
   lang: 'zh-CN',
+  appearance: 'force-dark',
   title: 'AgoraIn | 课堂签到与教学管理一体化平台',
   description: 'AgoraIn v4 —— 签到打卡、课时点名、电子答题卡与 AI 阅卷、家校沟通、多机构运营的一体化平台',
   head: [

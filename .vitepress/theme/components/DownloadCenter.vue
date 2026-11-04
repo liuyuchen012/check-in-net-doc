@@ -9,6 +9,17 @@ import MarketingFooter from './MarketingFooter.vue'
 const PLATFORM = 'https://agorain.615mc.cn'
 const ENDPOINT = PLATFORM + '/api/v4/downloads'
 
+/** 下载先进入服务器的“下载进行页”，由页面自动开始下载并展示 SHA256 / 安装步骤。 */
+const RELEASE_ID = 'a6f0c4d2-8b1e-4c7a-9d35-2e8f7b6a1c90'
+const ARTIFACT: Record<string, string> = {
+  'bundle-win-x64': 'windows_x64_full_folder',
+  'desktop-win-x64': 'windows_x64_folder',
+  'desktop-win-x64-setup': 'windows_x64_setup',
+  'classisland-custom-win-x64': 'windows_x64_classisland',
+  'scanstation-win-x64': 'windows_x64_scanstation',
+  'android-apk': 'android',
+}
+
 type Item = {
   slug: string
   name: string
@@ -21,8 +32,32 @@ type Item = {
 const items = ref<Record<string, Item>>({})
 const loading = ref(true)
 const online = ref(false)
+const error = ref('')
+const CACHE_KEY = 'agorain.downloads.v1'
 
-const link = (slug: string) => `${PLATFORM}/api/v4/downloads/${slug}`
+const link = (slug: string) =>
+  `${PLATFORM}/download/thank_you/v2/${RELEASE_ID}/${ARTIFACT[slug] || slug}`
+
+function readCache(): Record<string, Item> | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as { items?: Item[] }
+    const map: Record<string, Item> = {}
+    for (const it of parsed.items || []) map[it.slug] = it
+    return Object.keys(map).length ? map : null
+  } catch {
+    return null
+  }
+}
+
+function writeCache(map: Record<string, Item>) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), items: Object.values(map) }))
+  } catch {
+    /* 隐私模式/配额不足时不影响下载 */
+  }
+}
 
 function meta(slug: string) {
   const it = items.value[slug]
@@ -39,7 +74,7 @@ function sizeText(bytes: number) {
   return mb >= 1 ? mb.toFixed(1) + ' MB' : (bytes / 1024).toFixed(0) + ' KB'
 }
 
-const ready = (slug: string) => !online.value || !!items.value[slug]
+const ready = (slug: string) => !loading.value && online.value && !!items.value[slug]
 
 /** 取当前完整包的版本号做页头展示 */
 const currentVersion = computed(() => {
@@ -54,10 +89,10 @@ const platforms = [
   {
     key: 'windows',
     name: 'Windows',
-    req: 'Windows 10 1809+ / 11 · x64',
+    req: 'Windows 10 1809+ / 11 · x64；Win7 SP1 可用课堂大屏兼容模式',
     fmt: 'setup.exe · 绿色免安装 zip',
-    primary: { slug: 'bundle-win-x64', text: '下载完整包' },
-    extra: [],
+    primary: { slug: 'bundle-win-x64', text: '下载安装包' },
+    extra: [{ slug: 'bundle-win-x64-portable', text: '绿色免安装版' }],
     icon: '<path d="M3.2 5.6l7.4-1v7.1H3.2zM11.8 4.5L21 3.2v8.5h-9.2zM3.2 12.9h7.4v7.1l-7.4-1zM11.8 12.9H21v8.5l-9.2-1.3z"/>',
   },
   {
@@ -85,11 +120,10 @@ const subLinks = [
   { slug: 'scanstation-win-x64', text: '扫卡工作站（Windows）' },
   { href: '/miniprogram/quickstart', text: '家长端小程序' },
   { href: PLATFORM, text: '服务端与集控插件' },
-  { href: '/download/windows', text: '全部安装包' },
 ]
 
 const requirements = [
-  ['Windows', 'Windows 10 1809+（推荐 11）· x64；扫描仪取图与进纸器仅 Windows'],
+  ['Windows', 'Windows 10 1809+（推荐 11）· x64；Windows 7 SP1 可通过包内 Win7 启动器运行课堂大屏；扫描仪取图与进纸器仅 Windows'],
   ['Linux', 'x64 / arm64 · X11 桌面 · 自包含免装 .NET'],
   ['macOS', 'macOS 12+ · Apple Silicon 与 Intel 分别打包，未签名'],
   ['Android', 'Android 8.0+（移动端 App）'],
@@ -102,21 +136,45 @@ const steps = [
   ['后续更新', '客户端「设置 → 更新检查」；ClassIsland 在「设置 → 关于/更新」。升级不覆盖 data/。'],
 ]
 
-onMounted(async () => {
+async function load() {
+  loading.value = true
+  error.value = ''
+  online.value = false
+  items.value = {}
+
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 12000)
   try {
-    const res = await fetch(ENDPOINT, { headers: { Accept: 'application/json' } })
-    if (!res.ok) throw new Error(String(res.status))
+    const res = await fetch(ENDPOINT, {
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+      cache: 'no-store',
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const json = (await res.json()) as { items?: Item[] }
     const map: Record<string, Item> = {}
     for (const it of json.items || []) map[it.slug] = it
     items.value = map
     online.value = Object.keys(map).length > 0
-  } catch {
-    online.value = false
+    writeCache(map)
+    if (!online.value) error.value = '更新服务器暂未发布任何安装包'
+  } catch (e) {
+    const cached = readCache()
+    if (cached) {
+      items.value = cached
+      online.value = true
+      error.value = '更新服务器连接失败，当前显示上次读取的版本数据'
+    } else {
+      online.value = false
+      error.value = '无法读取更新服务器中的版本数据，请检查网络后重试'
+    }
   } finally {
+    clearTimeout(timer)
     loading.value = false
   }
-})
+}
+
+onMounted(load)
 </script>
 
 <template>
@@ -138,9 +196,28 @@ onMounted(async () => {
       </div>
     </section>
 
+    <!-- ==================== 版本数据加载态 ==================== -->
+    <section v-if="loading" class="mkt-dl-loading" aria-live="polite" aria-busy="true">
+      <div class="mkt-dl-loading-card">
+        <span class="mkt-dl-spinner" aria-hidden="true"></span>
+        <strong>正在读取更新服务器中的版本数据</strong>
+        <p>读取完成前不会显示下载按钮，请稍候。</p>
+      </div>
+    </section>
+
+    <section v-else-if="!online" class="mkt-dl-loading" aria-live="polite">
+      <div class="mkt-dl-loading-card">
+        <strong>暂时无法显示下载</strong>
+        <p>{{ error || '更新服务器没有返回可用的版本数据。' }}</p>
+        <button type="button" class="mkt-btn primary sm" @click="load">重新读取</button>
+      </div>
+    </section>
+
     <!-- ==================== 平台卡 ==================== -->
+    <template v-else>
     <section style="padding: 8px 0 64px">
       <div class="mkt-wrap">
+        <p v-if="error" class="mkt-dl-cache-note">{{ error }}</p>
         <div class="mkt-platforms">
           <div v-for="p in platforms" :key="p.key" class="mkt-platform">
             <span class="pico">
@@ -244,6 +321,8 @@ onMounted(async () => {
         </div>
       </div>
     </section>
+
+    </template>
 
     <MarketingFooter />
   </div>

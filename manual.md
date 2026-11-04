@@ -7,6 +7,27 @@ description: AgoraIn v4 各角色日常操作速查
 
 按角色速查：**教师 / 班主任 · 教务与机构管理员 · 家长 · 平台运营方**。
 
+## 常用界面
+
+<div class="doc-shots">
+  <figure>
+    <img src="/userguide/server-dashboard.png" alt="管理后台仪表盘" loading="lazy">
+    <figcaption>管理后台：左侧按班级、学生、设备、课时、通知等模块进入</figcaption>
+  </figure>
+  <figure>
+    <img src="/userguide/teaching-control.png" alt="教学模式授课台" loading="lazy">
+    <figcaption>教学模式：白板、资源、课堂控制与回放都在同一个授课台</figcaption>
+  </figure>
+  <figure>
+    <img src="/userguide/mobile-dashboard.png" alt="移动端工作台" loading="lazy">
+    <figcaption>移动端：教师可在手机上签到、发通知、查看班级状态</figcaption>
+  </figure>
+  <figure>
+    <img src="/userguide/server-calls.png" alt="呼叫提醒记录" loading="lazy">
+    <figcaption>呼叫提醒：下发后可在后台核对送达与回执状态</figcaption>
+  </figure>
+</div>
+
 ## 教师
 
 ### 上课前

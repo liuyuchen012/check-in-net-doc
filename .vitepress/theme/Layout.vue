@@ -5,7 +5,10 @@ import { computed, onMounted, watch } from 'vue'
 
 const route = useRoute()
 
-/** 营销页：强制深色 + 隐藏文档布局元素 */
+/**
+ * 全站统一深色：营销页与文档页不再出现「一半深色、一半浅色」的割裂。
+ * MARKETING 只控制营销页的铺满布局，不再单独控制主题。
+ */
 const MARKETING = new Set(['/', '/download'])
 
 const norm = (p: string) => {
@@ -18,19 +21,8 @@ const isMarketing = computed(() => MARKETING.has(norm(route.path)))
 function applyTheme(path: string) {
   if (typeof document === 'undefined') return
   const root = document.documentElement
-
-  if (MARKETING.has(norm(path))) {
-    root.classList.add('dark', 'mkt-dark')
-    return
-  }
-
-  root.classList.remove('mkt-dark')
-  // 回到文档页时恢复用户自己的主题偏好
-  const pref = localStorage.getItem('vitepress-theme-appearance') || 'auto'
-  const preferDark =
-    pref === 'dark' ||
-    (pref === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  root.classList.toggle('dark', preferDark)
+  root.classList.add('dark')
+  root.classList.toggle('mkt-dark', MARKETING.has(norm(path)))
 }
 
 watch(() => route.path, applyTheme, { immediate: true })

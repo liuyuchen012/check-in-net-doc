@@ -8,6 +8,29 @@ description: 从开通机构到第一节课打卡 —— AgoraIn v4 上手路径
 整个过程分五步：**开通机构 → 登录后台 → 建班级与学生 → 教室端签到 → 家长绑定**。
 考试阅卷是第五条链路，按需启用。
 
+## 界面速览
+
+下面都是实际运行界面，不是示意图。先认一遍入口，后面按步骤操作会更快。
+
+<div class="doc-shots">
+  <figure>
+    <img src="/shots/dashboard.webp" alt="AgoraIn 管理后台仪表盘" loading="lazy">
+    <figcaption>管理后台仪表盘：班级、设备、签到与待办集中在一屏</figcaption>
+  </figure>
+  <figure>
+    <img src="/shots/classes.webp" alt="班级与学生管理" loading="lazy">
+    <figcaption>班级 / 学生：批量导入、学号条码与家长邀请码都在这里</figcaption>
+  </figure>
+  <figure>
+    <img src="/shots/nexus-desktop.webp" alt="教室大屏 Nexus 顶栏" loading="lazy">
+    <figcaption>教室大屏：日期、当天课程与下一节提醒常驻屏幕顶部</figcaption>
+  </figure>
+  <figure>
+    <img src="/shots/monitoring.webp" alt="班级监视" loading="lazy">
+    <figcaption>班级监视：屏幕与摄像头双通道，支持 15 分钟片段回放</figcaption>
+  </figure>
+</div>
+
 ## 一、开通机构（学校 / 培训机构）
 
 1. 打开平台地址 <https://agorain.615mc.cn>，在登录页选择**机构注册**

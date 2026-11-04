@@ -28,7 +28,32 @@ description: 基于 ClassIsland 的 AgoraIn 定制版：内置集控客户端，
 2. 解压到任意目录（如 `D:\AgoraInClassIsland`）—— **自包含打包，无需安装 .NET 运行时**；
 3. 双击 `ClassIsland.Desktop.exe` 启动（首次启动按向导完成基础设置即可）。
 
-> 系统要求：Windows 10 1809+（教室一体机 / 电子白板 / 普通 PC 均可）。
+> 系统要求：Windows 10 1809+（教室一体机 / 电子白板 / 普通 PC 均可）；
+> Windows 7 SP1 请使用目录内的 `ClassIsland-Win7.exe` 启动，详见下方兼容说明。
+
+<div class="doc-shots">
+  <figure>
+    <img src="/shots/nexus-desktop.webp" alt="定制版 ClassIsland 在教室大屏上的顶栏" loading="lazy">
+    <figcaption>真实教室大屏：定制版 ClassIsland 顶栏显示日期、当天课程与下一节提醒</figcaption>
+  </figure>
+</div>
+
+### Windows 7 SP1 兼容启动
+
+Windows 7 不再被 .NET 8 官方支持，但班级大屏只需稳定显示课表与提醒。
+定制版附带 `ClassIsland-Win7.exe` 启动器：它会关闭 .NET 7+ 默认启用的
+WriteXorExecute 检查，再拉起完整主程序，**功能与 Windows 10 版一致**。
+
+使用前请确认：
+
+1. 系统为 **Windows 7 SP1 64 位**，并安装补丁 **KB3063858**；
+2. 安装 **.NET Framework 4.8**（启动器自身需要）；
+3. 安装 **Visual C++ 2015–2022 Redistributable（x64）**。
+
+启动时不要直接双击 `ClassIsland.Desktop.exe`，请双击 `ClassIsland-Win7.exe`。
+如果长时间运行后曾出现窗口变灰、停止刷新，新版本内置了界面/渲染看门狗：
+连续 25 秒 UI 无响应或 45 秒渲染不出帧时，会自动重启并恢复显示；
+Windows 7 默认使用软件渲染，避开老显卡驱动导致的 ANGLE 卡死。
 
 ## 三、连接到 AgoraIn 集控平台
 
